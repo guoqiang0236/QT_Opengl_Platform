@@ -1,0 +1,1 @@
+# QT_Opengl_Medical_Platform
