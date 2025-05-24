@@ -83,6 +83,7 @@ target_link_libraries(QtGuiApp PRIVATE
     VTK::FiltersModeling
     DcmtkUtil
     OpenCVUtil
+    GLFWUtil
 )
 
 # 设置 VTK 模块依赖（确保头文件正确处理）

@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget* parent)
     m_numsub(new QThread(this)),
     m_opencvUtil(std::make_unique<OpencvUtil>())
 {
+
     //setWindowFlags(Qt::FramelessWindowHint);
     setWindowIcon(QIcon(":/res/icon/favicon.ico")); // 覆盖可能的默认值
     m_ui->setupUi(this);

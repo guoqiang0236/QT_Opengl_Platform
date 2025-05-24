@@ -106,18 +106,18 @@ OFCondition MySCP::handleIncomingCommand(T_DIMSE_Message* incomingMsg, const Dcm
 							Uint16 samplesPerPixel = 1;
 							reqDataset->findAndGetUint16(DCM_SamplesPerPixel, samplesPerPixel);
 
-							if (samplesPerPixel == 3) // RGB
-							{
-								// 注意：DICOM的RGB数据通常是连续的R1G1B1R2G2B2...
-								cv::Mat imag_rgb(rows, columns, CV_8UC3, pixData8);
-								cv::Mat imag_bgr;
-								cv::cvtColor(imag_rgb, imag_bgr, cv::COLOR_RGB2BGR);
-								cv::imshow("CM-70 Screen", imag_bgr);
-							}else {
-								cv::Mat imag = cv::Mat(rows, columns, CV_8U, pixData8);
-								cv::imshow("CM-70 Screen", imag);
-							}
-							cv::waitKey(1);
+							//if (samplesPerPixel == 3) // RGB
+							//{
+							//	// 注意：DICOM的RGB数据通常是连续的R1G1B1R2G2B2...
+							//	cv::Mat imag_rgb(rows, columns, CV_8UC3, pixData8);
+							//	cv::Mat imag_bgr;
+							//	cv::cvtColor(imag_rgb, imag_bgr, cv::COLOR_RGB2BGR);
+							//	cv::imshow("CM-70 Screen", imag_bgr);
+							//}else {
+							//	cv::Mat imag = cv::Mat(rows, columns, CV_8U, pixData8);
+							//	cv::imshow("CM-70 Screen", imag);
+							//}
+							//cv::waitKey(1);
 						}else {
 							std::cout << "Couldn't find Pixel Data Array" << std::endl;
 						}												
