@@ -81,7 +81,6 @@ target_link_libraries(QtGuiApp PRIVATE
     VTK::FiltersGeneral
     VTK::FiltersGeometry
     VTK::FiltersModeling
-    VtkUtil
     DcmtkUtil
     OpenCVUtil
 )

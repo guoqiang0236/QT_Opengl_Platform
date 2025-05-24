@@ -6,7 +6,7 @@
 #include "OpenCVUtil.h"
 class QVTKOpenGLNativeWidget;
 class vtkRenderer;
-class VisualizationManager;
+
 namespace Ui {
     class MainWindow_UI;
 }
@@ -18,19 +18,7 @@ public:
     ~MainWindow();
 
 private slots:
-    void ReadFile();
-    void ReadFiles();
-    void DataTo3DVolume();
-    void DataTo3DSurface();
-    void ReadRawFile();
     void StyleChanged(const QString& style);
-    void ViewChange(const QString& viewport);
-    void LoadDicomFinished();
-    void LoadDicomsFinished();
-    void SetCurrentSliderEnable(bool enable);
-    void SetCurrentAXIALSliderValue(int slice);
-	void SetCurrentCORONALSliderValue(int slice);
-	void SetCurrentSAGITTALSliderValue(int slice);
     void ShutDown();
     void OnAnimationFinished();
     void Change_CurrentTime();
@@ -59,8 +47,6 @@ private:
     QThread* m_numsub; 
     std::unique_ptr<MyProgressDialog> m_progressDialog; // 进度对话框指针
 
-    //VtkUtil
-    std::unique_ptr<VisualizationManager> m_VisualManager;
     //DcmtkUtil
 	DcmCStoreSender m_dcmCStoreSender;
     //OpenCVUtil
