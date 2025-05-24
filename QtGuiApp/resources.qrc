@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/Qml/loading.qml</file>
+        <file>res/QSS/AMOLED.qss</file>
+        <file>res/QSS/Aqua.qss</file>
+        <file>res/QSS/ConsoleStyle.qss</file>
+        <file>res/QSS/ElegantDark.qss</file>
+        <file>res/QSS/LICENSE</file>
+        <file>res/QSS/MacOS.qss</file>
+        <file>res/QSS/ManjaroMix.qss</file>
+        <file>res/QSS/MaterialDark.qss</file>
+        <file>res/QSS/NeonButtons.qss</file>
+        <file>res/QSS/Ubuntu.qss</file>
+        <file>res/icon/favicon.ico</file>
+        <file>res/picture/loading.jpg</file>
+    </qresource>
+</RCC>
