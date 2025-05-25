@@ -75,6 +75,9 @@ void GLFWHelper::OpenglWindowExec()
 void GLFWHelper::TerminateOpenglWindow()
 {
     // 释放GLFW资源
-    glfwTerminate();
+    if (m_glfwwindow) {
+        glfwDestroyWindow(m_glfwwindow);
+        m_glfwwindow = nullptr;
+    }
 }
 
