@@ -21,12 +21,20 @@ set(CMAKE_AUTORCC ON)   # 自动处理 .qrc 资源文件，生成资源访问代
 file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS
     "source/*.cpp"
     "include/*.h"
+    "${CMAKE_SOURCE_DIR}/Packages/glad/src/glad.c"
 )
+
 # 创建动态库目标（SHARED表示生成DLL）
 add_library(GLFWUtil SHARED ${SRC_FILES})
 
 # 添加预编译头支持
 target_precompile_headers(GLFWUtil PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/pch.h")
+
+# 添加预编译头支持（排除 glad.c）
+set_source_files_properties(
+    "${CMAKE_SOURCE_DIR}/Packages/glad/src/glad.c"
+    PROPERTIES SKIP_PRECOMPILE_HEADERS ON
+)
 
 # 设置DLL导出宏（Windows下需要）
 if(WIN32)
@@ -39,6 +47,7 @@ target_include_directories(GLFWUtil
     PUBLIC
         ${GLFW_INCLUDE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_SOURCE_DIR}/Packages/glad/include
 )
 
 # 库lib目录
