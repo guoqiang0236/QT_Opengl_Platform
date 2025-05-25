@@ -38,6 +38,7 @@ public:
     QGridLayout *gridLayout_7;
     QFrame *frame;
     QLabel *label_showthreadnum;
+    QPushButton *pushButton_testglfw;
     QWidget *tab_4;
     QGridLayout *gridLayout_9;
     QPushButton *pushButton_3;
@@ -108,7 +109,7 @@ public:
         frame->setFrameShape(QFrame::Shape::StyledPanel);
         frame->setFrameShadow(QFrame::Shadow::Raised);
 
-        gridLayout_7->addWidget(frame, 1, 0, 1, 1);
+        gridLayout_7->addWidget(frame, 2, 1, 1, 1);
 
         label_showthreadnum = new QLabel(tab_3);
         label_showthreadnum->setObjectName("label_showthreadnum");
@@ -123,7 +124,12 @@ public:
         font.setBold(true);
         label_showthreadnum->setFont(font);
 
-        gridLayout_7->addWidget(label_showthreadnum, 0, 0, 1, 1);
+        gridLayout_7->addWidget(label_showthreadnum, 1, 1, 1, 1);
+
+        pushButton_testglfw = new QPushButton(tab_3);
+        pushButton_testglfw->setObjectName("pushButton_testglfw");
+
+        gridLayout_7->addWidget(pushButton_testglfw, 0, 1, 1, 1);
 
         tabWidget->addTab(tab_3, QString());
         tab_4 = new QWidget();
@@ -344,6 +350,7 @@ public:
     {
         MainWindow_UI->setWindowTitle(QCoreApplication::translate("MainWindow_UI", "MainWindow", nullptr));
         label_showthreadnum->setText(QCoreApplication::translate("MainWindow_UI", "0", nullptr));
+        pushButton_testglfw->setText(QCoreApplication::translate("MainWindow_UI", "testglfw", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab_3), QCoreApplication::translate("MainWindow_UI", "\346\202\243\350\200\205\344\277\241\346\201\257", nullptr));
         pushButton_3->setText(QString());
         pushButton_4->setText(QString());

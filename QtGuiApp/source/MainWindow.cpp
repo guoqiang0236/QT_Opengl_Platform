@@ -22,7 +22,8 @@ MainWindow::MainWindow(QWidget* parent)
 	m_thread_runnable(new MyThread_Runnable(this)),
     m_sub(new QThread(this)),
     m_numsub(new QThread(this)),
-    m_opencvUtil(std::make_unique<OpencvUtil>())
+    m_opencvUtil(std::make_unique<OpencvUtil>()),
+    m_glfwHelper (std::make_unique<GLFWHelper>(this))
 {
 
     //setWindowFlags(Qt::FramelessWindowHint);
@@ -133,6 +134,16 @@ void MainWindow::ProgressChanged(int value, int max)
 	}
 }
 
+void MainWindow::InitGLFWWindow()
+{
+    if (!m_glfwHelper)
+        return;
+	m_glfwHelper->Initialize();
+    m_glfwHelper->CreateOpenglWindow();
+    m_glfwHelper->OpenglWindowExec();
+    m_glfwHelper->TerminateOpenglWindow();
+}
+
 
 
 void MainWindow::InitSlots()
@@ -153,6 +164,9 @@ void MainWindow::InitSlots()
             m_opencvDialog->exec(); // 模态对话框
 		}   
 		});
+
+    //GLFW
+    connect(m_ui->pushButton_testglfw, &QPushButton::clicked, this, &MainWindow::InitGLFWWindow);
 }
 
 void MainWindow::UpdateGUI()

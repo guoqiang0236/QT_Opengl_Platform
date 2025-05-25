@@ -25,6 +25,7 @@ private slots:
     void Change_CurrentTime();
     void ControlRecording();
 	void ProgressChanged(int value, int max); // 进度条更新
+	void InitGLFWWindow();
 
 signals:
 
