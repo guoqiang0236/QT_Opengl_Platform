@@ -22,8 +22,7 @@ MainWindow::MainWindow(QWidget* parent)
 	m_thread_runnable(new MyThread_Runnable(this)),
     m_sub(new QThread(this)),
     m_numsub(new QThread(this)),
-    m_opencvUtil(std::make_unique<OpencvUtil>()),
-    m_glfwHelper (std::make_unique<GLFWHelper>(this))
+    m_opencvUtil(std::make_unique<OpencvUtil>())
 {
 
     //setWindowFlags(Qt::FramelessWindowHint);
@@ -136,12 +135,16 @@ void MainWindow::ProgressChanged(int value, int max)
 
 void MainWindow::InitGLFWWindow()
 {
-    if (!m_glfwHelper)
+    auto glfwApp = GLFWApplication::Instance();
+    if (!glfwApp)
         return;
-	m_glfwHelper->Initialize();
-    m_glfwHelper->CreateOpenglWindow();
-    m_glfwHelper->OpenglWindowExec();
-    m_glfwHelper->TerminateOpenglWindow();
+    bool flag = glfwApp->Initialize(1600,900);
+    if (flag)
+    {
+        glfwApp->UseOpenGLFunctions();
+        glfwApp->OpenglWindowExec();
+        glfwApp->TerminateOpenglWindow();
+    }
 }
 
 

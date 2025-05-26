@@ -4,7 +4,7 @@
 #include "DcmCStoreSender.h"
 #include "MyOpenCVDialog.h"
 #include "OpenCVUtil.h"
-#include "GLFWHelper.h"
+#include "GLFWApplication.h"
 class QVTKOpenGLNativeWidget;
 class vtkRenderer;
 
@@ -55,8 +55,7 @@ private:
     std::unique_ptr<OpencvUtil> m_opencvUtil;
     std::unique_ptr<MyOpenCVDialog> m_opencvDialog; // OpenCV对话框指针
 
-	//GLFW
-	std::unique_ptr<GLFWHelper> m_glfwHelper;
+	
 };
 
 #endif // MED_IMG_MAINWINDOW_H
