@@ -39,8 +39,10 @@ public:
 	void prepareVBO();
 
     void prepare();
-
     
+    void prepareSingleBuffer();
+
+    void prepareInterleaveBuffer();
 
 signals:
     void glfwInitialized(bool success);
@@ -53,6 +55,7 @@ private:
     bool binitialized = false;
     static void FrameBufferSizeCallback(GLFWwindow* window, int width, int height);
     static void KeyeCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+
 private:
 	// OpenGL 窗口指针
     uint32_t m_width;

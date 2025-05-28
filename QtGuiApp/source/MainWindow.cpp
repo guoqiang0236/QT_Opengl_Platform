@@ -142,6 +142,7 @@ void MainWindow::InitGLFWWindow()
     if (flag)
     {
         glfwApp->UseOpenGLFunctions();
+		glfwApp->prepareInterleaveBuffer();
         glfwApp->OpenglWindowExec();
         glfwApp->TerminateOpenglWindow();
     }

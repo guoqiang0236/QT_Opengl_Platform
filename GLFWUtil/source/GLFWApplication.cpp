@@ -214,6 +214,87 @@ void GLFWApplication::prepare()
     GL_CALL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW));
 }
 
+void GLFWApplication::prepareSingleBuffer()
+{
+	//1.准备顶点数据
+    float vertices[] = {
+        -0.5f, -0.5f, 0.0f,  // 左下角
+         0.5f, -0.5f, 0.0f,  // 右下角
+         0.0f,  0.5f, 0.0f   // 顶部
+    };
+
+    float colors[] = {
+        1.0f, 0.0f, 0.0f, 1.0f, // 红色
+        0.0f, 1.0f, 0.0f, 1.0f, // 绿色
+        0.0f, 0.0f, 1.0f, 1.0f  // 蓝色
+    };
+    //2.使用数据生成两个vbo psovbo，colorvbo
+    GLuint posvbo, colorvbo;
+	GL_CALL(glGenBuffers(1, &posvbo));
+    GL_CALL(glGenBuffers(1, &colorvbo));
+
+    GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, posvbo));
+    GL_CALL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW));
+
+    GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, colorvbo));
+    GL_CALL(glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW));
+
+    //3.生成vao并且绑定
+    GLuint vao = 0;
+    GL_CALL(glGenVertexArrays(1, &vao));
+    GL_CALL(glBindVertexArray(vao));
+
+    //4.分别将位置/颜色属性的描述信息加入到vao中
+    //4.1描述位置属性
+    GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, posvbo));
+    GL_CALL(glEnableVertexAttribArray(0)); // 位置属性索引为0
+    GL_CALL(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0));
+
+	//4.2描述颜色属性
+    GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, colorvbo));
+    GL_CALL(glEnableVertexAttribArray(1)); // 颜色属性索引为1
+    GL_CALL(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0));
+
+    GL_CALL(glBindVertexArray(0)); //解绑VAO
+}
+
+void GLFWApplication::prepareInterleaveBuffer()
+{
+    //1.准备顶点数据(位置加颜色）
+    float vertices[] = {
+        -0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,
+         0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f, 
+         0.0f,  0.5f, 0.0f ,  0.0f, 0.0f, 1.0f,
+    };
+
+    //2.创建唯一的vbo
+    GLuint vbo = 0;
+    GL_CALL(glGenBuffers(1, &vbo));
+    GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, vbo));
+    GL_CALL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW));
+
+    //3.创建vao并绑定
+	GLuint vao = 0;
+    GL_CALL(glGenVertexArrays(1, &vao));
+    GL_CALL(glBindVertexArray(vao));
+
+    //4.分别将位置/颜色属性的描述信息加入到vao中
+    //4.1描述位置属性
+    GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, vbo));
+    GL_CALL(glEnableVertexAttribArray(0));
+    GL_CALL(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0));
+
+    //4.2描述颜色属性
+    GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, vbo));
+    GL_CALL(glEnableVertexAttribArray(1)); // 颜色属性索引为1
+    GL_CALL(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float))));
+
+    GL_CALL(glBindVertexArray(0)); //解绑VAO
+
+}
+
+
+
 void OnResize(int width, int height)
 {
     GL_CALL(glViewport(0, 0, width, height));
