@@ -39,8 +39,14 @@ public:
 	void prepareVBO();
 
     void prepare();
-
     
+    void prepareSingleBuffer();
+    
+    void prepareShader();
+
+    void prepareInterleaveBuffer();
+
+    void render();
 
 signals:
     void glfwInitialized(bool success);
@@ -49,10 +55,11 @@ private:
     explicit GLFWApplication(QObject* parent = nullptr);
     static GLFWApplication* m_instance;
     bool CreateOpenglWindow();
-
+    void prapareBackground();
     bool binitialized = false;
     static void FrameBufferSizeCallback(GLFWwindow* window, int width, int height);
     static void KeyeCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+
 private:
 	// OpenGL 窗口指针
     uint32_t m_width;
@@ -61,4 +68,7 @@ private:
 	ResizeCallback m_resizeCallback = nullptr;
     KeyBoardCallback m_keyboardCallback = nullptr;
 
+
+    GLuint m_vao;
+    GLuint m_program;
 };

@@ -21,8 +21,9 @@ MainWindow::MainWindow(QWidget* parent)
     m_thread_work(new MyThread_Work(this)),
 	m_thread_runnable(new MyThread_Runnable(this)),
     m_sub(new QThread(this)),
-    m_numsub(new QThread(this)),
-    m_opencvUtil(std::make_unique<OpencvUtil>())
+    m_numsub(new QThread(this)), 
+	//m_vaoWidget(new VAOOpenGLWidget(this))
+	m_glwidget(new MyGLWidget(this))
 {
 
     //setWindowFlags(Qt::FramelessWindowHint);
@@ -94,33 +95,6 @@ void MainWindow::Change_CurrentTime()
 	m_ui->label_currenttime->setText(currentTime);
 }
 
-void MainWindow::ControlRecording()
-{
-    if(!m_opencvUtil)
-		m_opencvUtil = std::make_unique<OpencvUtil>();
-
-	
-	if (!m_opencvUtil->GetIsRecording())
-	{
-        // 检查并创建 D:\data 文件夹
-        QString folderPath = "D:/data";
-        QDir dir(folderPath);
-        if (!dir.exists()) {
-            dir.mkpath(".");
-        }
-		std::string outputPath = folderPath.toStdString() + "/output.avi";
-        // 获取当前屏幕区域
-        RECT rect;
-        HWND hwnd = reinterpret_cast<HWND>(this->winId());
-        GetWindowRect(hwnd, &rect);
-        // 设置录制区域为当前窗口
-        m_opencvUtil->StartRecording(rect, outputPath.c_str());
-	}
-	else
-	{
-        m_opencvUtil->StopRecording();
-	}
-}
 
 void MainWindow::ProgressChanged(int value, int max)
 {
@@ -133,21 +107,6 @@ void MainWindow::ProgressChanged(int value, int max)
 	}
 }
 
-void MainWindow::InitGLFWWindow()
-{
-    auto glfwApp = GLFWApplication::Instance();
-    if (!glfwApp)
-        return;
-    bool flag = glfwApp->Initialize(1600,900);
-    if (flag)
-    {
-        glfwApp->UseOpenGLFunctions();
-        glfwApp->OpenglWindowExec();
-        glfwApp->TerminateOpenglWindow();
-    }
-}
-
-
 
 void MainWindow::InitSlots()
 {
@@ -157,29 +116,39 @@ void MainWindow::InitSlots()
     
     connect(m_ui->comboBox, &QComboBox::currentTextChanged, this, &MainWindow::StyleChanged);
     connect(m_ui->pushButton_shutdown, &QPushButton::clicked, this, &MainWindow::ShutDown);
-	connect(m_ui->pushButton_record, &QPushButton::clicked, this, &MainWindow::ControlRecording);
   
 
-    //testopencv
-	connect(m_ui->pushButton_opencvtest, &QPushButton::clicked, this, [this]() {
-        if (m_opencvDialog)
-        {
-            m_opencvDialog->exec(); // 模态对话框
-		}   
-		});
 
-    //GLFW
-    connect(m_ui->pushButton_testglfw, &QPushButton::clicked, this, &MainWindow::InitGLFWWindow);
+    //opengl
+    connect(m_ui->pushButton_drawtriangle, &QPushButton::clicked, m_glwidget, &MyGLWidget::triggerDrawTriangle);
+    
 }
 
 void MainWindow::UpdateGUI()
 {
     if (!m_ui )
         return;
-	m_ui->label_hospital->setText("Opengl学习平台");
+	m_ui->label_hospital->setText("Opengl医疗平台");
     m_ui->comboBox->setCurrentIndex(8);
-    m_opencvDialog = std::make_unique<MyOpenCVDialog>(this);
-    m_opencvDialog->setWindowModality(Qt::ApplicationModal);
+
+    if (m_ui->openGLWidget)
+    {
+        m_ui->gridLayout_8->removeWidget(m_ui->openGLWidget);
+        m_ui->openGLWidget->setParent(nullptr);
+        m_ui->openGLWidget->deleteLater();
+        m_ui->openGLWidget = nullptr;
+    }
+   /* if (!m_vaoWidget)
+        return;
+    m_vaoWidget->setObjectName("openGLWidget");
+
+    m_ui->gridLayout_8->addWidget(m_vaoWidget, 1, 0, 1, 1);*/
+
+    if (!m_glwidget)
+        return;
+    m_glwidget->setObjectName("openGLWidget");
+
+    m_ui->gridLayout_8->addWidget(m_glwidget, 1, 0, 1, 1);
 }
 
 void MainWindow::UpdateSize()
