@@ -91,6 +91,7 @@ bool GLFWApplication::CreateOpenglWindow()
         qDebug() << "glad初始化失败";
         return false;
     }
+    prapareBackground();
     qDebug() << "glad初始化成功";
     qDebug() << "GLFW 窗口创建成功";
     return true;
@@ -121,8 +122,9 @@ void GLFWApplication::OpenglWindowExec()
 		// 接受并分发窗体消息处理事件
 		glfwPollEvents();
 
-        //执行gl清画布操作
-        GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
+        
+        render();
+    
 
         //执行gl双缓存操作
 		glfwSwapBuffers(m_glfwwindow);
@@ -240,9 +242,9 @@ void GLFWApplication::prepareSingleBuffer()
     GL_CALL(glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW));
 
     //3.生成vao并且绑定
-    GLuint vao = 0;
-    GL_CALL(glGenVertexArrays(1, &vao));
-    GL_CALL(glBindVertexArray(vao));
+    m_vao = 0;
+    GL_CALL(glGenVertexArrays(1, &m_vao));
+    GL_CALL(glBindVertexArray(m_vao));
 
     //4.分别将位置/颜色属性的描述信息加入到vao中
     //4.1描述位置属性
@@ -256,6 +258,93 @@ void GLFWApplication::prepareSingleBuffer()
     GL_CALL(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0));
 
     GL_CALL(glBindVertexArray(0)); //解绑VAO
+}
+
+void GLFWApplication::prapareBackground()
+{
+    GL_CALL(glClearColor(0.2f, 0.3f, 0.3f, 1.0f));
+}
+
+void GLFWApplication::prepareShader()
+{
+    //1 完成vs与fs的源代码，并且装入字符串
+    const char* vertexShaderSource =
+        "#version 460 core\n"
+        "layout (location = 0) in vec3 aPos;\n"
+        "void main()\n"
+        "{\n"
+        "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+        "}\0";
+    const char* fragmentShaderSource =
+        "#version 330 core\n"
+        "out vec4 FragColor;\n"
+        "void main()\n"
+        "{\n"
+        "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+        "}\n\0";
+
+    //2 创建Shader程序（vs、fs）
+    GLuint vertex, fragment;
+    vertex = glCreateShader(GL_VERTEX_SHADER);
+    fragment = glCreateShader(GL_FRAGMENT_SHADER);
+
+    //3 为shader程序输入shader代码
+    glShaderSource(vertex, 1, &vertexShaderSource, NULL);
+	glShaderSource(fragment, 1, &fragmentShaderSource, NULL);
+
+    int success = 0;
+    char infoLog[1024];
+    //4 执行shader代码编译 
+	glCompileShader(vertex);
+    //检查vertex编译结果
+	glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+		glGetShaderInfoLog(vertex, 1024, NULL, infoLog);
+		qDebug() << "Vertex shader compilation failed: " << infoLog;
+	}
+	else {
+		qDebug() << "Vertex shader compiled successfully.";
+    }
+
+    glCompileShader(fragment);
+    //检查fragment编译结果
+    glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		glGetShaderInfoLog(fragment, 1024, NULL, infoLog);
+		qDebug() << "Fragment shader compilation failed: " << infoLog;
+	}
+	else {
+		qDebug() << "Fragment shader compiled successfully.";
+	}
+
+    //5 创建一个Program壳子
+	m_program = 0;
+    m_program = glCreateProgram();
+
+    //6 将vs与fs编译好的结果放到program这个壳子里
+	glAttachShader(m_program, vertex);
+	glAttachShader(m_program, fragment);
+
+    //7 执行program的链接操作，形成最终可执行shader程序
+	glLinkProgram(m_program);
+
+    //检查链接错误
+    glGetProgramiv(m_program, GL_LINK_STATUS, &success);
+	if (!success)
+	{
+		glGetProgramInfoLog(m_program, 1024, NULL, infoLog);
+		qDebug() << "Shader program linking failed: " << infoLog;
+	}
+	else {
+		qDebug() << "Shader program linked successfully.";
+	}
+
+    //清理
+	glDeleteShader(vertex);
+    glDeleteShader(fragment);
+
 }
 
 void GLFWApplication::prepareInterleaveBuffer()
@@ -274,9 +363,9 @@ void GLFWApplication::prepareInterleaveBuffer()
     GL_CALL(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW));
 
     //3.创建vao并绑定
-	GLuint vao = 0;
-    GL_CALL(glGenVertexArrays(1, &vao));
-    GL_CALL(glBindVertexArray(vao));
+    m_vao = 0;
+    GL_CALL(glGenVertexArrays(1, &m_vao));
+    GL_CALL(glBindVertexArray(m_vao));
 
     //4.分别将位置/颜色属性的描述信息加入到vao中
     //4.1描述位置属性
@@ -291,6 +380,21 @@ void GLFWApplication::prepareInterleaveBuffer()
 
     GL_CALL(glBindVertexArray(0)); //解绑VAO
 
+}
+
+void GLFWApplication::render()
+{
+    //执行gl清画布操作
+    GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
+    //1 绑定当前的program
+    glUseProgram(m_program);
+
+    //2 绑定当前的vao
+    glBindVertexArray(m_vao);
+
+    //3 发出绘制指令
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+    
 }
 
 

@@ -1,10 +1,9 @@
 ﻿#ifndef MED_IMG_MAINWINDOW_H
 #define MED_IMG_MAINWINDOW_H
 #include "pch.h"
-#include "DcmCStoreSender.h"
-#include "MyOpenCVDialog.h"
 #include "OpenCVUtil.h"
-#include "GLFWApplication.h"
+#include  "MyGLWidget.h"
+#include "VAOOpenGLWidget.h"
 class QVTKOpenGLNativeWidget;
 class vtkRenderer;
 
@@ -23,9 +22,7 @@ private slots:
     void ShutDown();
     void OnAnimationFinished();
     void Change_CurrentTime();
-    void ControlRecording();
 	void ProgressChanged(int value, int max); // 进度条更新
-	void InitGLFWWindow();
 
 signals:
 
@@ -49,13 +46,9 @@ private:
     QThread* m_numsub; 
     std::unique_ptr<MyProgressDialog> m_progressDialog; // 进度对话框指针
 
-    //DcmtkUtil
-	DcmCStoreSender m_dcmCStoreSender;
-    //OpenCVUtil
-    std::unique_ptr<OpencvUtil> m_opencvUtil;
-    std::unique_ptr<MyOpenCVDialog> m_opencvDialog; // OpenCV对话框指针
 
-	
+	MyGLWidget* m_glwidget; // OpenGL Widget
+	//VAOOpenGLWidget* m_vaoWidget; // VAO OpenGL Widget
 };
 
 #endif // MED_IMG_MAINWINDOW_H
