@@ -18,6 +18,7 @@ public:
     explicit MyGLWidget(QWidget* parent = nullptr);
     ~MyGLWidget();
 
+private:
     // 学习用的功能函数
     void prapareBackground();
     void prepareShader();
@@ -26,6 +27,7 @@ public:
     void prepareSingleBuffer();
     void prepareInterleaveBuffer();
     void render();
+    void prepareVAOForGLTriangles();
 
 public slots:
     void triggerDrawTriangle(); // 供按钮点击触发
