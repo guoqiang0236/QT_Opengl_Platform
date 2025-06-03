@@ -52,6 +52,7 @@ void MyGLWidget::prepareShader()
 
     //2 创建Shader程序（vs、fs）
     GLuint vertex, fragment;
+
     vertex = glCreateShader(GL_VERTEX_SHADER);
     fragment = glCreateShader(GL_FRAGMENT_SHADER);
 
@@ -127,6 +128,49 @@ void MyGLWidget::prepareVBO()
     GLuint vboArr[] = { 0, 0, 0 };
     glGenBuffers(3, vboArr);
     glDeleteBuffers(3, vboArr);
+}
+
+void MyGLWidget::prepareEBOVAO()
+{
+    //1 准备positions
+    float positions[] = {
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        0.0f,  0.5f, 0.0f,
+        0.5f,  0.5f, 0.0f,
+    };
+
+    unsigned int indices[] = {
+        0, 1, 2,
+        2, 1, 3
+    };
+    //2 VBO创建
+    m_vbo = 0;
+	glGenBuffers(1, &m_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+
+    //3 EBO创建
+    m_ebo = 0;
+    glGenBuffers(1, &m_ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    //4 VAO创建
+	glGenVertexArrays(1, &m_vao);
+    glBindVertexArray(m_vao);
+
+    //5 绑定vbo ebo 加入属性描述信息
+    //5.1 加入位置属性描述信息
+	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+	glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	
+    //5.2 加入索引属性描述信息
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);   
+
+    glBindVertexArray(0);
+
 }
 
 void MyGLWidget::prepare()
@@ -234,7 +278,9 @@ void MyGLWidget::render()
    //2 绑定当前的vao
    glBindVertexArray(m_vao);
    //3 发出绘制指令
-   glDrawArrays(GL_TRIANGLES, 0, 3); // 绘制三角形
+   //glDrawArrays(GL_TRIANGLES, 0, 3); // 绘制三角形
+   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(sizeof(int)*0)); // 使用索引绘制
+   //glBindVertexArray(0);
 }
 
 void MyGLWidget::paintGL()
@@ -259,7 +305,8 @@ void MyGLWidget::triggerDrawTriangle()
     // 你可以在这里按需调用各种prepare函数
     makeCurrent();
     prepareShader();
-    prepareInterleaveBuffer();
+    //prepareInterleaveBuffer();
+    prepareEBOVAO();
     m_prepared = true;
     doneCurrent();
     update(); // 触发重绘
