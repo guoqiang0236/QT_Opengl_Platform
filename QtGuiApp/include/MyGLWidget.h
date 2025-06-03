@@ -23,6 +23,7 @@ private:
     void prapareBackground();
     void prepareShader();
     void prepareVBO();
+    void prepareEBOVAO();
     void prepare();
     void prepareSingleBuffer();
     void prepareInterleaveBuffer();
@@ -41,6 +42,7 @@ protected:
 private:
     GLuint m_vao = 0;
     GLuint m_vbo = 0;
+    GLuint m_ebo = 0;
     GLuint m_program = 0;
     bool m_prepared = false;
 };
