@@ -186,6 +186,38 @@ void MyGLWidget::prepare()
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 }
 
+void MyGLWidget::prepareVAOForGLTriangles() 
+{
+    //1 准备positions
+    float positions[] = {
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        0.0f,  0.5f, 0.0f,
+        0.5f,  0.5f, 0.0f,
+        0.8f,  0.8f, 0.0f,
+        0.8f,  0.0f, 0.0f
+    };
+
+
+    //2  posVbo
+    GLuint posVbo;
+    glGenBuffers(1, &posVbo);
+
+    glBindBuffer(GL_ARRAY_BUFFER, posVbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+
+    //3 生成vao并且绑定
+    glGenVertexArrays(1, &m_vao);
+    glBindVertexArray(m_vao);
+
+    //4 描述位置属性
+    glBindBuffer(GL_ARRAY_BUFFER, posVbo);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+    glBindVertexArray(0);
+}
+
 void MyGLWidget::prepareSingleBuffer()
 {
     //1 准备positions colors数据
@@ -278,7 +310,7 @@ void MyGLWidget::render()
    //2 绑定当前的vao
    glBindVertexArray(m_vao);
    //3 发出绘制指令
-   //glDrawArrays(GL_TRIANGLES, 0, 3); // 绘制三角形
+   //glDrawArrays(GL_TRIANGLES, 0, 6); // 绘制三角形
    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(sizeof(int)*0)); // 使用索引绘制
    //glBindVertexArray(0);
 }
@@ -306,6 +338,7 @@ void MyGLWidget::triggerDrawTriangle()
     makeCurrent();
     prepareShader();
     //prepareInterleaveBuffer();
+    //prepareVAOForGLTriangles();
     prepareEBOVAO();
     m_prepared = true;
     doneCurrent();

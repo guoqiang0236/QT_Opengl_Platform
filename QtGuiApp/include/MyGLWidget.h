@@ -23,6 +23,7 @@ public:
     void prepareShader();
     void prepareVBO();
     void prepareEBOVAO();
+    void prepareVAOForGLTriangles();
     void prepare();
     void prepareSingleBuffer();
     void prepareInterleaveBuffer();
