@@ -1,17 +1,8 @@
 ﻿#pragma once
+#include "pch.h"
+#include "MyShader.h"
 
-#include <QOpenGLWidget>
-#include <QOpenGLShaderProgram>
-#include <QOpenGLFunctions_3_3_Core> // 添加此头文件
-#include <QObject>
-#include <QWidget>
-#include <QOpenGLFunctions>
-#include <QOpenGLBuffer>
-#include <QOpenGLVertexArrayObject>
-#include <QOpenGLTexture>
-
-
-class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
+class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_4_5_Core
 {
     Q_OBJECT
 public:
@@ -22,14 +13,16 @@ private:
     // 学习用的功能函数
     void prapareBackground();
     void prepareShader();
+    void preparecolortriangleShader();
     void prepareVBO();
     void prepareEBOVAO();
+	void prepareVAOcolortriangle();
     void prepareVAOForGLTriangles();
     void prepare();
     void prepareSingleBuffer();
     void prepareInterleaveBuffer();
     void render();
-    void prepareVAOForGLTriangles();
+    void prepareShaderPtr();
 
 public slots:
     void triggerDrawTriangle(); // 供按钮点击触发
@@ -46,5 +39,6 @@ private:
     GLuint m_ebo = 0;
     GLuint m_program = 0;
     bool m_prepared = false;
+	std::unique_ptr<MyShader> m_Shader;
 };
 

@@ -22,6 +22,15 @@
 #include <QDateTime>
 #include <QTimer>
 #include <QThreadPool>
+#include <QOpenGLWidget>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLFunctions_4_5_Core> 
+#include <QObject>
+#include <QWidget>
+#include <QOpenGLFunctions>
+#include <QOpenGLBuffer>
+#include <QOpenGLVertexArrayObject>
+#include <QOpenGLTexture>
 
 //自定义Qt类
 #include "MyThread.h"
