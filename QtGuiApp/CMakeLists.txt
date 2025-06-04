@@ -1,6 +1,10 @@
 #设置cmake的最低版本要求
 cmake_minimum_required(VERSION 3.20)
 
+#复制shader文件到构建目录
+file(GLOB ASSETS "./assets" )
+file(COPY ${ASSETS} DESTINATION ${CMAKE_BINARY_DIR})
+
 #设置c++标准
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -83,7 +87,7 @@ target_link_libraries(QtGuiApp PRIVATE
     VTK::FiltersModeling
     DcmtkUtil
     OpenCVUtil
-    GLFWUtil
+    #GLFWUtil
 )
 
 # 设置 VTK 模块依赖（确保头文件正确处理）

@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.20)
 project(Medcical-QT-Opengl)
 
+# 设置shader文件的路径
+file(GLOB ASSETS "${CMAKE_CURRENT_SOURCE_DIR}/assets" )
+
 # 设置源文件编码为 UTF - 8
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /utf-8")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /utf-8")
@@ -26,6 +29,7 @@ add_subdirectory(QtGuiApp)
 add_subdirectory(DcmtkUtil)
 add_subdirectory(OpencvUtil)
 #add_subdirectory(GLFWUtil)
+
 
 # 设置 QtGuiApp 为 Visual Studio 的启动项目
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT QtGuiApp)
