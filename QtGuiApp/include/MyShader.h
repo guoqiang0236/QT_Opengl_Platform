@@ -11,7 +11,9 @@ public:
 	void begin();//开始使用当前Shader
 
 	void end();//结束使用当前Shader
+	GLuint getProgram() const;
 
+	void setFloat(const std::string& name, float value);
 private:
 	//shader program
 	//type:COMPILE LINK

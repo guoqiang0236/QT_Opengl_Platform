@@ -31,6 +31,7 @@
 #include <QOpenGLBuffer>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLTexture>
+#include <QElapsedTimer>
 
 //自定义Qt类
 #include "MyThread.h"

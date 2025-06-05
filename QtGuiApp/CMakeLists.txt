@@ -5,6 +5,11 @@ cmake_minimum_required(VERSION 3.20)
 file(GLOB ASSETS "./assets" )
 file(COPY ${ASSETS} DESTINATION ${CMAKE_BINARY_DIR})
 
+# 递归收集 assets 文件夹下所有文件
+file(GLOB_RECURSE ASSET_FILES "${CMAKE_CURRENT_SOURCE_DIR}/assets/*")
+# 在 VS 工程中显示 assets 文件夹
+source_group("assets" FILES ${ASSET_FILES})
+
 #设置c++标准
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -37,8 +42,8 @@ qt_add_resources(RESOURCES resources.qrc)
 
 
 # 创建可执行文件，根据构建类型动态设置 WIN32 选项
-#add_executable(QtGuiApp WIN32 ${SRC_FILES} ${RESOURCES} res/icon/apprc.rc)  # Release 模式：无控制台
-add_executable(QtGuiApp ${SRC_FILES} ${RESOURCES}  res/icon/apprc.rc)
+#add_executable(QtGuiApp WIN32 ${SRC_FILES} ${RESOURCES} res/icon/apprc.rc ${ASSET_FILES})  # Release 模式：无控制台
+add_executable(QtGuiApp ${SRC_FILES} ${RESOURCES}  res/icon/apprc.rc ${ASSET_FILES})
 
 # 添加预编译头支持
 target_precompile_headers(QtGuiApp PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/pch.h")

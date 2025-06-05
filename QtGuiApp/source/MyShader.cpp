@@ -92,6 +92,20 @@ void MyShader::end()
 	glUseProgram(0);
 }
 
+GLuint MyShader::getProgram() const
+{
+	return mProgram;
+}
+
+void MyShader::setFloat(const std::string& name, float value)
+{
+	//1 通过名称拿到Uniform变量的位置Location
+	GLuint location = glGetUniformLocation(mProgram, name.c_str());
+
+	//2 通过Location更新Uniform变量的值
+	glUniform1f(location, value);
+}
+
 void MyShader::checkShaderErrors(GLuint target, std::string type)
 {
 	int success = 0;
