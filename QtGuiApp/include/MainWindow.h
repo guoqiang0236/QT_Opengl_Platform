@@ -1,7 +1,6 @@
 ﻿#ifndef MED_IMG_MAINWINDOW_H
 #define MED_IMG_MAINWINDOW_H
 #include "pch.h"
-#include "OpenCVUtil.h"
 #include  "MyGLWidget.h"
 #include "VAOOpenGLWidget.h"
 class QVTKOpenGLNativeWidget;

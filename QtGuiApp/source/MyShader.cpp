@@ -106,6 +106,13 @@ void MyShader::setFloat(const std::string& name, float value)
 	glUniform1f(location, value);
 }
 
+void MyShader::setInt(const std::string& name, int value)
+{
+	GLuint location = glGetUniformLocation(mProgram, name.c_str());
+
+	glUniform1i(location, value);
+}
+
 void MyShader::checkShaderErrors(GLuint target, std::string type)
 {
 	int success = 0;

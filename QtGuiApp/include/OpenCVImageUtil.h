@@ -1,12 +1,12 @@
 ﻿#pragma once
-#include "OpencvUtil_Export.h"
+
 #include "pch.h"
 #include <QObject>
 #include <QString>
 #include <QImage>
 #include <opencv2/opencv.hpp>
 
-class OPENCVUTIL_API OpenCVImageUtil : public QObject
+class OpenCVImageUtil : public QObject
 {
     Q_OBJECT
 public:

@@ -14,6 +14,7 @@ public:
 	GLuint getProgram() const;
 
 	void setFloat(const std::string& name, float value);
+	void setInt(const std::string& name, int value);
 private:
 	//shader program
 	//type:COMPILE LINK
