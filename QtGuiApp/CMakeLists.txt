@@ -20,6 +20,8 @@ project(QtGuiApp LANGUAGES CXX)
 # 查找所需要的库
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets OpenGLWidgets Quick QuickWidgets)
 find_package(VTK REQUIRED)
+set (OpenCV_DIR "${CMAKE_SOURCE_DIR}/Packages/OpenCV4100")
+find_package(OpenCV REQUIRED)
 
 if(NOT VTK_FOUND)
     message(FATAL_ERROR "VTK not found!")
@@ -53,12 +55,14 @@ target_include_directories(QtGuiApp
     PRIVATE 
         ${VTK_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${OpenCV_INCLUDE_DIRS}
 )
 
 # 库lib目录
 target_link_directories(QtGuiApp
     PRIVATE
         "${CMAKE_SOURCE_DIR}/lib"
+        ${OpenCV_LIB_DIR}
 )
 
 # 链接lib库
@@ -92,7 +96,7 @@ target_link_libraries(QtGuiApp PRIVATE
     VTK::FiltersModeling
     DcmtkUtil
     OpenCVUtil
-    #GLFWUtil
+    ${OpenCV_LIBS}
 )
 
 # 设置 VTK 模块依赖（确保头文件正确处理）

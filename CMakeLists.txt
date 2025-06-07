@@ -26,8 +26,6 @@ endforeach()
 
 # 添加子项目
 add_subdirectory(QtGuiApp)
-add_subdirectory(DcmtkUtil)
-add_subdirectory(OpencvUtil)
 #add_subdirectory(GLFWUtil)
 
 

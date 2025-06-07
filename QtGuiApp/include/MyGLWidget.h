@@ -21,8 +21,13 @@ private:
     void prepare();
     void prepareSingleBuffer();
     void prepareInterleaveBuffer();
-    void render();
+  
     void prepareShaderPtr();
+	void prepareTexture();
+	void prepareVAOForGLTrianglesWithTexture();
+
+    //渲染
+    void render();
 
 public slots:
     void triggerDrawTriangle(); // 供按钮点击触发
@@ -40,6 +45,7 @@ private:
     GLuint m_vbo = 0;
     GLuint m_ebo = 0;
     GLuint m_program = 0;
+    GLuint m_texture = 0;
     bool m_prepared = false;
 	std::unique_ptr<MyShader> m_Shader;
     QElapsedTimer m_timer;

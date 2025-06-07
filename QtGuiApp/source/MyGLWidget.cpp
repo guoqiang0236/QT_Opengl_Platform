@@ -1,5 +1,6 @@
 #include "MyGLWidget.h"
 #include <QDebug>
+#include <opencv2/opencv.hpp>
 
 MyGLWidget::MyGLWidget(QWidget* parent)
     : QOpenGLWidget(parent)
@@ -436,20 +437,26 @@ void MyGLWidget::render()
    if (m_Shader)
    {
        m_Shader->begin();
+
+       m_Shader->setInt("sampler", 0);
        //设定全局uniform time
-	   m_Shader->setFloat("time", m_timer.elapsed() / 1000.0f); // 传递时间给着色器
+	  // m_Shader->setFloat("time", m_timer.elapsed() / 1000.0f); // 传递时间给着色器
       
 
    }
-   //glUseProgram(m_program);
    
+   // 绑定纹理
+   if (m_texture) {
+       glActiveTexture(GL_TEXTURE0);
+       glBindTexture(GL_TEXTURE_2D, m_texture);
+   }
    
    
    //2 绑定当前的vao
    glBindVertexArray(m_vao);
    //3 发出绘制指令
    //glDrawArrays(GL_TRIANGLES, 0, 6); // 绘制三角形
-   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(sizeof(int)*0)); // 使用索引绘制
+   glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)(sizeof(int)*0)); // 使用索引绘制
    glBindVertexArray(0);
 
    if (m_Shader)
@@ -459,7 +466,130 @@ void MyGLWidget::render()
 void MyGLWidget::prepareShaderPtr()
 {
     //qDebug() << QDir::currentPath();
-    m_Shader = std::make_unique<MyShader>("../assets/shaders/vertexmove.glsl", "../assets/shaders/fragmentmove.glsl");
+    m_Shader = std::make_unique<MyShader>("../assets/shaders/vertex.glsl", "../assets/shaders/fragment.glsl");
+}
+
+void MyGLWidget::prepareTexture()
+{
+    // 1. 用 OpenCV 读取图片（注意：imread 默认是 BGR）
+    cv::Mat img = cv::imread("../assets/textures/goku.jpg", cv::IMREAD_UNCHANGED);
+    if (img.empty()) {
+        qDebug() << "图片加载失败";
+        return;
+    }
+    //OpenCV 默认左上角为原点，OpenGL 纹理左下角为原点，需要上下翻转
+    cv::flip(img, img, 0);
+    //转为 RGBA 格式（如果不是4通道）
+    if (img.channels() == 3) {
+        cv::cvtColor(img, img, cv::COLOR_BGR2RGBA);
+    }
+    else if (img.channels() == 4) {
+        cv::cvtColor(img, img, cv::COLOR_BGRA2RGBA);
+    }
+
+    //2 生成纹理并且激活单元绑定
+    glGenTextures(1, &m_texture);
+    //--激活纹理单元--
+    glActiveTexture(GL_TEXTURE0);
+    //--绑定纹理对象--
+    glBindTexture(GL_TEXTURE_2D, m_texture);
+
+    //3 传输纹理数据,开辟显存
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.cols, img.rows,
+        0, GL_RGBA, GL_UNSIGNED_BYTE, img.data);
+
+    //4 设置纹理的过滤方式
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    //5 设置纹理的包裹方式
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);//u
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);//v
+
+}
+
+void MyGLWidget::prepareVAOForGLTrianglesWithTexture()
+{
+    //1 准备positions colors
+    float positions[] = {
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        0.0f,  0.5f, 0.0f,
+    };
+
+    float colors[] = {
+        1.0f, 0.0f,0.0f,
+        0.0f, 1.0f,0.0f,
+        0.0f, 0.0f,1.0f
+    };
+
+    float uvs[] = {
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        0.5f, 1.0f,
+    };
+
+    unsigned int indices[] = {
+        0, 1, 2
+    };
+	//2 VBO创建
+    GLuint posVbo, colorVbo, uvVbo;
+	glGenBuffers(1, &posVbo);
+	glBindBuffer(GL_ARRAY_BUFFER, posVbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &colorVbo);
+	glBindBuffer(GL_ARRAY_BUFFER, colorVbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &uvVbo);
+	glBindBuffer(GL_ARRAY_BUFFER, uvVbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(uvs), uvs, GL_STATIC_DRAW);
+
+	//3 EBO创建
+	m_ebo = 0;
+	glGenBuffers(1, &m_ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    //4 VAO创建
+	glGenVertexArrays(1, &m_vao);
+    glBindVertexArray(m_vao);
+
+    GLuint posLocation = 0;
+    GLuint colorLocation = 0;
+    GLuint uvlocation = 0;
+    //动态获取shaer的location
+    if (m_Shader)
+    {
+        posLocation = glGetAttribLocation(m_Shader->getProgram(), "aPos");
+        colorLocation = glGetAttribLocation(m_Shader->getProgram(), "aColor");
+		uvlocation = glGetAttribLocation(m_Shader->getProgram(), "aUV");
+    }
+
+    //5 绑定vbo ebo 加入属性描述信息
+    //5.1 加入位置属性描述信息
+	glBindBuffer(GL_ARRAY_BUFFER, posVbo);
+	glEnableVertexAttribArray(posLocation);
+    glVertexAttribPointer(posLocation, 3, GL_FLOAT, GL_FALSE,
+        3 * sizeof(float),(void*)0);
+
+	//5.2 加入颜色属性描述数据
+    glBindBuffer(GL_ARRAY_BUFFER, colorVbo);
+	glEnableVertexAttribArray(colorLocation);
+    glVertexAttribPointer(colorLocation, 3, GL_FLOAT, GL_FALSE,
+        3 * sizeof(float), (void*)0);
+
+    //5.3 加入uv属性描述数据
+	glBindBuffer(GL_ARRAY_BUFFER, uvVbo);
+	glEnableVertexAttribArray(uvlocation);
+    glVertexAttribPointer(uvlocation,2,GL_FLOAT,GL_FALSE,
+		2 * sizeof(float), (void*)0);
+
+	//5.4 加入索引属性描述数据
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
+
+	glBindVertexArray(0);
 }
 
 void MyGLWidget::prepareVAOForGLTriangles()
@@ -526,7 +656,8 @@ void MyGLWidget::triggerDrawTriangle()
     // 你可以在这里按需调用各种prepare函数
     makeCurrent();
     prepareShaderPtr();
-    prepareVAOcolortriangle();
+    prepareVAOForGLTrianglesWithTexture();
+    prepareTexture();
     m_prepared = true;
     doneCurrent();
     update(); // 触发重绘
