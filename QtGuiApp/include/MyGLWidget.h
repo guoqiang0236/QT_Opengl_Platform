@@ -25,12 +25,15 @@ private:
     void prepareShaderPtr();
 	void prepareTexture();
 	void prepareVAOForGLTrianglesWithTexture();
+    void prepareVAOForTexture();
+    
 
     //渲染
     void render();
 
 public slots:
     void triggerDrawTriangle(); // 供按钮点击触发
+	void triggerDrawTexture(); // 供按钮点击触发
 
 protected:
     void initializeGL() override;

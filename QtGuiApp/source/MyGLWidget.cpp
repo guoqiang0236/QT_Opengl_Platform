@@ -20,12 +20,14 @@ MyGLWidget::~MyGLWidget()
     } 
     doneCurrent();
 }
+
 void MyGLWidget::initializeGL()
 {
+   
     initializeOpenGLFunctions();
     prapareBackground();
    
-    
+ 
 }
 
 void MyGLWidget::prapareBackground()
@@ -456,7 +458,7 @@ void MyGLWidget::render()
    glBindVertexArray(m_vao);
    //3 发出绘制指令
    //glDrawArrays(GL_TRIANGLES, 0, 6); // 绘制三角形
-   glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)(sizeof(int)*0)); // 使用索引绘制
+   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(sizeof(int)*0)); // 使用索引绘制
    glBindVertexArray(0);
 
    if (m_Shader)
@@ -472,7 +474,7 @@ void MyGLWidget::prepareShaderPtr()
 void MyGLWidget::prepareTexture()
 {
     // 1. 用 OpenCV 读取图片（注意：imread 默认是 BGR）
-    cv::Mat img = cv::imread("../assets/textures/goku.jpg", cv::IMREAD_UNCHANGED);
+    cv::Mat img = cv::imread("../assets/textures/hinata.jpg", cv::IMREAD_UNCHANGED);
     if (img.empty()) {
         qDebug() << "图片加载失败";
         return;
@@ -534,7 +536,7 @@ void MyGLWidget::prepareVAOForGLTrianglesWithTexture()
     };
 	//2 VBO创建
     GLuint posVbo, colorVbo, uvVbo;
-	glGenBuffers(1, &posVbo);
+    glGenBuffers(1, &posVbo);
 	glBindBuffer(GL_ARRAY_BUFFER, posVbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
 
@@ -590,6 +592,93 @@ void MyGLWidget::prepareVAOForGLTrianglesWithTexture()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
 
 	glBindVertexArray(0);
+}
+
+void MyGLWidget::prepareVAOForTexture()
+{
+    //1 准备positions colors
+    float positions[] = {
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        -0.5f,  0.5f, 0.0f,
+        0.5f,  0.5f, 0.0f,
+    };
+
+    float colors[] = {
+        1.0f, 0.0f,0.0f,
+        0.0f, 1.0f,0.0f,
+        0.0f, 0.0f,1.0f,
+        0.5f, 0.5f,0.5f
+    };
+
+    float uvs[] = {
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+    };
+
+    unsigned int indices[] = {
+        0, 1, 2,
+        2, 1, 3
+    };
+
+    //2 VBO创建
+    GLuint posVbo, colorVbo, uvVbo;
+    glGenBuffers(1, &posVbo);
+	glBindBuffer(GL_ARRAY_BUFFER, posVbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &colorVbo);
+	glBindBuffer(GL_ARRAY_BUFFER, colorVbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &uvVbo);
+    glBindBuffer(GL_ARRAY_BUFFER, uvVbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(uvs), uvs, GL_STATIC_DRAW);
+
+	//3 EBO创建
+    GLuint ebo;
+	glCreateBuffers(1, &ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    //4 VAO创建
+    glGenVertexArrays(1, &m_vao);
+    glBindVertexArray(m_vao);
+
+    //5 绑定vbo ebo 加入属性描述信息
+    GLuint posLocation = 0;
+    GLuint colorLocation = 0;
+    GLuint uvlocation = 0;
+    //动态获取shaer的location
+    if (m_Shader)
+    {
+        posLocation = glGetAttribLocation(m_Shader->getProgram(), "aPos");
+        colorLocation = glGetAttribLocation(m_Shader->getProgram(), "aColor");
+        uvlocation = glGetAttribLocation(m_Shader->getProgram(), "aUV");
+    }
+    //5.1 加入位置属性描述信息
+	glBindBuffer(GL_ARRAY_BUFFER, posVbo);
+	glEnableVertexAttribArray(posLocation);
+    glVertexAttribPointer(posLocation, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
+
+    //5.2 加入颜色属性描述数据
+	glBindBuffer(GL_ARRAY_BUFFER, colorVbo);
+    glEnableVertexAttribArray(colorLocation);
+    glVertexAttribPointer(colorLocation, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
+
+    //5.3 加入uv属性描述数据
+    glBindBuffer(GL_ARRAY_BUFFER, uvVbo);
+	glEnableVertexAttribArray(uvlocation);
+	glVertexAttribPointer(uvlocation, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void*)0);
+
+
+    //5.4 加入ebo到当前的vao
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+
+    glBindVertexArray(0);
+
 }
 
 void MyGLWidget::prepareVAOForGLTriangles()
@@ -653,7 +742,6 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)
 }
 void MyGLWidget::triggerDrawTriangle()
 {
-    // 你可以在这里按需调用各种prepare函数
     makeCurrent();
     prepareShaderPtr();
     prepareVAOForGLTrianglesWithTexture();
@@ -663,3 +751,13 @@ void MyGLWidget::triggerDrawTriangle()
     update(); // 触发重绘
 }
 
+void MyGLWidget::triggerDrawTexture()
+{
+    makeCurrent();
+    prepareShaderPtr();
+    prepareVAOForTexture();
+	prepareTexture();
+    m_prepared = true;
+    doneCurrent();
+	update(); // 触发重绘
+}

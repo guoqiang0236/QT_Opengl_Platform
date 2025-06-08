@@ -69,5 +69,6 @@
 
 //全局变量
 #include <GlobalConfig.h>
+#include "checkError.h"
 
 #endif // PCH_H

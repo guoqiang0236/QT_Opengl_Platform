@@ -43,7 +43,7 @@ MyShader::MyShader(const char* vertexPath, const char* fragmentPath)
 	const char* vertexShaderSource = vertexCode.c_str();
 	const char* fragmentShaderSource = fragmentCode.c_str();
 	//1 创建Shader程序（vs、fs）
-	GLuint vertex, fragment;
+	GLint vertex, fragment;
 	vertex = glCreateShader(GL_VERTEX_SHADER);
 	fragment = glCreateShader(GL_FRAGMENT_SHADER);
 
