@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "pch.h"
 #include "MyShader.h"
+#include "MyTexture.h"
 
 class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_4_5_Core
 {
@@ -26,14 +27,16 @@ private:
 	void prepareTexture();
 	void prepareVAOForGLTrianglesWithTexture();
     void prepareVAOForTexture();
-    
+    void prepareTexturePtr();
+    void prepareMixTexturePtr();
 
     //渲染
     void render();
 
 public slots:
     void triggerDrawTriangle(); // 供按钮点击触发
-	void triggerDrawTexture(); // 供按钮点击触发
+	void triggerDrawTexture(); 
+    void triggerDrawMixTexture();
 
 protected:
     void initializeGL() override;
@@ -51,6 +54,10 @@ private:
     GLuint m_texture = 0;
     bool m_prepared = false;
 	std::unique_ptr<MyShader> m_Shader;
+	std::unique_ptr<MyTexture> m_Texture;
+    MyTexture* grassTexture = nullptr;
+    MyTexture* landTexture = nullptr;
+    MyTexture* noiseTexture = nullptr;
     QElapsedTimer m_timer;
 };
 

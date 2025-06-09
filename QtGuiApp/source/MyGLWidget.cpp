@@ -440,11 +440,13 @@ void MyGLWidget::render()
    {
        m_Shader->begin();
 
-       m_Shader->setInt("sampler", 0);
+       //m_Shader->setInt("sampler", 0);
        //设定全局uniform time
-	  // m_Shader->setFloat("time", m_timer.elapsed() / 1000.0f); // 传递时间给着色器
+	   m_Shader->setFloat("time", m_timer.elapsed() / 1000.0f); // 传递时间给着色器
       
-
+       m_Shader->setInt("grassSampler", 0);
+       m_Shader->setInt("landSampler", 1);
+       m_Shader->setInt("noiseSampler", 2);
    }
    
    // 绑定纹理
@@ -681,6 +683,18 @@ void MyGLWidget::prepareVAOForTexture()
 
 }
 
+void MyGLWidget::prepareTexturePtr()
+{
+	m_Texture = std::make_unique<MyTexture>("../assets/textures/hinata.jpg", 0);
+}
+
+void MyGLWidget::prepareMixTexturePtr()
+{
+    grassTexture = new MyTexture("../assets/textures/grass.jpg", 0);
+    landTexture = new MyTexture("../assets/textures/land.jpg", 1);
+    noiseTexture = new MyTexture("../assets/textures/noise.jpg", 2);
+}
+
 void MyGLWidget::prepareVAOForGLTriangles()
 {
     //1 准备positions
@@ -756,8 +770,20 @@ void MyGLWidget::triggerDrawTexture()
     makeCurrent();
     prepareShaderPtr();
     prepareVAOForTexture();
-	prepareTexture();
+    prepareTexturePtr();
     m_prepared = true;
     doneCurrent();
 	update(); // 触发重绘
+}
+
+void MyGLWidget::triggerDrawMixTexture()
+{
+    makeCurrent();
+  
+	prepareShaderPtr();
+    prepareVAOForTexture();
+    prepareMixTexturePtr();
+    m_prepared = true;
+    doneCurrent();
+    update();
 }
