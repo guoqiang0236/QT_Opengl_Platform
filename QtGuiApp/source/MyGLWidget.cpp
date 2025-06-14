@@ -444,9 +444,9 @@ void MyGLWidget::render()
        //设定全局uniform time
 	   m_Shader->setFloat("time", m_timer.elapsed() / 1000.0f); // 传递时间给着色器
       
-       m_Shader->setInt("grassSampler", 0);
+     /*  m_Shader->setInt("grassSampler", 0);
        m_Shader->setInt("landSampler", 1);
-       m_Shader->setInt("noiseSampler", 2);
+       m_Shader->setInt("noiseSampler", 2);*/
    }
    
    // 绑定纹理
@@ -460,7 +460,7 @@ void MyGLWidget::render()
    glBindVertexArray(m_vao);
    //3 发出绘制指令
    //glDrawArrays(GL_TRIANGLES, 0, 6); // 绘制三角形
-   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(sizeof(int)*0)); // 使用索引绘制
+   glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)(sizeof(int)*0)); // 使用索引绘制
    glBindVertexArray(0);
 
    if (m_Shader)
@@ -470,7 +470,7 @@ void MyGLWidget::render()
 void MyGLWidget::prepareShaderPtr()
 {
     //qDebug() << QDir::currentPath();
-    m_Shader = std::make_unique<MyShader>("../assets/shaders/vertex.glsl", "../assets/shaders/fragment.glsl");
+    m_Shader = std::make_unique<MyShader>("../assets/shaders/vertexMipmap.glsl", "../assets/shaders/fragmentMipmap.glsl");
 }
 
 void MyGLWidget::prepareTexture()
@@ -683,9 +683,87 @@ void MyGLWidget::prepareVAOForTexture()
 
 }
 
+void MyGLWidget::prepareVAOForMipmapTexture()
+{
+    //1 准备positions colors
+    float positions[] = {
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        0.0f,  0.5f, 0.0f,
+    };
+
+    float colors[] = {
+        1.0f, 0.0f,0.0f,
+        0.0f, 1.0f,0.0f,
+        0.0f, 0.0f,1.0f,
+    };
+
+    float uvs[] = {
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        0.5f, 1.0f,
+    };
+
+    unsigned int indices[] = {
+        0, 1, 2,
+    };
+
+
+	//2 VBO创建
+    GLuint posVbo, colorVbo, uvVbo;
+	glGenBuffers(1, &posVbo);
+	glBindBuffer(GL_ARRAY_BUFFER, posVbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &colorVbo);
+	glBindBuffer(GL_ARRAY_BUFFER, colorVbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &uvVbo);
+	glBindBuffer(GL_ARRAY_BUFFER, uvVbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(uvs), uvs, GL_STATIC_DRAW);
+
+    //3 EBO创建
+    GLuint ebo;
+	glGenBuffers(1, &ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	//4 VAO创建
+	glGenVertexArrays(1, &m_vao);
+    glBindVertexArray(m_vao);
+
+    //5 绑定vbo ebo 加入属性描述信息
+    //5.1 加入位置属性描述信息
+	glBindBuffer(GL_ARRAY_BUFFER, posVbo);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+    //5.2 加入颜色属性描述数据
+	glBindBuffer(GL_ARRAY_BUFFER, colorVbo);
+    glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+    //5.3 加入uv属性描述数据
+    glBindBuffer(GL_ARRAY_BUFFER, uvVbo);
+	glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE,2 * sizeof(float), (void*)0);
+
+    //5.4 加入ebo到当前的vao
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+
+	//6 扫尾工作：解绑当前vao
+    glBindVertexArray(0);
+}
+
 void MyGLWidget::prepareTexturePtr()
 {
 	m_Texture = std::make_unique<MyTexture>("../assets/textures/hinata.jpg", 0);
+}
+
+void MyGLWidget::prepareMipmapTexturePtr()
+{
+    m_Texture = std::make_unique<MyTexture>("../assets/textures/hinata.jpg", 0);
 }
 
 void MyGLWidget::prepareMixTexturePtr()
@@ -783,6 +861,17 @@ void MyGLWidget::triggerDrawMixTexture()
 	prepareShaderPtr();
     prepareVAOForTexture();
     prepareMixTexturePtr();
+    m_prepared = true;
+    doneCurrent();
+    update();
+}
+
+void MyGLWidget::triggerDrawMipmapTexture()
+{
+    makeCurrent();
+    prepareShaderPtr();
+    prepareVAOForMipmapTexture();
+    prepareMipmapTexturePtr();
     m_prepared = true;
     doneCurrent();
     update();

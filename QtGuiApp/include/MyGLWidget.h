@@ -27,7 +27,10 @@ private:
 	void prepareTexture();
 	void prepareVAOForGLTrianglesWithTexture();
     void prepareVAOForTexture();
+    void prepareVAOForMipmapTexture();
+
     void prepareTexturePtr();
+    void prepareMipmapTexturePtr();
     void prepareMixTexturePtr();
 
     //渲染
@@ -37,6 +40,7 @@ public slots:
     void triggerDrawTriangle(); // 供按钮点击触发
 	void triggerDrawTexture(); 
     void triggerDrawMixTexture();
+    void triggerDrawMipmapTexture();
 
 protected:
     void initializeGL() override;
