@@ -460,7 +460,7 @@ void MyGLWidget::render()
    glBindVertexArray(m_vao);
    //3 发出绘制指令
    //glDrawArrays(GL_TRIANGLES, 0, 6); // 绘制三角形
-   glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)(sizeof(int)*0)); // 使用索引绘制
+   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(sizeof(int)*0)); // 使用索引绘制
    glBindVertexArray(0);
 
    if (m_Shader)
@@ -470,7 +470,7 @@ void MyGLWidget::render()
 void MyGLWidget::prepareShaderPtr()
 {
     //qDebug() << QDir::currentPath();
-    m_Shader = std::make_unique<MyShader>("../assets/shaders/vertexMipmap.glsl", "../assets/shaders/fragmentMipmap.glsl");
+    m_Shader = std::make_unique<MyShader>("../assets/shaders/vertex.glsl", "../assets/shaders/fragment.glsl");
 }
 
 void MyGLWidget::prepareTexture()
@@ -656,7 +656,7 @@ void MyGLWidget::prepareVAOForTexture()
     //动态获取shaer的location
     if (m_Shader)
     {
-        posLocation = glGetAttribLocation(m_Shader->getProgram(), "aPos");
+        posLocation = glGetAttribLocation (m_Shader->getProgram(), "aPos");
         colorLocation = glGetAttribLocation(m_Shader->getProgram(), "aColor");
         uvlocation = glGetAttribLocation(m_Shader->getProgram(), "aUV");
     }
@@ -870,7 +870,8 @@ void MyGLWidget::triggerDrawMipmapTexture()
 {
     makeCurrent();
     prepareShaderPtr();
-    prepareVAOForMipmapTexture();
+    prepareVAOForTexture();
+    //prepareVAOForMipmapTexture();
     prepareMipmapTexturePtr();
     m_prepared = true;
     doneCurrent();
