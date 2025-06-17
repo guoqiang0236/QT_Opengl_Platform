@@ -120,7 +120,7 @@ void MainWindow::InitSlots()
 
 
     //opengl
-    connect(m_ui->pushButton_drawtriangle, &QPushButton::clicked, m_glwidget, &MyGLWidget::triggerDrawMipmapTexture);
+    connect(m_ui->pushButton_drawtriangle, &QPushButton::clicked, m_glwidget, &MyGLWidget::triggerDrawLiuYiFei);
     
 }
 

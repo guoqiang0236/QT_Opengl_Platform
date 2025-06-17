@@ -440,25 +440,26 @@ void MyGLWidget::render()
    {
        m_Shader->begin();
 
-       //m_Shader->setInt("sampler", 0);
+       m_Shader->setInt("sampler", 0);
        //设定全局uniform time
-	   m_Shader->setFloat("time", m_timer.elapsed() / 1000.0f); // 传递时间给着色器
+       m_Shader->setFloat("time", 1.0);
+	   //m_Shader->setFloat("time", m_timer.elapsed() / 1000.0f); // 传递时间给着色器
       
      /*  m_Shader->setInt("grassSampler", 0);
        m_Shader->setInt("landSampler", 1);
        m_Shader->setInt("noiseSampler", 2);*/
    }
    
-   // 绑定纹理
+   //2 绑定纹理
    if (m_texture) {
        glActiveTexture(GL_TEXTURE0);
        glBindTexture(GL_TEXTURE_2D, m_texture);
    }
    
    
-   //2 绑定当前的vao
+   //3 绑定当前的vao
    glBindVertexArray(m_vao);
-   //3 发出绘制指令
+   //4 发出绘制指令
    //glDrawArrays(GL_TRIANGLES, 0, 6); // 绘制三角形
    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(sizeof(int)*0)); // 使用索引绘制
    glBindVertexArray(0);
@@ -756,6 +757,93 @@ void MyGLWidget::prepareVAOForMipmapTexture()
     glBindVertexArray(0);
 }
 
+void MyGLWidget::prepareVAOForLiuYiFei()
+{
+    //1 准备positions colors
+    float positions[] = {
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        -0.5f,  0.5f, 0.0f,
+        0.5f,  0.5f, 0.0f,
+    };
+
+    float colors[] = {
+        1.0f, 0.0f,0.0f,
+        0.0f, 1.0f,0.0f,
+        0.0f, 0.0f,1.0f,
+        0.5f, 0.5f,0.5f
+    };
+
+    float uvs[] = {
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        0.0f, 1.0f,
+        1.0f, 1.0f,
+    };
+
+    unsigned int indices[] = {
+        0, 1, 2,
+        2, 1, 3
+    };
+    //2 VBO创建
+    GLuint posVbo, colorVbo, uvVbo;
+	glGenBuffers(1, &posVbo);
+	glBindBuffer(GL_ARRAY_BUFFER, posVbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &colorVbo);
+	glBindBuffer(GL_ARRAY_BUFFER, colorVbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &uvVbo);
+	glBindBuffer(GL_ARRAY_BUFFER, uvVbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(uvs), uvs, GL_STATIC_DRAW);
+
+    //3 EBO创建
+    GLuint ebo;
+	glGenBuffers(1, &ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo); 
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    //4 VAO创建
+    glGenVertexArrays(1, &m_vao);
+	glBindVertexArray(m_vao);
+
+    //5 绑定vbo ebo 加入属性描述信息
+    GLuint posLocation = 0;
+    GLuint colorLocation = 0;
+    GLuint uvlocation = 0;
+    //动态获取shaer的location
+    if (m_Shader)
+    {
+        posLocation = glGetAttribLocation(m_Shader->getProgram(), "aPos");
+        colorLocation = glGetAttribLocation(m_Shader->getProgram(), "aColor");
+        uvlocation = glGetAttribLocation(m_Shader->getProgram(), "aUV");
+    }
+
+    //5.1 加入位置属性描述信息
+    glBindBuffer(GL_ARRAY_BUFFER, posVbo);
+    glEnableVertexAttribArray(posLocation);
+    glVertexAttribPointer(posLocation, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+    //5.2 加入颜色属性描述数据
+    glBindBuffer(GL_ARRAY_BUFFER, colorVbo);
+    glEnableVertexAttribArray(colorLocation);
+    glVertexAttribPointer(colorLocation, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+    //5.3 加入uv属性描述数据
+    glBindBuffer(GL_ARRAY_BUFFER, uvVbo);
+    glEnableVertexAttribArray(uvlocation);
+    glVertexAttribPointer(uvlocation, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+
+    //5.4 加入ebo到当前的vao
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+
+    //6 扫尾工作：解绑当前vao
+    glBindVertexArray(0);
+
+}
+
 void MyGLWidget::prepareTexturePtr()
 {
 	m_Texture = std::make_unique<MyTexture>("../assets/textures/hinata.jpg", 0);
@@ -771,6 +859,11 @@ void MyGLWidget::prepareMixTexturePtr()
     grassTexture = new MyTexture("../assets/textures/grass.jpg", 0);
     landTexture = new MyTexture("../assets/textures/land.jpg", 1);
     noiseTexture = new MyTexture("../assets/textures/noise.jpg", 2);
+}
+
+void MyGLWidget::prepareMipmapLiuYiFeiTexturePtr()
+{
+    m_Texture = std::make_unique<MyTexture>("../assets/textures/liu.jpg", 0);
 }
 
 void MyGLWidget::prepareVAOForGLTriangles()
@@ -873,6 +966,17 @@ void MyGLWidget::triggerDrawMipmapTexture()
     prepareVAOForTexture();
     //prepareVAOForMipmapTexture();
     prepareMipmapTexturePtr();
+    m_prepared = true;
+    doneCurrent();
+    update();
+}
+
+void MyGLWidget::triggerDrawLiuYiFei()
+{
+    makeCurrent();
+    prepareShaderPtr();
+    prepareVAOForLiuYiFei();
+    prepareMipmapLiuYiFeiTexturePtr();
     m_prepared = true;
     doneCurrent();
     update();

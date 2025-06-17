@@ -28,10 +28,11 @@ private:
 	void prepareVAOForGLTrianglesWithTexture();
     void prepareVAOForTexture();
     void prepareVAOForMipmapTexture();
-
+    void prepareVAOForLiuYiFei();
     void prepareTexturePtr();
     void prepareMipmapTexturePtr();
     void prepareMixTexturePtr();
+    void prepareMipmapLiuYiFeiTexturePtr();
 
     //渲染
     void render();
@@ -41,6 +42,9 @@ public slots:
 	void triggerDrawTexture(); 
     void triggerDrawMixTexture();
     void triggerDrawMipmapTexture();
+    void triggerDrawLiuYiFei();
+
+
 
 protected:
     void initializeGL() override;
