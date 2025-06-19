@@ -22,6 +22,8 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets OpenGLWidgets Quick QuickW
 find_package(VTK REQUIRED)
 set (OpenCV_DIR "${CMAKE_SOURCE_DIR}/Packages/OpenCV4100")
 find_package(OpenCV REQUIRED)
+#GLM库
+set (GLM_DIR "${CMAKE_SOURCE_DIR}/Packages/glm-1.0.1-light")
 
 if(NOT VTK_FOUND)
     message(FATAL_ERROR "VTK not found!")
@@ -56,6 +58,7 @@ target_include_directories(QtGuiApp
         ${VTK_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${OpenCV_INCLUDE_DIRS}
+        ${GLM_DIR}
 )
 
 # 库lib目录
@@ -94,8 +97,6 @@ target_link_libraries(QtGuiApp PRIVATE
     VTK::FiltersGeneral
     VTK::FiltersGeometry
     VTK::FiltersModeling
-    DcmtkUtil
-    OpenCVUtil
     ${OpenCV_LIBS}
 )
 
@@ -108,3 +109,11 @@ endif()
 #if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
 #    add_definitions(-DQT_NO_DEBUG_OUTPUT)
 #endif()
+
+# 复制 opencv_world*.dll 到可执行文件目录
+add_custom_command(TARGET QtGuiApp POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${OpenCV_DIR}/x64/vc17/bin/opencv_world4100d.dll"
+    "${OpenCV_DIR}/x64/vc17/bin/opencv_world4100.dll"
+    $<TARGET_FILE_DIR:QtGuiApp>
+)

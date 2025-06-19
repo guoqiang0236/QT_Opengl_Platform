@@ -113,6 +113,35 @@ void MyShader::setInt(const std::string& name, int value)
 	glUniform1i(location, value);
 }
 
+void MyShader::setVector3(const std::string& name, float x, float y, float z)
+{
+	//1 通过名称拿到Uniform变量的位置Location
+	GLint location = glGetUniformLocation(mProgram, name.c_str());
+
+	//2 通过Location更新Uniform变量的值
+	glUniform3f(location, x, y, z);
+}
+
+void MyShader::setVector3(const std::string& name, const float* values)
+{
+	//1 通过名称拿到Uniform变量的位置Location
+	GLint location = glGetUniformLocation(mProgram, name.c_str());
+
+	//2 通过Location更新Uniform变量的值
+	//第二个参数：你当前要更新的uniform变量如果是数组，数组里面包括多少个向量vec3
+	glUniform3fv(location, 1, values);
+}
+
+void MyShader::setMatrix4x4(const std::string& name, glm::mat4 value)
+{
+	//1 通过名称拿到Uniform变量的位置Location
+	GLint location = glGetUniformLocation(mProgram, name.c_str());
+
+	//2 通过Location更新Uniform变量的值
+	//transpose参数：表示是否对传输进去的矩阵数据进行转置
+	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
+}
+
 void MyShader::checkShaderErrors(GLuint target, std::string type)
 {
 	int success = 0;

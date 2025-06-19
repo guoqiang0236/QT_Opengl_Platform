@@ -24,6 +24,7 @@ private:
     void prepareInterleaveBuffer();
   
     void prepareShaderPtr();
+	void prepareShaderPtrForMat();
 	void prepareTexture();
 	void prepareVAOForGLTrianglesWithTexture();
     void prepareVAOForTexture();
@@ -36,6 +37,11 @@ private:
 
     //渲染
     void render();
+
+
+    //图形变换
+	void doRotationTransform();
+    void doTransform();
 
 public slots:
     void triggerDrawTriangle(); // 供按钮点击触发
@@ -67,5 +73,7 @@ private:
     MyTexture* landTexture = nullptr;
     MyTexture* noiseTexture = nullptr;
     QElapsedTimer m_timer;
+    glm::mat4 m_transform;
+  
 };
 

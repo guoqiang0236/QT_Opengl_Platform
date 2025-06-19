@@ -442,24 +442,19 @@ void MyGLWidget::render()
 
        m_Shader->setInt("sampler", 0);
        //设定全局uniform time
-       m_Shader->setFloat("time", 1.0);
+       //m_Shader->setFloat("time", 1.0);
 	   //m_Shader->setFloat("time", m_timer.elapsed() / 1000.0f); // 传递时间给着色器
+
+	   m_Shader->setMatrix4x4("transform", m_transform); // 传递单位矩阵作为变换矩阵
       
      /*  m_Shader->setInt("grassSampler", 0);
        m_Shader->setInt("landSampler", 1);
        m_Shader->setInt("noiseSampler", 2);*/
    }
    
-   //2 绑定纹理
-   if (m_texture) {
-       glActiveTexture(GL_TEXTURE0);
-       glBindTexture(GL_TEXTURE_2D, m_texture);
-   }
-   
-   
-   //3 绑定当前的vao
+   //2 绑定当前的vao
    glBindVertexArray(m_vao);
-   //4 发出绘制指令
+   //3 发出绘制指令
    //glDrawArrays(GL_TRIANGLES, 0, 6); // 绘制三角形
    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(sizeof(int)*0)); // 使用索引绘制
    glBindVertexArray(0);
@@ -468,10 +463,29 @@ void MyGLWidget::render()
        m_Shader->end();
 }
 
+void MyGLWidget::doRotationTransform()
+{	//构建一个旋转矩阵，绕着z轴旋转45度角
+    //rotate函数：用于生成旋转矩阵
+    //bug1:rotate必须得到一个float类型的角度，c++的template
+    //bug2:rotate函数接受的不是角度（degree），接收的弧度（radians）
+    //注意点：radians函数也是模板函数，切记要传入float类型数据，加f后缀
+	m_transform = glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+}
+
+void MyGLWidget::doTransform()
+{
+
+}
+
 void MyGLWidget::prepareShaderPtr()
 {
     //qDebug() << QDir::currentPath();
     m_Shader = std::make_unique<MyShader>("../assets/shaders/vertex.glsl", "../assets/shaders/fragment.glsl");
+}
+
+void MyGLWidget::prepareShaderPtrForMat()
+{
+	m_Shader = std::make_unique<MyShader>("../assets/shaders/vertexMat.glsl", "../assets/shaders/fragmentMat.glsl");
 }
 
 void MyGLWidget::prepareTexture()
@@ -899,6 +913,9 @@ void MyGLWidget::prepareVAOForGLTriangles()
 
 void MyGLWidget::paintGL()
 {
+    //生成变换矩阵
+	doRotationTransform();
+    //渲染
     render();
     update();
 }
@@ -974,7 +991,7 @@ void MyGLWidget::triggerDrawMipmapTexture()
 void MyGLWidget::triggerDrawLiuYiFei()
 {
     makeCurrent();
-    prepareShaderPtr();
+    prepareShaderPtrForMat();
     prepareVAOForLiuYiFei();
     prepareMipmapLiuYiFeiTexturePtr();
     m_prepared = true;
