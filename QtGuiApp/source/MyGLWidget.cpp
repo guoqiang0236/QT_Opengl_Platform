@@ -9,6 +9,7 @@ MyGLWidget::MyGLWidget(QWidget* parent)
     setFocusPolicy(Qt::StrongFocus);
     setFocus();
     m_timer.start();
+    m_angle = 0.0f;
 }
 
 MyGLWidget::~MyGLWidget()
@@ -469,12 +470,40 @@ void MyGLWidget::doRotationTransform()
     //bug1:rotate必须得到一个float类型的角度，c++的template
     //bug2:rotate函数接受的不是角度（degree），接收的弧度（radians）
     //注意点：radians函数也是模板函数，切记要传入float类型数据，加f后缀
-	m_transform = glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    // 
+    m_transform = glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+}
+
+void MyGLWidget::doTranslationTransform()
+{
+    //平移变换
+	m_transform = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 0.0f));
+}
+
+void MyGLWidget::doScaleTransform()
+{
+    //缩放变换
+    m_transform = glm::scale(glm::mat4(1.0f), glm::vec3(2.0f, 2.0f, 1.0f));
 }
 
 void MyGLWidget::doTransform()
 {
+    //复合变换
+    glm::mat4 rotateMat = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    glm::mat4 translateMat = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 0.0f));
 
+    //先旋转 再平移
+    m_transform = translateMat * rotateMat;
+
+    //先平移 后旋转
+    //m_transform = rotateMat * translateMat;
+}
+
+void MyGLWidget::doRotation()
+{
+	//持续旋转
+    m_angle += 2.0f;
+    m_transform = glm::rotate(glm::mat4(1.0f), glm::radians(m_angle), glm::vec3(0.0f, 0.0f, 1.0f));
 }
 
 void MyGLWidget::prepareShaderPtr()
@@ -913,8 +942,8 @@ void MyGLWidget::prepareVAOForGLTriangles()
 
 void MyGLWidget::paintGL()
 {
-    //生成变换矩阵
-	doRotationTransform();
+    //变换矩阵
+    doRotation();
     //渲染
     render();
     update();

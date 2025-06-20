@@ -40,9 +40,12 @@ private:
 
 
     //图形变换
-	void doRotationTransform();
-    void doTransform();
-
+	void doRotationTransform();//旋转
+    void doTranslationTransform();//平移变换
+    void doScaleTransform(); //缩放变换
+    
+    void doTransform();//复合变换
+    void doRotation();//持续旋转
 public slots:
     void triggerDrawTriangle(); // 供按钮点击触发
 	void triggerDrawTexture(); 
@@ -74,6 +77,7 @@ private:
     MyTexture* noiseTexture = nullptr;
     QElapsedTimer m_timer;
     glm::mat4 m_transform;
+    float m_angle;
   
 };
 
