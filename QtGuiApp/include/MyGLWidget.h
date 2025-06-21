@@ -43,9 +43,10 @@ private:
 	void doRotationTransform();//旋转
     void doTranslationTransform();//平移变换
     void doScaleTransform(); //缩放变换
-    
     void doTransform();//复合变换
     void doRotation();//持续旋转
+    void doTransformDieJia();//叠加变换(本地坐标系)
+    void preTransformDieJia();//叠加预先变换(本地坐标系)
 public slots:
     void triggerDrawTriangle(); // 供按钮点击触发
 	void triggerDrawTexture(); 

@@ -30,8 +30,8 @@ MyTexture::MyTexture(const std::string& path, unsigned int unit)
 	glBindTexture(GL_TEXTURE_2D, mTexture);
 
     //3 传输纹理数据,开辟显存
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, mWidth = img.cols, mHeight = img.rows,
-        0, GL_RGBA, GL_UNSIGNED_BYTE, img.data);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, mWidth = img.cols, mHeight = img.rows,//第一个GL_RGBA告诉 OpenGL ​​如何存储纹理数据​​（在 GPU 内存中的格式）
+        0, GL_RGBA, GL_UNSIGNED_BYTE, img.data);//第二个GL_RGBA参数告诉 OpenGL ​​输入数据（img.data）的排列方式​​。
 
 	//opengl生成mipmap
 	glGenerateMipmap(GL_TEXTURE_2D);

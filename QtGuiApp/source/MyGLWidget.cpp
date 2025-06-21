@@ -10,6 +10,7 @@ MyGLWidget::MyGLWidget(QWidget* parent)
     setFocus();
     m_timer.start();
     m_angle = 0.0f;
+	m_transform = glm::mat4(1.0f); // 初始化变换矩阵为单位矩阵
 }
 
 MyGLWidget::~MyGLWidget()
@@ -441,7 +442,7 @@ void MyGLWidget::render()
    {
        m_Shader->begin();
 
-       m_Shader->setInt("sampler", 0);
+       m_Shader->setInt("sampler", 1);// 作用是把 shader 里的 sampler uniform 变量和 GL_TEXTURE0 纹理单元关联起来
        //设定全局uniform time
        //m_Shader->setFloat("time", 1.0);
 	   //m_Shader->setFloat("time", m_timer.elapsed() / 1000.0f); // 传递时间给着色器
@@ -502,9 +503,38 @@ void MyGLWidget::doTransform()
 void MyGLWidget::doRotation()
 {
 	//持续旋转
-    m_angle += 2.0f;
+    m_angle += 1.0f;
     m_transform = glm::rotate(glm::mat4(1.0f), glm::radians(m_angle), glm::vec3(0.0f, 0.0f, 1.0f));
 }
+
+void MyGLWidget::preTransformDieJia()
+{
+    //目标二：先平移再叠加旋转
+    //m_transform = glm::translate(m_transform, glm::vec3(0.6f, 0.0f, 0.0f));
+
+    //目标三：先旋转再叠加平移
+    //m_transform = glm::rotate(m_transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+    //目标四：先做一次缩放，再叠加平移 
+    m_transform = glm::scale(m_transform, glm::vec3(0.1f, 1.0f, 1.0f));
+}
+
+void MyGLWidget::doTransformDieJia()
+{
+    //目标一：旋转的三角形
+    //m_transform = glm::rotate(m_transform, glm::radians(1.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    
+    //目标二：先平移再叠加旋转
+    //m_transform = glm::rotate(m_transform, glm::radians(1.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    
+    //目标三：先旋转再叠加平移
+    //m_transform = glm::translate(m_transform, glm::vec3(0.01f, 0.0f, 0.0f));
+
+    //目标四：先做一次缩放，再叠加平移 
+	m_transform = glm::translate(m_transform, glm::vec3(0.01f, 0.0f, 0.0f));
+}
+
+
 
 void MyGLWidget::prepareShaderPtr()
 {
@@ -906,7 +936,7 @@ void MyGLWidget::prepareMixTexturePtr()
 
 void MyGLWidget::prepareMipmapLiuYiFeiTexturePtr()
 {
-    m_Texture = std::make_unique<MyTexture>("../assets/textures/liu.jpg", 0);
+	m_Texture = std::make_unique<MyTexture>("../assets/textures/liu.jpg", 1);//1是纹理单元GL_TEXTURE 1
 }
 
 void MyGLWidget::prepareVAOForGLTriangles()
@@ -943,7 +973,7 @@ void MyGLWidget::prepareVAOForGLTriangles()
 void MyGLWidget::paintGL()
 {
     //变换矩阵
-    doRotation();
+    doTransformDieJia();
     //渲染
     render();
     update();
@@ -1023,6 +1053,7 @@ void MyGLWidget::triggerDrawLiuYiFei()
     prepareShaderPtrForMat();
     prepareVAOForLiuYiFei();
     prepareMipmapLiuYiFeiTexturePtr();
+    preTransformDieJia();
     m_prepared = true;
     doneCurrent();
     update();
