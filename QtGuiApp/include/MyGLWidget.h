@@ -36,6 +36,7 @@ private:
     void prepareMipmapLiuYiFeiTexturePtr();
 
     //渲染
+    void prepareCamera();
     void render();
 
 
@@ -78,6 +79,7 @@ private:
     MyTexture* noiseTexture = nullptr;
     QElapsedTimer m_timer;
     glm::mat4 m_transform;
+	glm::mat4 m_viewmatrix;
     float m_angle;
   
 };

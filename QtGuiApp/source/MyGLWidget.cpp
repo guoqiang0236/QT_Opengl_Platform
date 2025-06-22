@@ -11,6 +11,7 @@ MyGLWidget::MyGLWidget(QWidget* parent)
     m_timer.start();
     m_angle = 0.0f;
 	m_transform = glm::mat4(1.0f); // 初始化变换矩阵为单位矩阵
+    m_viewmatrix = glm::identity<glm::mat4>();
 }
 
 MyGLWidget::~MyGLWidget()
@@ -433,6 +434,19 @@ void MyGLWidget::prepareInterleaveBuffer()
 
 }
 
+void MyGLWidget::prepareCamera()
+{
+    //lookat:生成一个viewMatrix
+    //eye:当前摄像机所在的位置
+    //center:当前摄像机看向的那个点
+    //up:穹顶向量
+    m_viewmatrix = glm::lookAt(
+        glm::vec3(0.5f, 0.5f, 0.5f), // 摄像机位置
+		glm::vec3(0.0f, 0.5f, 0.0f), // 摄像机看向的点
+		glm::vec3(0.0f, 1.0f, 0.0f)  // 上方向(穹顶向量)
+	);
+}
+
 void MyGLWidget::render()
 {
    //执行opengl画布清理操作
@@ -448,6 +462,7 @@ void MyGLWidget::render()
 	   //m_Shader->setFloat("time", m_timer.elapsed() / 1000.0f); // 传递时间给着色器
 
 	   m_Shader->setMatrix4x4("transform", m_transform); // 传递单位矩阵作为变换矩阵
+	   m_Shader->setMatrix4x4("viewmatrix", m_viewmatrix);// 传递viewMatrix摄像机矩阵
       
      /*  m_Shader->setInt("grassSampler", 0);
        m_Shader->setInt("landSampler", 1);
@@ -973,7 +988,7 @@ void MyGLWidget::prepareVAOForGLTriangles()
 void MyGLWidget::paintGL()
 {
     //变换矩阵
-    doTransformDieJia();
+    //doTransformDieJia();
     //渲染
     render();
     update();
@@ -1053,7 +1068,8 @@ void MyGLWidget::triggerDrawLiuYiFei()
     prepareShaderPtrForMat();
     prepareVAOForLiuYiFei();
     prepareMipmapLiuYiFeiTexturePtr();
-    preTransformDieJia();
+    //preTransformDieJia();
+    prepareCamera();
     m_prepared = true;
     doneCurrent();
     update();
