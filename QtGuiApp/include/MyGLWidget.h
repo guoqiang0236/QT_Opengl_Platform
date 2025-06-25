@@ -36,7 +36,8 @@ private:
     void prepareMipmapLiuYiFeiTexturePtr();
 
     //渲染
-    void prepareCamera();
+	void prepareCamera();// 准备摄像机
+	void prepareOrtho();// 准备正交投影
     void render();
 
 
@@ -78,8 +79,9 @@ private:
     MyTexture* landTexture = nullptr;
     MyTexture* noiseTexture = nullptr;
     QElapsedTimer m_timer;
-    glm::mat4 m_transform;
-	glm::mat4 m_viewmatrix;
+	glm::mat4 m_transform;// 变换矩阵
+	glm::mat4 m_viewMatrix;// 摄像机矩阵
+	glm::mat4 m_projectionMatrix; // 投影矩阵
     float m_angle;
   
 };

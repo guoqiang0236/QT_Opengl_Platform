@@ -32,6 +32,7 @@
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLTexture>
 #include <QElapsedTimer>
+#include <QSerialPort>
 
 //自定义Qt类
 #include "MyThread.h"

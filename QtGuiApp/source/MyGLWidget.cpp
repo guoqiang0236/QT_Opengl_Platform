@@ -3,15 +3,15 @@
 #include <opencv2/opencv.hpp>
 
 MyGLWidget::MyGLWidget(QWidget* parent)
-    : QOpenGLWidget(parent)
+    : QOpenGLWidget(parent),
+    m_angle(0.0f),
+    m_transform(glm::mat4(1.0f)),// 初始化变换矩阵为单位矩阵
+    m_viewMatrix(glm::identity<glm::mat4>())
 {
     
     setFocusPolicy(Qt::StrongFocus);
     setFocus();
     m_timer.start();
-    m_angle = 0.0f;
-	m_transform = glm::mat4(1.0f); // 初始化变换矩阵为单位矩阵
-    m_viewmatrix = glm::identity<glm::mat4>();
 }
 
 MyGLWidget::~MyGLWidget()
@@ -440,11 +440,21 @@ void MyGLWidget::prepareCamera()
     //eye:当前摄像机所在的位置
     //center:当前摄像机看向的那个点
     //up:穹顶向量
-    m_viewmatrix = glm::lookAt(
-        glm::vec3(0.5f, 0.5f, 0.5f), // 摄像机位置
-		glm::vec3(0.0f, 0.5f, 0.0f), // 摄像机看向的点
-		glm::vec3(0.0f, 1.0f, 0.0f)  // 上方向(穹顶向量)
-	);
+    m_viewMatrix = glm::lookAt(
+        glm::vec3(0.0f, 0.0f, 1.0f),
+        glm::vec3(0.0f,0.0f,0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f) // 上方向(穹顶向量)
+    );
+}
+
+void MyGLWidget::prepareOrtho()
+{
+	//ortho:生成一个正交投影矩阵
+	//left, right, bottom, top, near, far
+	//注意：OpenGL的正交投影矩阵是左手坐标系
+	//注意：OpenGL的正交投影矩阵是左下角为原点
+	//注意：OpenGL的正交投影矩阵是z轴朝外的
+	m_projectionMatrix = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f);
 }
 
 void MyGLWidget::render()
@@ -462,8 +472,8 @@ void MyGLWidget::render()
 	   //m_Shader->setFloat("time", m_timer.elapsed() / 1000.0f); // 传递时间给着色器
 
 	   m_Shader->setMatrix4x4("transform", m_transform); // 传递单位矩阵作为变换矩阵
-	   m_Shader->setMatrix4x4("viewmatrix", m_viewmatrix);// 传递viewMatrix摄像机矩阵
-      
+	   m_Shader->setMatrix4x4("viewMatrix", m_viewMatrix);// 传递viewMatrix摄像机矩阵
+       m_Shader->setMatrix4x4("projectionMatrix", m_projectionMatrix);
      /*  m_Shader->setInt("grassSampler", 0);
        m_Shader->setInt("landSampler", 1);
        m_Shader->setInt("noiseSampler", 2);*/
@@ -849,10 +859,10 @@ void MyGLWidget::prepareVAOForLiuYiFei()
 {
     //1 准备positions colors
     float positions[] = {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        -0.5f,  0.5f, 0.0f,
-        0.5f,  0.5f, 0.0f,
+        -1.0f, -1.0f, 0.0f,
+        1.0f, -1.0f, 0.0f,
+        -1.0f,  1.0f, 0.0f,
+        1.0f,  1.0f, 0.0f,
     };
 
     float colors[] = {
@@ -1070,6 +1080,7 @@ void MyGLWidget::triggerDrawLiuYiFei()
     prepareMipmapLiuYiFeiTexturePtr();
     //preTransformDieJia();
     prepareCamera();
+    prepareOrtho();
     m_prepared = true;
     doneCurrent();
     update();

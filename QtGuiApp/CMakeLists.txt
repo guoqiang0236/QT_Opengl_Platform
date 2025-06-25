@@ -18,7 +18,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 project(QtGuiApp LANGUAGES CXX)
 
 # 查找所需要的库
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets OpenGLWidgets Quick QuickWidgets)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets OpenGLWidgets Quick QuickWidgets SerialPort)
+# 调试信息：显示 Qt6 的路径
+message(STATUS "Qt6 found at: ${Qt6_DIR}")
+message(STATUS "Qt6 version: ${Qt6_VERSION}")
+message(STATUS "Qt6 libraries: ${Qt6_LIBRARIES}")
 find_package(VTK REQUIRED)
 set (OpenCV_DIR "${CMAKE_SOURCE_DIR}/Packages/OpenCV4100")
 find_package(OpenCV REQUIRED)
@@ -76,6 +80,7 @@ target_link_libraries(QtGuiApp PRIVATE
     Qt6::OpenGLWidgets
     Qt6::Quick
     Qt6::QuickWidgets
+    Qt6::SerialPort
     VTK::GUISupportQt  
     VTK::RenderingOpenGL2
     VTK::InteractionStyle
