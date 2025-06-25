@@ -38,6 +38,7 @@ private:
     //渲染
 	void prepareCamera();// 准备摄像机
 	void prepareOrtho();// 准备正交投影
+	void preparareProjection();// 准备透视投影
     void render();
 
 

@@ -457,6 +457,16 @@ void MyGLWidget::prepareOrtho()
 	m_projectionMatrix = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f);
 }
 
+void MyGLWidget::preparareProjection()
+{
+	m_projectionMatrix = glm::perspective(
+		glm::radians(91.0f), // 视野角度
+		(float)width() / (float)height(), // 宽高比
+		0.1f, // 近裁剪面
+		100.0f // 远裁剪面
+	);
+}
+
 void MyGLWidget::render()
 {
    //执行opengl画布清理操作
@@ -538,10 +548,10 @@ void MyGLWidget::preTransformDieJia()
     //m_transform = glm::translate(m_transform, glm::vec3(0.6f, 0.0f, 0.0f));
 
     //目标三：先旋转再叠加平移
-    //m_transform = glm::rotate(m_transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    m_transform = glm::rotate(m_transform, glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
     //目标四：先做一次缩放，再叠加平移 
-    m_transform = glm::scale(m_transform, glm::vec3(0.1f, 1.0f, 1.0f));
+    //m_transform = glm::scale(m_transform, glm::vec3(0.1f, 1.0f, 1.0f));
 }
 
 void MyGLWidget::doTransformDieJia()
@@ -872,13 +882,14 @@ void MyGLWidget::prepareVAOForLiuYiFei()
         0.5f, 0.5f,0.5f
     };
 
+    //•	UV坐标（也叫纹理坐标）确实是用来告诉采样器（sampler）在图片（纹理）上“采集”哪一部分内容的
     float uvs[] = {
-        0.0f, 0.0f,
-        1.0f, 0.0f,
-        0.0f, 1.0f,
-        1.0f, 1.0f,
+        0.0f, 0.0f,//左下角
+        1.0f, 0.0f,//右下角
+        0.0f, 1.0f,//左上角
+        1.0f, 1.0f,//右上角
     };
-
+        
     unsigned int indices[] = {
         0, 1, 2,
         2, 1, 3
@@ -1078,9 +1089,10 @@ void MyGLWidget::triggerDrawLiuYiFei()
     prepareShaderPtrForMat();
     prepareVAOForLiuYiFei();
     prepareMipmapLiuYiFeiTexturePtr();
-    //preTransformDieJia();
+    preTransformDieJia();
     prepareCamera();
-    prepareOrtho();
+    //prepareOrtho();
+    preparareProjection();
     m_prepared = true;
     doneCurrent();
     update();
