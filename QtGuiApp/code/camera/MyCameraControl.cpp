@@ -23,10 +23,6 @@ void MyCameraControl::onMouse(int button, int action, double xpos, double ypos)
 
     // 3. 根据按下的鼠标按键不同执行后续操作
     switch (button) {
-    case 0:
-        
-        break;
-
     case 1:
         mLeftMouseDown = pressed;
         break;
@@ -49,6 +45,10 @@ void MyCameraControl::onKey(int key, int action, int mods)
 
     // 2. 记录在keyMap
     mKeyMap[key] = pressed;
+}
+
+void MyCameraControl::onScroll(double offset)
+{
 }
 
 void MyCameraControl::update()

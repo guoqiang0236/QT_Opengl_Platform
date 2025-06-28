@@ -4,9 +4,10 @@
 #include "MyTexture.h"
 
 //引入相机+控制器
-#include "MyPerspectiveCamera.h"
-#include "MyTrackBallCameraControl.h"
-#include <MyTrackBallCameraControl.h>
+#include "camera/MyOrthographicCamera.h"
+#include "camera/MyPerspectiveCamera.h"
+#include "camera/MyTrackBallCameraControl.h"
+
 
 class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_4_5_Core
 {
@@ -73,7 +74,7 @@ protected:
 	void mousePressEvent(QMouseEvent* event) override;   // 对应鼠标按下
 	void mouseReleaseEvent(QMouseEvent* event) override; // 对应鼠标释放
 	void mouseMoveEvent(QMouseEvent* event) override;    // 对应鼠标移动
-  
+    void wheelEvent(QWheelEvent* event)override; 
 
 private:
     MyShader* getShader() const;
@@ -97,7 +98,7 @@ private:
 	glm::mat4 m_projectionMatrix; // 投影矩阵
     float m_angle;
 
-	MyPerspectiveCamera* m_camera = nullptr; // 透视摄像机
+    MyCamera* m_camera = nullptr; // 透视摄像机
     MyCameraControl* m_cameraControl = nullptr; // 摄像机控制器
 	
   

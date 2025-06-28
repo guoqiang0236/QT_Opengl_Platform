@@ -38,10 +38,10 @@ set(CMAKE_AUTOMOC ON)   # 自动运行 moc，处理 Q_OBJECT 宏，生成元对�
 set(CMAKE_AUTOUIC ON)   # 自动处理 .ui 文件，生成对应的界面代码
 set(CMAKE_AUTORCC ON)   # 自动处理 .qrc 资源文件，生成资源访问代码
 
-# 收集源文件（显式列出头文件）
-file(GLOB SRC_FILES CONFIGURE_DEPENDS
-    "source/*.cpp"
-    "include/*.h"  
+# 收集源文件（递归收集所有子文件夹中的头文件和源文件）
+file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS
+    "code/*.h"  
+    "code/*.cpp"
 )
 
 qt_add_resources(RESOURCES resources.qrc)
@@ -54,7 +54,7 @@ qt_add_resources(RESOURCES resources.qrc)
 add_executable(QtGuiApp ${SRC_FILES} ${RESOURCES}  res/icon/apprc.rc ${ASSET_FILES})
 
 # 添加预编译头支持
-target_precompile_headers(QtGuiApp PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/pch.h")
+target_precompile_headers(QtGuiApp PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/code/pch.h")
 
 # 库头文件目录
 target_include_directories(QtGuiApp

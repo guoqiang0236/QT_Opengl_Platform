@@ -69,7 +69,7 @@
 #include <vtkImageViewer2.h>
 
 //全局变量
-#include <GlobalConfig.h>
+#include "GlobalConfig.h"
 #include "checkError.h"
 
 //GLM

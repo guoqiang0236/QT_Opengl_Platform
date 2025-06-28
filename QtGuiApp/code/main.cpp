@@ -7,7 +7,7 @@
 #include<vtkAutoInit.h>
 #include <vtkOutputWindow.h>
 #include <QFile>
-#include <GlobalConfig.h>
+#include "GlobalConfig.h"
 
 VTK_MODULE_INIT(vtkRenderingOpenGL2);
 VTK_MODULE_INIT(vtkInteractionStyle);

@@ -39,6 +39,11 @@ void MyTrackBallCameraControl::onCursor(double xpos, double ypos)
     mCurrentY = ypos;
 }
 
+void MyTrackBallCameraControl::onScroll(double offset)
+{
+	mCamera->scale(offset * mScaleSpeed); // 缩放相机
+}
+
 void MyTrackBallCameraControl::rotatePitch(float angle)
 {
     // 1. 绕着mRight向量旋转

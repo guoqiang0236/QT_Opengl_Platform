@@ -12,12 +12,14 @@ public:
     virtual void onMouse(int button, int action, double xpos, double ypos);
     virtual void onCursor(double xpos, double ypos);
     virtual void onKey(int key, int action, int mods);
+	virtual void onScroll(double offset);
 
     // 每一帧渲染之前都要进行调用，每一帧更新的行为可以放在这里
     virtual void update();
 
 	void setcamera(MyCamera* camera) {mCamera = camera;}
 	void setSensitivity(float sensitivity) { mSensitivity = sensitivity; }
+	void setScaleSpeed(float scaleSpeed) { mScaleSpeed = scaleSpeed; }
 
 protected:
     // 1. 鼠标按键状态
@@ -37,5 +39,8 @@ protected:
 
 	// 5. 存储一个MyCamera对象、
     MyCamera* mCamera = nullptr;
+
+    // 6. 记录相机缩放的速度
+	float mScaleSpeed = 0.05f; // 缩放速度
 };
 

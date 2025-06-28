@@ -437,11 +437,20 @@ void MyGLWidget::prepareInterleaveBuffer()
 
 void MyGLWidget::prepareCamera()
 {
+    float size = 3.0f;
+
 	m_camera = new MyPerspectiveCamera(
         60.0f, 
         (float)width() / (float)height(), 
         0.1f, 1000.0f,
         this);
+    /*
+    m_camera = new MyOrthographicCamera(
+        -size, size,
+        size, -size,
+        size, -size,
+        this
+    );*/
 	m_cameraControl = new MyTrackBallCameraControl(this);
     m_cameraControl->setcamera(m_camera);
 	
@@ -1069,6 +1078,11 @@ void MyGLWidget::mouseReleaseEvent(QMouseEvent* event)
 {
     qDebug() << "鼠标点击: 按钮" << event->button() << ", 松开";
     // 其他处理逻辑...
+    if (m_cameraControl)
+    {
+        // 1 表示按下，0 表示释放（你可以自定义，常用1=Press, 0=Release）
+        m_cameraControl->onMouse(static_cast<int>(event->button()), 0, event->position().x(), event->position().y());
+    }
     QOpenGLWidget::mouseReleaseEvent(event); // 保留父类行为（可选）
 }
 void MyGLWidget::mouseMoveEvent(QMouseEvent* event)
@@ -1081,6 +1095,17 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event)
         m_cameraControl->onCursor(event->position().x(), event->position().y());
     }
 	QOpenGLWidget::mouseMoveEvent(event); // 保留父类行为（可选）
+}
+void MyGLWidget::wheelEvent(QWheelEvent* event)
+{
+	qDebug() << "鼠标滚轮: 角度" << event->angleDelta();
+	// 其他处理逻辑...
+	if (m_cameraControl)
+	{
+        // 传递滚轮滚动的距离，正值为向上，负值为向下
+		m_cameraControl->onScroll(event->angleDelta().y());
+	}
+	QOpenGLWidget::wheelEvent(event); // 保留父类行为（可选）
 }
 void MyGLWidget::triggerDrawTriangle()
 {

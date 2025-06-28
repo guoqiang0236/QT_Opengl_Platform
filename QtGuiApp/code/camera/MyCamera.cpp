@@ -31,3 +31,7 @@ glm::mat4 MyCamera::getProjectionMatrix()
 	//相机基类返回单位矩阵
 	return glm::identity<glm::mat4>();
 }
+
+void MyCamera::scale(float deltaScale)
+{
+}

@@ -2,7 +2,7 @@
 #define MED_IMG_MAINWINDOW_H
 #include "pch.h"
 #include  "MyGLWidget.h"
-#include "VAOOpenGLWidget.h"
+
 class QVTKOpenGLNativeWidget;
 class vtkRenderer;
 
@@ -47,7 +47,6 @@ private:
 
 
 	MyGLWidget* m_glwidget; // OpenGL Widget
-	//VAOOpenGLWidget* m_vaoWidget; // VAO OpenGL Widget
 };
 
 #endif // MED_IMG_MAINWINDOW_H
