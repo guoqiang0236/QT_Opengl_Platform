@@ -24,11 +24,11 @@ void MyCameraControl::onMouse(int button, int action, double xpos, double ypos)
     // 3. 根据按下的鼠标按键不同执行后续操作
     switch (button) {
     case 0:
-        mLeftMouseDown = pressed;
+        
         break;
 
     case 1:
-        mRightMouseDown = pressed;
+        mLeftMouseDown = pressed;
         break;
 
     case 2:

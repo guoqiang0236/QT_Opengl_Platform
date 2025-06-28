@@ -442,19 +442,10 @@ void MyGLWidget::prepareCamera()
         (float)width() / (float)height(), 
         0.1f, 1000.0f,
         this);
-	m_cameraControl = new MyCameraControl(this);
+	m_cameraControl = new MyTrackBallCameraControl(this);
     m_cameraControl->setcamera(m_camera);
 	
     
-    //lookat:生成一个viewMatrix
-    //eye:当前摄像机所在的位置
-    //center:当前摄像机看向的那个点
-    //up:穹顶向量
-    m_viewMatrix = glm::lookAt(
-        glm::vec3(0.0f, 0.0f, 1.0f),
-        glm::vec3(0.0f,0.0f,0.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f) // 上方向(穹顶向量)
-    );
 }
 
 void MyGLWidget::prepareOrtho()
@@ -492,8 +483,11 @@ void MyGLWidget::render()
 	   //m_Shader->setFloat("time", m_timer.elapsed() / 1000.0f); // 传递时间给着色器
 
 	   m_Shader->setMatrix4x4("transform", m_transform); // 传递单位矩阵作为变换矩阵
-	   m_Shader->setMatrix4x4("viewMatrix", m_viewMatrix);// 传递viewMatrix摄像机矩阵
-       m_Shader->setMatrix4x4("projectionMatrix", m_projectionMatrix);
+       if (m_camera)
+       {
+           m_Shader->setMatrix4x4("viewMatrix", m_camera->getViewMatrix());// 传递viewMatrix摄像机矩阵
+           m_Shader->setMatrix4x4("projectionMatrix", m_camera->getProjectionMatrix());
+       }
      /*  m_Shader->setInt("grassSampler", 0);
        m_Shader->setInt("landSampler", 1);
        m_Shader->setInt("noiseSampler", 2);*/
@@ -1019,11 +1013,13 @@ void MyGLWidget::prepareVAOForGLTriangles()
 void MyGLWidget::paintGL()
 {
     //摄像机更新
-    m_cameraControl->update();
+    if (m_cameraControl)
+    {
+        m_cameraControl->update();
+    }
     //变换矩阵
     //doTransformDieJia();
     //渲染
-   
     render();
     update();
 }
@@ -1079,6 +1075,11 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event)
 {
 	qDebug() << "鼠标移动: 位置" << event->pos();
 	// 其他处理逻辑...
+    if (m_cameraControl)
+    {
+        // 1 表示按下，0 表示释放（你可以自定义，常用1=Press, 0=Release）
+        m_cameraControl->onCursor(event->position().x(), event->position().y());
+    }
 	QOpenGLWidget::mouseMoveEvent(event); // 保留父类行为（可选）
 }
 void MyGLWidget::triggerDrawTriangle()
@@ -1135,8 +1136,7 @@ void MyGLWidget::triggerDrawLiuYiFei()
     prepareMipmapLiuYiFeiTexturePtr();
     preTransformDieJia();
     prepareCamera();
-    //prepareOrtho();
-    preparareProjection();
+  
     m_prepared = true;
     doneCurrent();
     update();

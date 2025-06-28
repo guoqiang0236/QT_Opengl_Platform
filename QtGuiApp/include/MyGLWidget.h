@@ -5,7 +5,8 @@
 
 //引入相机+控制器
 #include "MyPerspectiveCamera.h"
-#include "MyCameraControl.h"
+#include "MyTrackBallCameraControl.h"
+#include <MyTrackBallCameraControl.h>
 
 class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_4_5_Core
 {
@@ -97,7 +98,7 @@ private:
     float m_angle;
 
 	MyPerspectiveCamera* m_camera = nullptr; // 透视摄像机
-	MyCameraControl* m_cameraControl = nullptr; // 摄像机控制器
+    MyCameraControl* m_cameraControl = nullptr; // 摄像机控制器
 	
   
 };
