@@ -1,0 +1,16 @@
+#pragma once
+#include "MyCamera.h"
+
+class MyPerspectiveCamera : public MyCamera {
+public:
+    MyPerspectiveCamera(float fovy, float aspect, float near, float far, QObject* parent = nullptr);
+    ~MyPerspectiveCamera();
+
+    glm::mat4 getProjectionMatrix() override;
+
+private:
+    float mFovy = 0.0f;
+    float mAspect = 0.0f;
+    float mNear = 0.0f;
+    float mFar = 0.0f;
+};

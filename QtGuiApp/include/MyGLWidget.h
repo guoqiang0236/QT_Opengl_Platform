@@ -3,6 +3,10 @@
 #include "MyShader.h"
 #include "MyTexture.h"
 
+//引入相机+控制器
+#include "MyPerspectiveCamera.h"
+#include "MyCameraControl.h"
+
 class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_4_5_Core
 {
     Q_OBJECT
@@ -62,8 +66,15 @@ public slots:
 protected:
     void initializeGL() override;
     void paintGL() override;
-    void keyPressEvent(QKeyEvent* event) override;
-    void resizeGL(int w, int h) override;
+    void resizeGL(int w, int h) override;                // 对应帧缓冲区大小变化
+    void keyPressEvent(QKeyEvent* event) override;       // 对应键盘按下
+	void keyReleaseEvent(QKeyEvent* event) override;     // 对应键盘释放
+	void mousePressEvent(QMouseEvent* event) override;   // 对应鼠标按下
+	void mouseReleaseEvent(QMouseEvent* event) override; // 对应鼠标释放
+	void mouseMoveEvent(QMouseEvent* event) override;    // 对应鼠标移动
+  
+
+private:
     MyShader* getShader() const;
     GLuint getProgram() const;
 
@@ -84,6 +95,10 @@ private:
 	glm::mat4 m_viewMatrix;// 摄像机矩阵
 	glm::mat4 m_projectionMatrix; // 投影矩阵
     float m_angle;
+
+	MyPerspectiveCamera* m_camera = nullptr; // 透视摄像机
+	MyCameraControl* m_cameraControl = nullptr; // 摄像机控制器
+	
   
 };
 

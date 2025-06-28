@@ -11,6 +11,7 @@ MyGLWidget::MyGLWidget(QWidget* parent)
     
     setFocusPolicy(Qt::StrongFocus);
     setFocus();
+    setMouseTracking(false); // 关键：开启鼠标跟踪
     m_timer.start();
 }
 
@@ -131,7 +132,7 @@ void MyGLWidget::preparecolortriangleShader()
 {
     //1 完成vs与fs的源代码，并且装入字符串
     const char* vertexShaderSource =
-        "#version 460 core\n"
+        "#version 450 core\n"
         "layout (location = 0) in vec3 aPos;\n"
         "layout (location = 1) in vec3 aColor;\n"
         "out vec3 color;\n"
@@ -141,7 +142,7 @@ void MyGLWidget::preparecolortriangleShader()
         "   color = aColor;\n"
         "}\0";
     const char* fragmentShaderSource =
-        "#version 330 core\n"
+        "#version 450 core\n"
         "out vec4 FragColor;\n"
         "in vec3 color;\n"
         "void main()\n"
@@ -436,6 +437,15 @@ void MyGLWidget::prepareInterleaveBuffer()
 
 void MyGLWidget::prepareCamera()
 {
+	m_camera = new MyPerspectiveCamera(
+        60.0f, 
+        (float)width() / (float)height(), 
+        0.1f, 1000.0f,
+        this);
+	m_cameraControl = new MyCameraControl(this);
+    m_cameraControl->setcamera(m_camera);
+	
+    
     //lookat:生成一个viewMatrix
     //eye:当前摄像机所在的位置
     //center:当前摄像机看向的那个点
@@ -548,10 +558,10 @@ void MyGLWidget::preTransformDieJia()
     //m_transform = glm::translate(m_transform, glm::vec3(0.6f, 0.0f, 0.0f));
 
     //目标三：先旋转再叠加平移
-    m_transform = glm::rotate(m_transform, glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    //m_transform = glm::rotate(m_transform, glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
     //目标四：先做一次缩放，再叠加平移 
-    //m_transform = glm::scale(m_transform, glm::vec3(0.1f, 1.0f, 1.0f));
+    m_transform = glm::scale(m_transform, glm::vec3(2.0f, 1.0f, 1.0f));
 }
 
 void MyGLWidget::doTransformDieJia()
@@ -1008,9 +1018,12 @@ void MyGLWidget::prepareVAOForGLTriangles()
 
 void MyGLWidget::paintGL()
 {
+    //摄像机更新
+    m_cameraControl->update();
     //变换矩阵
     //doTransformDieJia();
     //渲染
+   
     render();
     update();
 }
@@ -1035,7 +1048,38 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)
     if (event->key() == Qt::Key_W) {
         qDebug() << "按下了: W";
     }
+    if(m_cameraControl)
+	{
+       // 1 表示按下，0 表示释放（你可以自定义，常用1=Press, 0=Release）
+		m_cameraControl->onKey(event->key(),1,event->modifiers());
+	}
     QOpenGLWidget::keyPressEvent(event); // 保留父类行为
+}
+void MyGLWidget::keyReleaseEvent(QKeyEvent* event)
+{
+}
+void MyGLWidget::mousePressEvent(QMouseEvent* event)
+{
+    qDebug() << "鼠标点击: 按钮" << event->button() << ", 按下";
+    if (m_cameraControl)
+    {
+        // 1 表示按下，0 表示释放（你可以自定义，常用1=Press, 0=Release）
+        m_cameraControl->onMouse(static_cast<int>(event->button()), 1, event->position().x(),event->position().y());
+    }
+    // 其他处理逻辑...
+    QOpenGLWidget::mousePressEvent(event); // 保留父类行为（可选）
+}
+void MyGLWidget::mouseReleaseEvent(QMouseEvent* event)
+{
+    qDebug() << "鼠标点击: 按钮" << event->button() << ", 松开";
+    // 其他处理逻辑...
+    QOpenGLWidget::mouseReleaseEvent(event); // 保留父类行为（可选）
+}
+void MyGLWidget::mouseMoveEvent(QMouseEvent* event)
+{
+	qDebug() << "鼠标移动: 位置" << event->pos();
+	// 其他处理逻辑...
+	QOpenGLWidget::mouseMoveEvent(event); // 保留父类行为（可选）
 }
 void MyGLWidget::triggerDrawTriangle()
 {
