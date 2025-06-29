@@ -35,9 +35,9 @@
 #include <QSerialPort>
 
 //自定义Qt类
-#include "MyThread.h"
-#include "MyThread_Work.h"
-#include "MyThread_QRunnable.h"
+#include "thread/MyThread.h"
+#include "thread/MyThread_Work.h"
+#include "thread/MyThread_QRunnable.h"
 #include "MyProgressDialog.h"
 
 // VTK 相关头文件

@@ -12,6 +12,7 @@ MyGLWidget::MyGLWidget(QWidget* parent)
     setFocusPolicy(Qt::StrongFocus);
     setFocus();
     setMouseTracking(false); // 关键：开启鼠标跟踪
+    
     m_timer.start();
 }
 
@@ -451,7 +452,8 @@ void MyGLWidget::prepareCamera()
         size, -size,
         this
     );*/
-	m_cameraControl = new MyTrackBallCameraControl(this);
+	//m_cameraControl = new MyTrackBallCameraControl(this);
+	m_cameraControl = new MyGameCameraControl(this);
     m_cameraControl->setcamera(m_camera);
 	
     
@@ -1050,9 +1052,7 @@ GLuint MyGLWidget::getProgram() const
 
 void MyGLWidget::keyPressEvent(QKeyEvent* event)
 {
-    if (event->key() == Qt::Key_W) {
-        qDebug() << "按下了: W";
-    }
+
     if(m_cameraControl)
 	{
        // 1 表示按下，0 表示释放（你可以自定义，常用1=Press, 0=Release）
@@ -1062,6 +1062,13 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event)
 }
 void MyGLWidget::keyReleaseEvent(QKeyEvent* event)
 {
+
+    if (m_cameraControl)
+    {
+        // 1 表示按下，0 表示释放（你可以自定义，常用1=Press, 0=Release）
+        m_cameraControl->onKey(event->key(), 0, event->modifiers());
+    }
+    QOpenGLWidget::keyPressEvent(event); // 保留父类行为
 }
 void MyGLWidget::mousePressEvent(QMouseEvent* event)
 {
@@ -1106,6 +1113,11 @@ void MyGLWidget::wheelEvent(QWheelEvent* event)
 		m_cameraControl->onScroll(event->angleDelta().y());
 	}
 	QOpenGLWidget::wheelEvent(event); // 保留父类行为（可选）
+}
+void MyGLWidget::showEvent(QShowEvent* event)
+{
+    QOpenGLWidget::showEvent(event);
+    setFocus(Qt::OtherFocusReason); // 这里再次请求焦点
 }
 void MyGLWidget::triggerDrawTriangle()
 {

@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include<string>
-#include"pch.h"
+#include"../pch.h"
 
 class MyShader : protected QOpenGLFunctions_4_5_Core
 {

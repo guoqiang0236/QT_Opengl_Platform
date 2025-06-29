@@ -3,7 +3,7 @@
 #include<fstream>
 #include<sstream>
 #include<iostream>
-#include"pch.h"
+#include"../pch.h"
 MyShader::MyShader(const char* vertexPath, const char* fragmentPath)
 {
 	initializeOpenGLFunctions();

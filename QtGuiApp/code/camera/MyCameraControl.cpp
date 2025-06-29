@@ -41,7 +41,7 @@ void MyCameraControl::onCursor(double xpos, double ypos)
 void MyCameraControl::onKey(int key, int action, int mods)
 {
     // 1. 检测按下或者抬起，给到一个变量
-    bool pressed = (action == QEvent::KeyPress);
+    bool pressed = (action == 1);
 
     // 2. 记录在keyMap
     mKeyMap[key] = pressed;

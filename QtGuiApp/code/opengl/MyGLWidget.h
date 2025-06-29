@@ -1,12 +1,13 @@
 ﻿#pragma once
-#include "pch.h"
+#include "../pch.h"
 #include "MyShader.h"
 #include "MyTexture.h"
 
 //引入相机+控制器
-#include "camera/MyOrthographicCamera.h"
-#include "camera/MyPerspectiveCamera.h"
-#include "camera/MyTrackBallCameraControl.h"
+#include "../camera/MyOrthographicCamera.h"
+#include "../camera/MyPerspectiveCamera.h"
+#include "../camera/MyTrackBallCameraControl.h"
+#include "../camera/MyGameCameraControl.h"
 
 
 class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_4_5_Core
@@ -75,6 +76,7 @@ protected:
 	void mouseReleaseEvent(QMouseEvent* event) override; // 对应鼠标释放
 	void mouseMoveEvent(QMouseEvent* event) override;    // 对应鼠标移动
     void wheelEvent(QWheelEvent* event)override; 
+	void showEvent(QShowEvent* event) override; // 对应窗口显示
 
 private:
     MyShader* getShader() const;

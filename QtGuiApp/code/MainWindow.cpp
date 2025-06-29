@@ -137,6 +137,7 @@ void MainWindow::UpdateGUI()
         m_ui->openGLWidget->setParent(nullptr);
         m_ui->openGLWidget->deleteLater();
         m_ui->openGLWidget = nullptr;
+      
     }
    /* if (!m_vaoWidget)
         return;
@@ -149,6 +150,8 @@ void MainWindow::UpdateGUI()
     m_glwidget->setObjectName("openGLWidget");
 
     m_ui->gridLayout_8->addWidget(m_glwidget, 1, 0, 1, 1);
+   
+   
 }
 
 void MainWindow::UpdateSize()
