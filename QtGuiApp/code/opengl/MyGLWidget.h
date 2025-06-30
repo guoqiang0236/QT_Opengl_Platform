@@ -41,8 +41,10 @@ private:
     void prepareMipmapTexturePtr();
     void prepareMixTexturePtr();
     void prepareMipmapLiuYiFeiTexturePtr();
+    
 
     //渲染
+    void prepareStates();
 	void prepareCamera();// 准备摄像机
 	void prepareOrtho();// 准备正交投影
 	void preparareProjection();// 准备透视投影
@@ -63,6 +65,8 @@ public slots:
     void triggerDrawMixTexture();
     void triggerDrawMipmapTexture();
     void triggerDrawLiuYiFei();
+
+	void triggerDrawTwoPictures();
 
 
 
@@ -91,11 +95,13 @@ private:
     bool m_prepared = false;
 	std::unique_ptr<MyShader> m_Shader;
 	std::unique_ptr<MyTexture> m_Texture;
+    std::unique_ptr<MyTexture> m_Texture2;
     MyTexture* grassTexture = nullptr;
     MyTexture* landTexture = nullptr;
     MyTexture* noiseTexture = nullptr;
     QElapsedTimer m_timer;
 	glm::mat4 m_transform;// 变换矩阵
+    glm::mat4 m_transform2;// 变换矩阵
 	glm::mat4 m_viewMatrix;// 摄像机矩阵
 	glm::mat4 m_projectionMatrix; // 投影矩阵
     float m_angle;

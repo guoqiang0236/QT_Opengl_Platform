@@ -436,6 +436,14 @@ void MyGLWidget::prepareInterleaveBuffer()
 
 }
 
+void MyGLWidget::prepareStates()
+{
+	glEnable(GL_DEPTH_TEST); // 启用深度测试
+	glDepthFunc(GL_LESS); // 设置深度测试函数
+
+	glClearDepth(1.0f);// 设置深度缓冲的清除值
+}
+
 void MyGLWidget::prepareCamera()
 {
     float size = 3.0f;
@@ -466,13 +474,13 @@ void MyGLWidget::prepareOrtho()
 	//注意：OpenGL的正交投影矩阵是左手坐标系
 	//注意：OpenGL的正交投影矩阵是左下角为原点
 	//注意：OpenGL的正交投影矩阵是z轴朝外的
-	m_projectionMatrix = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f);
+	m_projectionMatrix = glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f, 2.0f, -2.0f);
 }
 
 void MyGLWidget::preparareProjection()
 {
 	m_projectionMatrix = glm::perspective(
-		glm::radians(91.0f), // 视野角度
+		glm::radians(80.0f), // 视野角度
 		(float)width() / (float)height(), // 宽高比
 		0.1f, // 近裁剪面
 		100.0f // 远裁剪面
@@ -482,7 +490,7 @@ void MyGLWidget::preparareProjection()
 void MyGLWidget::render()
 {
    //执行opengl画布清理操作
-   glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);// 清除颜色缓冲和深度缓冲
    //1 绑定当前的program
    if (m_Shader)
    {
@@ -494,6 +502,9 @@ void MyGLWidget::render()
 	   //m_Shader->setFloat("time", m_timer.elapsed() / 1000.0f); // 传递时间给着色器
 
 	   m_Shader->setMatrix4x4("transform", m_transform); // 传递单位矩阵作为变换矩阵
+       //m_Shader->setMatrix4x4("viewMatrix", m_viewMatrix);// 传递viewMatrix摄像机矩阵
+       //m_Shader->setMatrix4x4("projectionMatrix", m_projectionMatrix);
+
        if (m_camera)
        {
            m_Shader->setMatrix4x4("viewMatrix", m_camera->getViewMatrix());// 传递viewMatrix摄像机矩阵
@@ -504,11 +515,28 @@ void MyGLWidget::render()
        m_Shader->setInt("noiseSampler", 2);*/
    }
    
+ 
    //2 绑定当前的vao
    glBindVertexArray(m_vao);
    //3 发出绘制指令
+   
    //glDrawArrays(GL_TRIANGLES, 0, 6); // 绘制三角形
+   //第一次绘制
+   if (m_Texture) {
+       m_Texture->bind();
+   }
    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(sizeof(int)*0)); // 使用索引绘制
+
+   //第二次绘制
+
+   if (m_Texture2)
+   {
+       m_Texture2->bind();
+       m_transform2 = glm::translate(glm::mat4(1.0f), glm::vec3(0.8f, 0.0f, -1.0f));
+       m_Shader->setMatrix4x4("transform", m_transform2);
+   }
+   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(sizeof(int) * 0)); // 使用索引绘制
+   
    glBindVertexArray(0);
 
    if (m_Shader)
@@ -975,7 +1003,9 @@ void MyGLWidget::prepareTexturePtr()
 
 void MyGLWidget::prepareMipmapTexturePtr()
 {
-    m_Texture = std::make_unique<MyTexture>("../assets/textures/hinata.jpg", 0);
+    m_Texture2 = std::make_unique<MyTexture>("../assets/textures/goku.jpg", 1);
+    m_Texture = std::make_unique<MyTexture>("../assets/textures/hinata.jpg", 1);
+	
 }
 
 void MyGLWidget::prepareMixTexturePtr()
@@ -1171,9 +1201,22 @@ void MyGLWidget::triggerDrawLiuYiFei()
     prepareShaderPtrForMat();
     prepareVAOForLiuYiFei();
     prepareMipmapLiuYiFeiTexturePtr();
-    preTransformDieJia();
+    preparareProjection();
     prepareCamera();
   
+    m_prepared = true;
+    doneCurrent();
+    update();
+}
+
+void MyGLWidget::triggerDrawTwoPictures()
+{
+    makeCurrent();
+    prepareShaderPtrForMat();
+    prepareVAOForLiuYiFei();
+    prepareMipmapTexturePtr();
+    prepareCamera();
+    prepareStates();
     m_prepared = true;
     doneCurrent();
     update();
