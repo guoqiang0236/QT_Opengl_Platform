@@ -2,9 +2,11 @@
 #include"../pch.h"
 #include <QOpenGLFunctions>
 
-class MyGeometry :protected QOpenGLFunctions_4_5_Core {
+class MyGeometry :public QObject,protected QOpenGLFunctions_4_5_Core {
+
+    Q_OBJECT
 public:
-    MyGeometry();
+    MyGeometry(QObject* parent = nullptr);
     ~MyGeometry();
 
     static MyGeometry* createBox(float size);

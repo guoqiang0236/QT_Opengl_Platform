@@ -2,6 +2,7 @@
 #include "../pch.h"
 #include "MyShader.h"
 #include "MyTexture.h"
+#include "MyGeometry.h"
 
 //引入相机+控制器
 #include "../camera/MyOrthographicCamera.h"
@@ -30,17 +31,25 @@ private:
     void prepareSingleBuffer();
     void prepareInterleaveBuffer();
   
+	//SHADER
     void prepareShaderPtr();
 	void prepareShaderPtrForMat();
-	void prepareTexture();
+	void prepareShaderPtrForGeometry();
+
+    //VAO
 	void prepareVAOForGLTrianglesWithTexture();
     void prepareVAOForTexture();
     void prepareVAOForMipmapTexture();
     void prepareVAOForLiuYiFei();
+	void prepareVAOForGeometry();
+
+	//TEXTURE
+    void prepareTexture();
     void prepareTexturePtr();
     void prepareMipmapTexturePtr();
     void prepareMixTexturePtr();
     void prepareMipmapLiuYiFeiTexturePtr();
+	
     
 
     //渲染
@@ -67,6 +76,8 @@ public slots:
     void triggerDrawLiuYiFei();
 
 	void triggerDrawTwoPictures();
+
+	void triggerDrawGeometryBox();
 
 
 
@@ -108,7 +119,7 @@ private:
 
     MyCamera* m_camera = nullptr; // 透视摄像机
     MyCameraControl* m_cameraControl = nullptr; // 摄像机控制器
-	
+    MyGeometry* m_geometry = nullptr;
   
 };
 

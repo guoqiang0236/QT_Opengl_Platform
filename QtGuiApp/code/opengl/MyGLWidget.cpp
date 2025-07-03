@@ -12,7 +12,7 @@ MyGLWidget::MyGLWidget(QWidget* parent)
     setFocusPolicy(Qt::StrongFocus);
     setFocus();
     setMouseTracking(false); // 关键：开启鼠标跟踪
-    
+
     m_timer.start();
 }
 
@@ -460,8 +460,8 @@ void MyGLWidget::prepareCamera()
         size, -size,
         this
     );*/
-	//m_cameraControl = new MyTrackBallCameraControl(this);
-	m_cameraControl = new MyGameCameraControl(this);
+	m_cameraControl = new MyTrackBallCameraControl(this);
+	//m_cameraControl = new MyGameCameraControl(this);
     m_cameraControl->setcamera(m_camera);
 	
     
@@ -498,7 +498,7 @@ void MyGLWidget::render()
 
        m_Shader->setInt("sampler", 1);// 作用是把 shader 里的 sampler uniform 变量和 GL_TEXTURE0 纹理单元关联起来
        //设定全局uniform time
-       //m_Shader->setFloat("time", 1.0);
+       m_Shader->setFloat("time", 1.0);
 	   //m_Shader->setFloat("time", m_timer.elapsed() / 1000.0f); // 传递时间给着色器
 
 	   m_Shader->setMatrix4x4("transform", m_transform); // 传递单位矩阵作为变换矩阵
@@ -517,7 +517,11 @@ void MyGLWidget::render()
    
  
    //2 绑定当前的vao
-   glBindVertexArray(m_vao);
+   //glBindVertexArray(m_vao);
+   if (m_geometry)
+   {
+       glBindVertexArray(m_geometry->getVao());
+   }
    //3 发出绘制指令
    
    //glDrawArrays(GL_TRIANGLES, 0, 6); // 绘制三角形
@@ -525,17 +529,21 @@ void MyGLWidget::render()
    if (m_Texture) {
        m_Texture->bind();
    }
-   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(sizeof(int)*0)); // 使用索引绘制
+   if (m_geometry)
+   {
+       glDrawElements(GL_TRIANGLES, m_geometry->getIndicesCount(), GL_UNSIGNED_INT, (void*)(sizeof(int) * 0)); // 使用索引绘制
+
+   }
 
    //第二次绘制
 
-   if (m_Texture2)
-   {
-       m_Texture2->bind();
-       m_transform2 = glm::translate(glm::mat4(1.0f), glm::vec3(0.8f, 0.0f, -1.0f));
-       m_Shader->setMatrix4x4("transform", m_transform2);
-   }
-   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(sizeof(int) * 0)); // 使用索引绘制
+   //if (m_Texture2)
+   //{
+   //    m_Texture2->bind();
+   //    m_transform2 = glm::translate(glm::mat4(1.0f), glm::vec3(0.8f, 0.0f, -1.0f));
+   //    m_Shader->setMatrix4x4("transform", m_transform2);
+   //}
+   //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(sizeof(int) * 0)); // 使用索引绘制
    
    glBindVertexArray(0);
 
@@ -623,6 +631,11 @@ void MyGLWidget::prepareShaderPtr()
 void MyGLWidget::prepareShaderPtrForMat()
 {
 	m_Shader = std::make_unique<MyShader>("../assets/shaders/vertexMat.glsl", "../assets/shaders/fragmentMat.glsl");
+}
+
+void MyGLWidget::prepareShaderPtrForGeometry()
+{
+	m_Shader = std::make_unique<MyShader>("../assets/shaders/vertexGeometry.glsl", "../assets/shaders/fragmentGeometry.glsl");
 }
 
 void MyGLWidget::prepareTexture()
@@ -996,6 +1009,11 @@ void MyGLWidget::prepareVAOForLiuYiFei()
 
 }
 
+void MyGLWidget::prepareVAOForGeometry()
+{
+    m_geometry = MyGeometry::createBox(6.0f);
+}
+
 void MyGLWidget::prepareTexturePtr()
 {
 	m_Texture = std::make_unique<MyTexture>("../assets/textures/hinata.jpg", 0);
@@ -1217,6 +1235,19 @@ void MyGLWidget::triggerDrawTwoPictures()
     prepareMipmapTexturePtr();
     prepareCamera();
     prepareStates();
+    m_prepared = true;
+    doneCurrent();
+    update();
+}
+
+void MyGLWidget::triggerDrawGeometryBox()
+{
+    makeCurrent();
+    prepareShaderPtrForGeometry();
+    prepareVAOForGeometry();
+    prepareMipmapTexturePtr();
+    prepareCamera();
+	prepareStates();
     m_prepared = true;
     doneCurrent();
     update();
