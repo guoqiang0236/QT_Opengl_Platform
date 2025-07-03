@@ -1011,7 +1011,9 @@ void MyGLWidget::prepareVAOForLiuYiFei()
 
 void MyGLWidget::prepareVAOForGeometry()
 {
-    m_geometry = MyGeometry::createBox(6.0f);
+    //m_geometry = MyGeometry::createBox(6.0f);
+    m_geometry = MyGeometry::createSphere(6.0f);
+  
 }
 
 void MyGLWidget::prepareTexturePtr()

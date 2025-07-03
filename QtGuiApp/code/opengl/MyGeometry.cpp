@@ -143,7 +143,91 @@ MyGeometry* MyGeometry::createBox(float size)
 
 MyGeometry* MyGeometry::createSphere(float size)
 {
-	MyGeometry* geometry = new MyGeometry();
+    MyGeometry* geometry = new MyGeometry();
 
-	return geometry;
+    // 声明纬线与经线的数量
+    const int numLatLines = 60;  // 纬线
+    const int numLongLines = 60; // 经线
+    const float radius = size * 0.5f;
+
+    std::vector<float> positions;
+    std::vector<float> uvs;
+    std::vector<unsigned int> indices;
+
+    // 通过两层循环（纬线在外，经线在内）->位置、uv
+    for (int i = 0; i <= numLatLines; i++) {
+        float phi = i * glm::pi<float>() / numLatLines;  // 纬度 [0, pi]
+        float xy = radius * sinf(phi);
+        float z = radius * cosf(phi);
+
+        for (int j = 0; j <= numLongLines; j++) {
+            float theta = j * 2 * glm::pi<float>() / numLongLines;  // 经度 [0, 2pi]
+            float x = xy * cosf(theta);
+            float y = xy * sinf(theta);
+
+            positions.push_back(x);
+            positions.push_back(y);
+            positions.push_back(z);
+
+            float u = (float)j / numLongLines;
+            float v = (float)i / numLatLines;
+            uvs.push_back(u);
+            uvs.push_back(v);
+        }
+    }
+
+    // 生成索引
+    for (int i = 0; i < numLatLines; i++) {
+        for (int j = 0; j < numLongLines; j++) {
+            unsigned int first = i * (numLongLines + 1) + j;
+            unsigned int second = first + numLongLines + 1;
+
+            indices.push_back(first);
+            indices.push_back(second);
+            indices.push_back(first + 1);
+
+            indices.push_back(second);
+            indices.push_back(second + 1);
+            indices.push_back(first + 1);
+        }
+    }
+
+    geometry->mIndicesCount = static_cast<uint32_t>(indices.size());
+
+    // VBO创建
+    GLuint& posVbo = geometry->mPosVbo, uvVbo = geometry->mUvVao, ebo = geometry->mEbo;
+    // POS
+    geometry->glGenBuffers(1, &posVbo);
+    geometry->glBindBuffer(GL_ARRAY_BUFFER, posVbo);
+    geometry->glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(float), positions.data(), GL_STATIC_DRAW);
+
+    // UV
+    geometry->glGenBuffers(1, &uvVbo);
+    geometry->glBindBuffer(GL_ARRAY_BUFFER, uvVbo);
+    geometry->glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(float), uvs.data(), GL_STATIC_DRAW);
+
+    // EBO
+    geometry->glGenBuffers(1, &ebo);
+    geometry->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    geometry->glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+
+    // VAO创建
+    geometry->glGenVertexArrays(1, &geometry->mVao);
+    geometry->glBindVertexArray(geometry->mVao);
+
+    // 绑定顶点位置
+    geometry->glBindBuffer(GL_ARRAY_BUFFER, posVbo);
+    geometry->glEnableVertexAttribArray(0);
+    geometry->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+    // 绑定UV坐标
+    geometry->glBindBuffer(GL_ARRAY_BUFFER, uvVbo);
+    geometry->glEnableVertexAttribArray(1);
+    geometry->glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+    // 绑定EBO
+    geometry->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+
+    geometry->glBindVertexArray(0);
+    return geometry;
 }
