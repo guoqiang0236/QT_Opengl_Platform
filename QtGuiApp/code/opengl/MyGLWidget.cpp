@@ -1023,8 +1023,8 @@ void MyGLWidget::prepareTexturePtr()
 
 void MyGLWidget::prepareMipmapTexturePtr()
 {
-    m_Texture2 = std::make_unique<MyTexture>("../assets/textures/goku.jpg", 1);
-    m_Texture = std::make_unique<MyTexture>("../assets/textures/hinata.jpg", 1);
+    //m_Texture2 = std::make_unique<MyTexture>("../assets/textures/goku.jpg", 1);
+    m_Texture = std::make_unique<MyTexture>("../assets/textures/earth.jpg", 1);
 	
 }
 
