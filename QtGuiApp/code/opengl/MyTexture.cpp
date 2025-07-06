@@ -73,6 +73,11 @@ MyTexture::MyTexture(const std::string& path, unsigned int unit)
 	//5 设置纹理的包裹方式
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // u
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // v
+
+  /*  •	GL_CLAMP_TO_EDGE：坐标超出范围时，采样纹理边缘的颜色，不会重复或镜像。
+    •	GL_CLAMP_TO_BORDER：坐标超出范围时，采样指定的边界颜色（需设置 GL_TEXTURE_BORDER_COLOR）。
+    •	GL_MIRRORED_REPEAT：超出范围时，纹理坐标以镜像的方式重复。
+    •	GL_MIRROR_CLAMP_TO_EDGE（OpenGL 4.4 + ）：超出范围时，先镜像再 clamp 到边缘。*/
 }
 
 MyTexture::~MyTexture()
