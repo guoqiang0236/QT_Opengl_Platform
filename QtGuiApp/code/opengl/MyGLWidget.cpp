@@ -496,7 +496,7 @@ void MyGLWidget::render()
    {
        m_Shader->begin();
 
-       m_Shader->setInt("sampler", 1);// 作用是把 shader 里的 sampler uniform 变量和 GL_TEXTURE0 纹理单元关联起来
+       m_Shader->setInt("sampler", 0);// 作用是把 shader 里的 sampler uniform 变量和 GL_TEXTURE0 纹理单元关联起来
        //设定全局uniform time
        m_Shader->setFloat("time", 1.0);
 	   //m_Shader->setFloat("time", m_timer.elapsed() / 1000.0f); // 传递时间给着色器
@@ -505,11 +505,17 @@ void MyGLWidget::render()
        //m_Shader->setMatrix4x4("viewMatrix", m_viewMatrix);// 传递viewMatrix摄像机矩阵
        //m_Shader->setMatrix4x4("projectionMatrix", m_projectionMatrix);
 
+
+       //摄像机
        if (m_camera)
        {
            m_Shader->setMatrix4x4("viewMatrix", m_camera->getViewMatrix());// 传递viewMatrix摄像机矩阵
            m_Shader->setMatrix4x4("projectionMatrix", m_camera->getProjectionMatrix());
-       }
+	   }
+	 
+       //光源参数
+       m_Shader->setVector3("lightDirection", m_lightDirection);
+       m_Shader->setVector3("lightColor", m_lightColor);
      /*  m_Shader->setInt("grassSampler", 0);
        m_Shader->setInt("landSampler", 1);
        m_Shader->setInt("noiseSampler", 2);*/
@@ -1011,9 +1017,9 @@ void MyGLWidget::prepareVAOForLiuYiFei()
 
 void MyGLWidget::prepareVAOForGeometry()
 {
-    //m_geometry = MyGeometry::createBox(6.0f);
-    m_geometry = MyGeometry::createSphere(6.0f);
-  
+    m_geometry = MyGeometry::createBox(6.0f);
+    //m_geometry = MyGeometry::createSphere(6.0f);
+	//m_geometry = MyGeometry::createPlane(1.0f, 1.0f);
 }
 
 void MyGLWidget::prepareTexturePtr()
@@ -1023,8 +1029,8 @@ void MyGLWidget::prepareTexturePtr()
 
 void MyGLWidget::prepareMipmapTexturePtr()
 {
-    //m_Texture2 = std::make_unique<MyTexture>("../assets/textures/goku.jpg", 1);
-    m_Texture = std::make_unique<MyTexture>("../assets/textures/earth.jpg", 1);
+    m_Texture2 = std::make_unique<MyTexture>("../assets/textures/hinata.jpg", 0);
+    //m_Texture = std::make_unique<MyTexture>("../assets/textures/earth.jpg", 0);
 	
 }
 
@@ -1122,7 +1128,7 @@ void MyGLWidget::keyReleaseEvent(QKeyEvent* event)
 }
 void MyGLWidget::mousePressEvent(QMouseEvent* event)
 {
-    qDebug() << "鼠标点击: 按钮" << event->button() << ", 按下";
+    //qDebug() << "鼠标点击: 按钮" << event->button() << ", 按下";
     if (m_cameraControl)
     {
         // 1 表示按下，0 表示释放（你可以自定义，常用1=Press, 0=Release）
@@ -1133,7 +1139,7 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event)
 }
 void MyGLWidget::mouseReleaseEvent(QMouseEvent* event)
 {
-    qDebug() << "鼠标点击: 按钮" << event->button() << ", 松开";
+    //qDebug() << "鼠标点击: 按钮" << event->button() << ", 松开";
     // 其他处理逻辑...
     if (m_cameraControl)
     {
@@ -1144,7 +1150,7 @@ void MyGLWidget::mouseReleaseEvent(QMouseEvent* event)
 }
 void MyGLWidget::mouseMoveEvent(QMouseEvent* event)
 {
-	qDebug() << "鼠标移动: 位置" << event->pos();
+	//qDebug() << "鼠标移动: 位置" << event->pos();
 	// 其他处理逻辑...
     if (m_cameraControl)
     {
@@ -1155,7 +1161,7 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event)
 }
 void MyGLWidget::wheelEvent(QWheelEvent* event)
 {
-	qDebug() << "鼠标滚轮: 角度" << event->angleDelta();
+	//qDebug() << "鼠标滚轮: 角度" << event->angleDelta();
 	// 其他处理逻辑...
 	if (m_cameraControl)
 	{
@@ -1194,7 +1200,6 @@ void MyGLWidget::triggerDrawTexture()
 void MyGLWidget::triggerDrawMixTexture()
 {
     makeCurrent();
-  
 	prepareShaderPtr();
     prepareVAOForTexture();
     prepareMixTexturePtr();

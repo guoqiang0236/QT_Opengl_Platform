@@ -132,6 +132,15 @@ void MyShader::setVector3(const std::string& name, const float* values)
 	glUniform3fv(location, 1, values);
 }
 
+void MyShader::setVector3(const std::string& name, const glm::vec3 value)
+{
+	//1 通过名称拿到Uniform变量的位置Location
+	GLint location = glGetUniformLocation(mProgram, name.c_str());
+
+	//2 通过Location更新Uniform变量的值
+	glUniform3f(location, value.x, value.y, value.z);
+}
+
 void MyShader::setMatrix4x4(const std::string& name, glm::mat4 value)
 {
 	//1 通过名称拿到Uniform变量的位置Location
