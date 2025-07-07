@@ -116,13 +116,17 @@ private:
 	glm::mat4 m_viewMatrix;// 摄像机矩阵
 	glm::mat4 m_projectionMatrix; // 投影矩阵
     //平行光
-	glm::vec3 m_lightDirection{ -0.4f, -1.4f, -1.9f }; // 平行光方向
+	glm::vec3 m_lightDirection{ -1.0f, -1.0f, -1.0f }; // 平行光方向
 	glm::vec3 m_lightColor{ 1.0f, 1.0f, 1.0f }; // 平行光颜色
-    float m_angle;
-
+    //specular
+	float m_specularIntensity = 0.5f; // 镜面反射强度   
+    //ambient
+	glm::vec3 m_ambientColor{ 0.2f, 0.2f, 0.2f }; // 环境光颜色 
+    
+    //摄像机
     MyCamera* m_camera = nullptr; // 透视摄像机
     MyCameraControl* m_cameraControl = nullptr; // 摄像机控制器
     MyGeometry* m_geometry = nullptr;
-  
+    float m_angle;
 };
 

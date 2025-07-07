@@ -501,7 +501,7 @@ void MyGLWidget::render()
        m_Shader->setFloat("time", 1.0);
 	   //m_Shader->setFloat("time", m_timer.elapsed() / 1000.0f); // 传递时间给着色器
 
-	   m_Shader->setMatrix4x4("transform", m_transform); // 传递单位矩阵作为变换矩阵
+	   m_Shader->setMatrix4x4("modelMatrix", m_transform); // 传递单位矩阵作为变换矩阵
        //m_Shader->setMatrix4x4("viewMatrix", m_viewMatrix);// 传递viewMatrix摄像机矩阵
        //m_Shader->setMatrix4x4("projectionMatrix", m_projectionMatrix);
 
@@ -511,26 +511,24 @@ void MyGLWidget::render()
        {
            m_Shader->setMatrix4x4("viewMatrix", m_camera->getViewMatrix());// 传递viewMatrix摄像机矩阵
            m_Shader->setMatrix4x4("projectionMatrix", m_camera->getProjectionMatrix());
+           m_Shader->setVector3("cameraPosition", m_camera->mPosition);
 	   }
 	 
        //光源参数
        m_Shader->setVector3("lightDirection", m_lightDirection);
        m_Shader->setVector3("lightColor", m_lightColor);
-     /*  m_Shader->setInt("grassSampler", 0);
-       m_Shader->setInt("landSampler", 1);
-       m_Shader->setInt("noiseSampler", 2);*/
+	   m_Shader->setFloat("specularIntensity", m_specularIntensity); // 镜面反射强度
+       m_Shader->setVector3("ambientColor", m_ambientColor);
    }
    
  
    //2 绑定当前的vao
-   //glBindVertexArray(m_vao);
    if (m_geometry)
    {
        glBindVertexArray(m_geometry->getVao());
    }
    //3 发出绘制指令
    
-   //glDrawArrays(GL_TRIANGLES, 0, 6); // 绘制三角形
    //第一次绘制
    if (m_Texture) {
        m_Texture->bind();
