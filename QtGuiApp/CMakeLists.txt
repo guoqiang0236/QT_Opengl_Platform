@@ -44,6 +44,13 @@ file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS
     "code/*.cpp"
 )
 
+# 为每个文件创建对应的文件夹分组
+foreach(FILE_PATH IN LISTS SRC_FILES)
+    file(RELATIVE_PATH REL_PATH "${CMAKE_CURRENT_SOURCE_DIR}" "${FILE_PATH}")
+    get_filename_component(FILE_DIR "${REL_PATH}" DIRECTORY)
+    source_group("${FILE_DIR}" FILES "${FILE_PATH}")
+endforeach()
+
 qt_add_resources(RESOURCES resources.qrc)
 
 

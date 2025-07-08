@@ -21,6 +21,7 @@ public:
 	void setVector3(const std::string& name, const glm::vec3 value);
 
 	void setMatrix4x4(const std::string& name, glm::mat4 value);
+	void setMatrix3x3(const std::string& name, const glm::mat3& mat);
 private:
 	//shader program
 	//type:COMPILE LINK

@@ -68,6 +68,8 @@ private:
     void doRotation();//持续旋转
     void doTransformDieJia();//叠加变换(本地坐标系)
     void preTransformDieJia();//叠加预先变换(本地坐标系)
+
+
 public slots:
     void triggerDrawTriangle(); // 供按钮点击触发
 	void triggerDrawTexture(); 
@@ -115,6 +117,7 @@ private:
     glm::mat4 m_transform2;// 变换矩阵
 	glm::mat4 m_viewMatrix;// 摄像机矩阵
 	glm::mat4 m_projectionMatrix; // 投影矩阵
+	glm::mat3 m_normalMatrix;// 法线矩阵
     //平行光
 	glm::vec3 m_lightDirection{ -1.0f, -1.0f, -1.0f }; // 平行光方向
 	glm::vec3 m_lightColor{ 1.0f, 1.0f, 1.0f }; // 平行光颜色

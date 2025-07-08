@@ -10,7 +10,7 @@ out vec3 worldPosition;
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix; //视图矩阵
 uniform mat4 projectionMatrix; //投影矩阵
-
+uniform mat3 normalMatrix; //法线矩阵
 
 
 //aPos作为attribute（属性）传入shader
@@ -35,5 +35,6 @@ void main()
 
     // 传递其他属性
     uv = aUV;
-    normal= aNormal;
+    normal = normalMatrix * aNormal; // 法线变换，使用法线矩阵进行变换
+    //normal= transpose(inverse(mat3(modelMatrix)))*aNormal;// 转置逆矩阵用于法线变换
 }

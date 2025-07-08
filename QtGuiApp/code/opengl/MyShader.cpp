@@ -151,6 +151,11 @@ void MyShader::setMatrix4x4(const std::string& name, glm::mat4 value)
 	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
 }
 
+void MyShader::setMatrix3x3(const std::string& name, const glm::mat3& mat) {
+	GLint loc = glGetUniformLocation(mProgram, name.c_str());
+	glUniformMatrix3fv(loc, 1, GL_FALSE, &mat[0][0]);
+}
+
 void MyShader::checkShaderErrors(GLuint target, std::string type)
 {
 	int success = 0;

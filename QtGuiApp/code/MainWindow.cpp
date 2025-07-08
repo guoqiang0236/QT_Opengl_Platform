@@ -128,7 +128,7 @@ void MainWindow::UpdateGUI()
 {
     if (!m_ui )
         return;
-	m_ui->label_hospital->setText("Opengl医疗平台");
+	m_ui->label_hospital->setText("Opengl渲染引擎");
     m_ui->comboBox->setCurrentIndex(8);
 
     if (m_ui->openGLWidget)

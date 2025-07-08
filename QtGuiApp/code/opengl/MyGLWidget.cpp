@@ -6,7 +6,8 @@ MyGLWidget::MyGLWidget(QWidget* parent)
     : QOpenGLWidget(parent),
     m_angle(0.0f),
     m_transform(glm::mat4(1.0f)),// 初始化变换矩阵为单位矩阵
-    m_viewMatrix(glm::identity<glm::mat4>())
+    m_viewMatrix(glm::identity<glm::mat4>()),
+	m_normalMatrix(glm::identity<glm::mat3>())
 {
     
     setFocusPolicy(Qt::StrongFocus);
@@ -38,7 +39,7 @@ void MyGLWidget::initializeGL()
 void MyGLWidget::prapareBackground()
 {
    
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     
 }
 
@@ -502,9 +503,8 @@ void MyGLWidget::render()
 	   //m_Shader->setFloat("time", m_timer.elapsed() / 1000.0f); // 传递时间给着色器
 
 	   m_Shader->setMatrix4x4("modelMatrix", m_transform); // 传递单位矩阵作为变换矩阵
-       //m_Shader->setMatrix4x4("viewMatrix", m_viewMatrix);// 传递viewMatrix摄像机矩阵
-       //m_Shader->setMatrix4x4("projectionMatrix", m_projectionMatrix);
-
+	   m_normalMatrix = glm::transpose(glm::inverse(glm::mat3(m_transform))); // 计算法线矩阵))
+	   m_Shader->setMatrix3x3("normalMatrix", m_normalMatrix); // 传递法线矩阵
 
        //摄像机
        if (m_camera)
@@ -580,14 +580,16 @@ void MyGLWidget::doScaleTransform()
 void MyGLWidget::doTransform()
 {
     //复合变换
-    glm::mat4 rotateMat = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    glm::mat4 translateMat = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 0.0f));
+    //glm::mat4 rotateMat = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    //glm::mat4 translateMat = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 0.0f));
 
     //先旋转 再平移
-    m_transform = translateMat * rotateMat;
+    //m_transform = translateMat * rotateMat;
 
     //先平移 后旋转
     //m_transform = rotateMat * translateMat;
+
+    m_transform = glm::rotate(m_transform, glm::radians(1.0f), glm::vec3(0.0f, 1.0f, 1.0f));
 }
 
 void MyGLWidget::doRotation()
@@ -1015,8 +1017,8 @@ void MyGLWidget::prepareVAOForLiuYiFei()
 
 void MyGLWidget::prepareVAOForGeometry()
 {
-    m_geometry = MyGeometry::createBox(6.0f);
-    //m_geometry = MyGeometry::createSphere(6.0f);
+    //m_geometry = MyGeometry::createBox(6.0f);
+    m_geometry = MyGeometry::createSphere(1.0f);
 	//m_geometry = MyGeometry::createPlane(1.0f, 1.0f);
 }
 
@@ -1027,8 +1029,8 @@ void MyGLWidget::prepareTexturePtr()
 
 void MyGLWidget::prepareMipmapTexturePtr()
 {
-    m_Texture2 = std::make_unique<MyTexture>("../assets/textures/hinata.jpg", 0);
-    //m_Texture = std::make_unique<MyTexture>("../assets/textures/earth.jpg", 0);
+    //m_Texture2 = std::make_unique<MyTexture>("../assets/textures/hinata.jpg", 0);
+    m_Texture = std::make_unique<MyTexture>("../assets/textures/earth.jpg", 0);
 	
 }
 
@@ -1083,6 +1085,7 @@ void MyGLWidget::paintGL()
         m_cameraControl->update();
     }
     //变换矩阵
+    doTransform();
     //doTransformDieJia();
     //渲染
     render();
