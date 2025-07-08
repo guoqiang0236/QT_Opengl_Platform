@@ -1,8 +1,16 @@
 cmake_minimum_required(VERSION 3.20)
 project(Medcical-QT-Opengl)
 
-# 设置shader文件的路径
-file(GLOB ASSETS "${CMAKE_CURRENT_SOURCE_DIR}/assets" )
+file(GLOB_RECURSE ASSETS 
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets/*"
+    "${CMAKE_CURRENT_SOURCE_DIR}/assets/*/*"  # 显式包含子目录
+)
+
+# 修正 source_group 的 TREE 参数
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" 
+    PREFIX "Assets"  # 在VS中显示的根文件夹名称
+    FILES ${ASSETS}
+)
 
 # 设置源文件编码为 UTF - 8
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /utf-8")

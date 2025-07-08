@@ -8,6 +8,7 @@ MyGLWidget::MyGLWidget(QWidget* parent)
     m_transform(glm::mat4(1.0f)),// 初始化变换矩阵为单位矩阵
     m_viewMatrix(glm::identity<glm::mat4>()),
 	m_normalMatrix(glm::identity<glm::mat3>())
+
 {
     
     setFocusPolicy(Qt::StrongFocus);
@@ -15,6 +16,7 @@ MyGLWidget::MyGLWidget(QWidget* parent)
     setMouseTracking(false); // 关键：开启鼠标跟踪
 
     m_timer.start();
+
 }
 
 MyGLWidget::~MyGLWidget()
@@ -33,7 +35,7 @@ void MyGLWidget::initializeGL()
     initializeOpenGLFunctions();
     prapareBackground();
    
- 
+   
 }
 
 void MyGLWidget::prapareBackground()
@@ -340,18 +342,7 @@ void MyGLWidget::prepareVAOcolortriangle()
 
 }
 
-void MyGLWidget::prepare()
-{
-    float vertices[] = {
-        -0.5f, -0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f,
-         0.0f,  0.5f, 0.0f
-    };
-    GLuint vbo = 0;
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-}
+
 
 
 void MyGLWidget::prepareSingleBuffer()
@@ -563,6 +554,30 @@ void MyGLWidget::doRotationTransform()
     //注意点：radians函数也是模板函数，切记要传入float类型数据，加f后缀
     // 
     m_transform = glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+}
+
+
+void MyGLWidget::prepare() {
+    m_renderer = new::MyRenderer();
+
+    // 1. 创建geometry
+    auto geometry = MyGeometry::createSphere(1.0f);
+
+    // 2. 创建一个material并且配置参数
+    auto material = new MyPhongMaterial();
+    material->mShiness = 32.0f;
+    material->mDiffuse = new MyTexture("../assets/textures/earth.jpg", 0); // 兼容原有指针成员
+
+    // 3. 生成mesh并用智能指针管理
+    auto mesh = new::MyMesh(geometry, material);
+
+
+    // material 也可以存到材质列表里，或由 mesh 持有
+    m_meshes.push_back(mesh);
+
+    m_dirLight = new::MyDirectionalLight(); // 平行光
+    m_ambLight = new::MyAmbientLight(); // 环境光
+     
 }
 
 void MyGLWidget::doTranslationTransform()
@@ -1084,11 +1099,15 @@ void MyGLWidget::paintGL()
     {
         m_cameraControl->update();
     }
+    if (m_renderer && !m_meshes.empty())
+    {
+        m_renderer->render(m_meshes,m_camera,m_dirLight,m_ambLight);
+    }
     //变换矩阵
-    doTransform();
+    //doTransform();
     //doTransformDieJia();
     //渲染
-    render();
+    //render();
     update();
 }
 
@@ -1256,6 +1275,16 @@ void MyGLWidget::triggerDrawGeometryBox()
     prepareMipmapTexturePtr();
     prepareCamera();
 	prepareStates();
+    m_prepared = true;
+    doneCurrent();
+    update();
+}
+
+void MyGLWidget::triggerDraw()
+{
+    makeCurrent();
+    prepareCamera();
+    prepare();
     m_prepared = true;
     doneCurrent();
     update();

@@ -2,13 +2,20 @@
 #include "../pch.h"
 #include "MyShader.h"
 #include "MyTexture.h"
+
 #include "MyGeometry.h"
+#include "MyObject.h"
+#include "MyMesh.h"
+#include "Material/MyPhongMaterial.h"
+#include "renderer/MyRenderer.h"
 
 //引入相机+控制器
 #include "../camera/MyOrthographicCamera.h"
 #include "../camera/MyPerspectiveCamera.h"
 #include "../camera/MyTrackBallCameraControl.h"
 #include "../camera/MyGameCameraControl.h"
+
+
 
 
 class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_4_5_Core
@@ -27,7 +34,7 @@ private:
     void prepareEBOVAO();
 	void prepareVAOcolortriangle();
     void prepareVAOForGLTriangles();
-    void prepare();
+ 
     void prepareSingleBuffer();
     void prepareInterleaveBuffer();
   
@@ -50,7 +57,7 @@ private:
     void prepareMixTexturePtr();
     void prepareMipmapLiuYiFeiTexturePtr();
 	
-    
+   
 
     //渲染
     void prepareStates();
@@ -58,7 +65,7 @@ private:
 	void prepareOrtho();// 准备正交投影
 	void preparareProjection();// 准备透视投影
     void render();
-
+    void prepare();
 
     //图形变换
 	void doRotationTransform();//旋转
@@ -80,7 +87,7 @@ public slots:
 	void triggerDrawTwoPictures();
 
 	void triggerDrawGeometryBox();
-
+    void triggerDraw();
 
 
 protected:
@@ -131,5 +138,15 @@ private:
     MyCameraControl* m_cameraControl = nullptr; // 摄像机控制器
     MyGeometry* m_geometry = nullptr;
     float m_angle;
+
+    //renderer
+	MyRenderer*m_renderer = nullptr;
+    std::vector<MyMesh*> m_meshes{}; // 存储所有的Mesh对象
+    
+    MyDirectionalLight* m_dirLight = nullptr; // 平行光
+    MyAmbientLight* m_ambLight = nullptr;     // 环境光
+
+
+
 };
 

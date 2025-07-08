@@ -1,6 +1,6 @@
 #pragma once
 
-#include "pch.h"
+#include "../pch.h"
 #include <glm/glm.hpp>
 
 class MyObject :public QObject, protected QOpenGLFunctions_4_5_Core {

@@ -2,6 +2,7 @@
 
 MyMaterial::MyMaterial()
 {
+	
 }
 
 MyMaterial::~MyMaterial()

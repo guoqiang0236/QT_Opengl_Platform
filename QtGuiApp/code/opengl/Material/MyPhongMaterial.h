@@ -3,11 +3,11 @@
 #include "MyMaterial.h"
 #include "../MyTexture.h"
 
-class PhongMaterial : public MyMaterial {
+class MyPhongMaterial : public MyMaterial {
     Q_OBJECT
 public:
-    PhongMaterial() ;
-    ~PhongMaterial();
+    MyPhongMaterial() ;
+    ~MyPhongMaterial();
 
 public:
     MyTexture* mDiffuse{ nullptr };

@@ -1,10 +1,10 @@
 #include "MyPhongMaterial.h"
 
-PhongMaterial::PhongMaterial()
+MyPhongMaterial::MyPhongMaterial()
 {
 	mType = MaterialType::PhongMaterial;
 }
 
-PhongMaterial::~PhongMaterial()
+MyPhongMaterial::~MyPhongMaterial()
 {
 }
