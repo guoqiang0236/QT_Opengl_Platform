@@ -11,6 +11,7 @@ uniform vec3 lightDirection;
 uniform vec3 lightColor;
 uniform float specularIntensity; //镜面反射强度
 uniform vec3 ambientColor; //环境光颜色
+uniform float shiness;
 
 //世界摄像机位置
 uniform vec3 cameraPosition;
@@ -33,7 +34,7 @@ void main()
   float flag = step(0.0, doResult); // 如果doResult小于0，则flag为0，否则为1
   vec3 lightReflect = normalize(reflect(lightDirN, normalizedNormal)); // 计算光线反射方向
   float specular = clamp(dot(lightReflect, -viewDir), 0.0, 1.0); // 计算镜面反射分量
-  specular = pow(specular, 32.0); // 控制光斑大小，32.0是一个常用的值，可以根据需要调整
+  specular = pow(specular, shiness); // 控制光斑大小，32.0是一个常用的值，可以根据需要调整
   vec3 specularColor = lightColor * specular * flag * specularIntensity;
 
   // 4 计算环境光

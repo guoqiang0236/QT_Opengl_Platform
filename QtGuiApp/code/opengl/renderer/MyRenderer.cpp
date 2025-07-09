@@ -40,7 +40,7 @@ void MyRenderer::render(const std::vector<MyMesh*>& meshes, MyCamera* camera, My
 		switch (material->mType) {
 		case MaterialType::PhongMaterial: {
 			MyPhongMaterial* phongMat = static_cast<MyPhongMaterial*>(material);
-
+			
 			//diffuse贴图
 		    //将纹理采样器与纹理单元挂钩
 			shader->setInt("sampler", 0);
@@ -60,6 +60,7 @@ void MyRenderer::render(const std::vector<MyMesh*>& meshes, MyCamera* camera, My
 			shader->setVector3("lightColor", dirLight->mColor);
 			shader->setFloat("specularIntensity", dirLight->mSpecularIntensity);
 			shader->setVector3("ambientColor", ambLight->mColor);
+			shader->setFloat("shiness", phongMat->mShiness);
 
 			//相机信息更新
 			shader->setVector3("cameraPosition", camera->mPosition);
