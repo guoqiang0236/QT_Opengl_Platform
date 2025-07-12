@@ -6,7 +6,7 @@
 #include "../Light/MyDirectionalLight.h"
 #include "../Light/MyAmbientLight.h"
 #include "../MyShader.h"
-#include "../Material/MyPhongMaterial.h"
+
 
 class MyRenderer :protected QOpenGLFunctions_4_5_Core {
 public:
@@ -26,5 +26,5 @@ private:
 private:
 	//生成多种不同的shader对象
 	MyShader* mPhongShader{ nullptr };
-
+	MyShader* mWhiteShader{ nullptr };
 };

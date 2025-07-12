@@ -1,7 +1,8 @@
 #include "MyGLWidget.h"
 #include <QDebug>
 #include <opencv2/opencv.hpp>
-
+#include "Material/MyPhongMaterial.h"
+#include "Material/MyWhiteMaterial.h"
 MyGLWidget::MyGLWidget(QWidget* parent)
     : QOpenGLWidget(parent),
     m_angle(0.0f),
@@ -561,29 +562,27 @@ void MyGLWidget::prepare() {
     m_renderer = new::MyRenderer();
 
     // 1. 创建geometry
-    auto geometry = MyGeometry::createSphere(1.0f);
+    auto geometry = MyGeometry::createBox(1.0f);
 
     // 2. 创建一个material并且配置参数
     auto material01 = new MyPhongMaterial();
     material01->mShiness = 32.0f;
-    material01->mDiffuse = new MyTexture("../assets/textures/earth.jpg", 0); // 兼容原有指针成员
+    material01->mDiffuse = new MyTexture("../assets/textures/box.png", 0); // 兼容原有指针成员
+    material01->mSpecularMask = new MyTexture("../assets/textures/sp_mask.png", 1);
 
     // 3. 生成mesh并用智能指针管理
     auto mesh01 = new::MyMesh(geometry, material01);
 
 
+	auto geometryWhite = MyGeometry::createSphere(0.5f);
+    auto materialWhite = new MyWhiteMaterial();
+    auto meshWhite = new MyMesh(geometryWhite, materialWhite);
+    meshWhite->setPosition(glm::vec3(1.0, 1.0, 1.0));
     
-    auto material02 = new MyPhongMaterial();
-    material02->mShiness = 32.0f;
-    material02->mDiffuse = new MyTexture("../assets/textures/moon.jpg", 0); // 兼容原有指针成员
 
-    // 3. 生成mesh并用智能指针管理
-    auto mesh02 = new::MyMesh(geometry, material02);
-    mesh02->setPosition(glm::vec3(1.0f, 0.5f, -0.5f));
-	mesh02->setScale(glm::vec3(0.5f, 0.5f, 0.5f));
     // material 也可以存到材质列表里，或由 mesh 持有
     m_meshes.push_back(mesh01);
-    m_meshes.push_back(mesh02);
+    m_meshes.push_back(meshWhite);
 
     m_dirLight = new::MyDirectionalLight(); // 平行光
     m_ambLight = new::MyAmbientLight(); // 环境光
@@ -1112,8 +1111,6 @@ void MyGLWidget::paintGL()
     if (m_renderer && !m_meshes.empty())
     {
         m_meshes[0]->rotateY(0.1f);
-        m_meshes[1]->rotateY(-0.2f);
-        m_meshes[1]->rotateX(-0.2f);
         m_renderer->render(m_meshes,m_camera,m_dirLight,m_ambLight);
     }
     //变换矩阵

@@ -11,5 +11,6 @@ public:
 
 public:
     MyTexture* mDiffuse{ nullptr };
+	MyTexture* mSpecularMask{ nullptr };
     float mShiness{ 1.0f };
 };

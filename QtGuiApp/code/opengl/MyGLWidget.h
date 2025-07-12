@@ -6,7 +6,7 @@
 #include "MyGeometry.h"
 #include "MyObject.h"
 #include "MyMesh.h"
-#include "Material/MyPhongMaterial.h"
+
 #include "renderer/MyRenderer.h"
 
 //引入相机+控制器

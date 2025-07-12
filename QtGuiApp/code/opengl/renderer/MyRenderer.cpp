@@ -1,9 +1,11 @@
 #include "MyRenderer.h"
-
+#include "../Material/MyPhongMaterial.h"
+#include "../Material/MyWhiteMaterial.h"
 MyRenderer::MyRenderer()
 {
 	initializeOpenGLFunctions();
 	mPhongShader = new MyShader("../assets/shaders/phong.vert", "../assets/shaders/phong.frag");
+	mWhiteShader = new MyShader("../assets/shaders/white.vert", "../assets/shaders/white.frag");
 }
 
 MyRenderer::~MyRenderer()
@@ -47,6 +49,8 @@ void MyRenderer::render(const std::vector<MyMesh*>& meshes, MyCamera* camera, My
 			//将纹理与纹理单元进行挂钩
 			phongMat->mDiffuse->bind();
 
+			shader->setInt("specularMaskSampler", 1);
+			phongMat->mSpecularMask->bind();
 			//mvp矩阵的更新
 			shader->setMatrix4x4("modelMatrix", mesh->getModelMatrix());
 			shader->setMatrix4x4("viewMatrix", camera->getViewMatrix());
@@ -56,16 +60,25 @@ void MyRenderer::render(const std::vector<MyMesh*>& meshes, MyCamera* camera, My
 			shader->setMatrix3x3("normalMatrix", normalMatrix);
 
 			// 光源参数的uniform更新
-			shader->setVector3("lightDirection", dirLight->mDirection);
-			shader->setVector3("lightColor", dirLight->mColor);
-			shader->setFloat("specularIntensity", dirLight->mSpecularIntensity);
+			shader->setVector3("directionalLight.direction", dirLight->mDirection);
+			shader->setVector3("directionalLight.color", dirLight->mColor);
+			shader->setFloat("directionalLight.specularIntensity", dirLight->mSpecularIntensity);
+			shader->setFloat("directionalLight.intensity", dirLight->mIntensity);
 			shader->setVector3("ambientColor", ambLight->mColor);
 			shader->setFloat("shiness", phongMat->mShiness);
 
 			//相机信息更新
 			shader->setVector3("cameraPosition", camera->mPosition);
-			break;
 		}
+			break;
+		case MaterialType::WhiteMaterial: {
+			//mvp矩阵的更新
+			shader->setMatrix4x4("modelMatrix", mesh->getModelMatrix());
+			shader->setMatrix4x4("viewMatrix", camera->getViewMatrix());
+			shader->setMatrix4x4("projectionMatrix", camera->getProjectionMatrix());
+
+		}
+			break;
 		default:
 			continue;
 		}
@@ -87,9 +100,9 @@ MyShader* MyRenderer::pickShader(MaterialType type)
 	case MaterialType::PhongMaterial:
 		result = mPhongShader;
 		break;
-	//case MaterialType::WhiteMaterial:
-	//	result = mWhiteShader;
-	//	break;
+	case MaterialType::WhiteMaterial:
+		result = mWhiteShader;
+		break;
 	//case MaterialType::DepthMaterial:
 	//	result = mDepthShader;
 	//	break;

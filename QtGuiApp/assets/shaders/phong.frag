@@ -1,49 +1,152 @@
-#version 450 core
+#version 460 core
 out vec4 FragColor;
 
 in vec2 uv;
 in vec3 normal;
 in vec3 worldPosition;
 
-uniform sampler2D sampler;
-//光源参数
-uniform vec3 lightDirection;
-uniform vec3 lightColor;
-uniform float specularIntensity; //镜面反射强度
-uniform vec3 ambientColor; //环境光颜色
-uniform float shiness;
+uniform sampler2D sampler;	//diffuse贴图采样器
+uniform sampler2D specularMaskSampler;//specularMask贴图采样器
 
-//世界摄像机位置
+uniform vec3 ambientColor;
+
+//相机世界位置
 uniform vec3 cameraPosition;
 
 
+uniform float shiness;
+
+//透明度
+uniform float opacity;
+
+
+struct DirectionalLight{
+	vec3 direction;
+	vec3 color;
+	float specularIntensity;
+	float intensity;
+};
+
+struct PointLight{
+	vec3 position;
+	vec3 color;
+	float specularIntensity;
+
+	float k2;
+	float k1;
+	float kc;
+};
+
+struct SpotLight{
+	vec3 position;
+	vec3 targetDirection;
+	vec3 color;
+	float outerLine;
+	float innerLine;
+	float specularIntensity;
+};
+
+uniform DirectionalLight directionalLight;
+
+//计算漫反射光照
+vec3 calculateDiffuse(vec3 lightColor, vec3 objectColor, vec3 lightDir, vec3 normal){
+	float diffuse = clamp(dot(-lightDir, normal), 0.0,1.0);
+	vec3 diffuseColor = lightColor * diffuse * objectColor;
+
+	return diffuseColor;
+}
+
+//计算镜面反射光照
+vec3 calculateSpecular(vec3 lightColor, vec3 lightDir, vec3 normal, vec3 viewDir, float intensity){
+	//1 防止背面光效果
+	float dotResult = dot(-lightDir, normal);
+	float flag = step(0.0, dotResult);
+	vec3 lightReflect = normalize(reflect(lightDir,normal));
+
+	//2 jisuan specular
+	float specular = max(dot(lightReflect,-viewDir), 0.0);
+
+	//3 控制光斑大小
+	specular = pow(specular, shiness);
+
+	//float specularMask = texture(specularMaskSampler, uv).r;
+
+	//4 计算最终颜色
+	vec3 specularColor = lightColor * specular * flag * intensity;
+
+	return specularColor;
+}
+
+vec3 calculateSpotLight(SpotLight light, vec3 normal, vec3 viewDir){
+	//计算光照的通用数据
+	vec3 objectColor  = texture(sampler, uv).xyz;
+	vec3 lightDir = normalize(worldPosition - light.position);
+	vec3 targetDir = normalize(light.targetDirection);
+
+	//计算spotlight的照射范围
+	float cGamma = dot(lightDir, targetDir);
+	float intensity =clamp( (cGamma - light.outerLine) / (light.innerLine - light.outerLine), 0.0, 1.0);
+
+	//1 计算diffuse
+	vec3 diffuseColor = calculateDiffuse(light.color,objectColor, lightDir,normal);
+
+	//2 计算specular
+	vec3 specularColor = calculateSpecular(light.color, lightDir,normal, viewDir,light.specularIntensity); 
+
+	return (diffuseColor + specularColor)*intensity;
+}
+
+vec3 calculateDirectionalLight(DirectionalLight light, vec3 normal ,vec3 viewDir){
+	light.color *= light.intensity;
+	//计算光照的通用数据
+	vec3 objectColor  = texture(sampler, uv).xyz;
+	vec3 lightDir = normalize(light.direction);
+
+	//1 计算diffuse
+	vec3 diffuseColor = calculateDiffuse(light.color,objectColor, lightDir,normal);
+
+	//2 计算specular
+	vec3 specularColor = calculateSpecular(light.color, lightDir,normal, viewDir,light.specularIntensity); 
+
+	return diffuseColor + specularColor;
+}
+
+vec3 calculatePointLight(PointLight light, vec3 normal ,vec3 viewDir){
+	//计算光照的通用数据
+	vec3 objectColor  = texture(sampler, uv).xyz;
+	vec3 lightDir = normalize(worldPosition - light.position);
+
+	//计算衰减
+	float dist = length(worldPosition - light.position);
+	float attenuation = 1.0 / (light.k2 * dist * dist + light.k1 * dist + light.kc);
+
+	//1 计算diffuse
+	vec3 diffuseColor = calculateDiffuse(light.color,objectColor, lightDir,normal);
+
+	//2 计算specular
+	vec3 specularColor = calculateSpecular(light.color, lightDir,normal, viewDir,light.specularIntensity); 
+
+	return (diffuseColor + specularColor)*attenuation;
+}
+
 void main()
 {
-  // 1 计算光照的通用数据
-  vec3 objectColor = texture(sampler, uv).xyz;
-  vec3 normalizedNormal = normalize(normal); // 将插值后的法线归一化，确保其长度为1，避免光照计算误差
-  vec3 lightDirN = normalize(lightDirection); // 将光源方向归一化，确保其长度为1
-  vec3 viewDir = normalize(worldPosition - cameraPosition); // 视线方向
+	vec3 result = vec3(0.0,0.0,0.0);
 
-  // 2 计算diffuse(漫反射)相关数据
-  float diffuse = clamp(dot(-lightDirN, normalizedNormal),0.0,1.0);  // 计算漫反射分量： dot(-lightDirN, normalizedNormal) 表示光线入射方向与表面法线的夹角余弦
-  vec3 diffuseColor = lightColor * diffuse * objectColor; // 计算最终颜色：光源颜色 * 漫反射系数 * 物体本身颜色
+	//计算光照的通用数据
+	vec3 normalN = normalize(normal);
+	vec3 viewDir = normalize(worldPosition - cameraPosition);
 
-  // 3 计算specular (镜面反射)相关数据
-  float doResult = dot(-lightDirN, normalizedNormal);// 防止背面光效果
-  float flag = step(0.0, doResult); // 如果doResult小于0，则flag为0，否则为1
-  vec3 lightReflect = normalize(reflect(lightDirN, normalizedNormal)); // 计算光线反射方向
-  float specular = clamp(dot(lightReflect, -viewDir), 0.0, 1.0); // 计算镜面反射分量
-  specular = pow(specular, shiness); // 控制光斑大小，32.0是一个常用的值，可以根据需要调整
-  vec3 specularColor = lightColor * specular * flag * specularIntensity;
+	result += calculateDirectionalLight(directionalLight,normalN, viewDir);
 
-  // 4 计算环境光
-  vec3 ambientColorFinal = ambientColor * objectColor; // 环境光颜色与物体颜色的乘积
+	//环境光计算
+	vec3 objectColor  = texture(sampler, uv).xyz;
+	float alpha =  texture(sampler, uv).a;
 
+	vec3 ambientColor = objectColor * ambientColor;
 
-  vec3 finalColor = diffuseColor + specularColor + ambientColorFinal; // 最终颜色为漫反射和镜面反射和环境光的和
+	vec3 finalColor = result + ambientColor;
+	
 
-  FragColor = vec4(finalColor, 1.0); // 将视线方向与颜色结合
-
-  
+	FragColor = vec4(finalColor,alpha * opacity);
 }
