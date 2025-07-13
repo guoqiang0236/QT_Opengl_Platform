@@ -144,6 +144,7 @@ private:
     std::vector<MyMesh*> m_meshes{}; // 存储所有的Mesh对象
     
     MyDirectionalLight* m_dirLight = nullptr; // 平行光
+	MyPointLight* m_pointLight = nullptr; // 点光源
     MyAmbientLight* m_ambLight = nullptr;     // 环境光
 
 

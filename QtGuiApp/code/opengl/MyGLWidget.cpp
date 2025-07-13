@@ -584,7 +584,13 @@ void MyGLWidget::prepare() {
     m_meshes.push_back(mesh01);
     m_meshes.push_back(meshWhite);
 
-    m_dirLight = new::MyDirectionalLight(); // 平行光
+    //m_dirLight = new::MyDirectionalLight(); // 平行光
+    // 创建点光源并设置衰减参数
+    m_pointLight = new MyPointLight();
+    m_pointLight->setPosition(meshWhite->getPosition());
+    m_pointLight->mK2 = 0.017f;  // 二次衰减系数
+    m_pointLight->mK1 = 0.07f;   // 线性衰减系数
+    m_pointLight->mKc = 1.0f;    // 常数衰减系数
     m_ambLight = new::MyAmbientLight(); // 环境光
 	m_ambLight->mColor = glm::vec3(0.2f, 0.2f, 0.2f); // 设置环境光颜色
 }
@@ -1111,7 +1117,7 @@ void MyGLWidget::paintGL()
     if (m_renderer && !m_meshes.empty())
     {
         m_meshes[0]->rotateY(0.1f);
-        m_renderer->render(m_meshes,m_camera,m_dirLight,m_ambLight);
+        m_renderer->render(m_meshes,m_camera, m_pointLight,m_ambLight);
     }
     //变换矩阵
     //doTransform();

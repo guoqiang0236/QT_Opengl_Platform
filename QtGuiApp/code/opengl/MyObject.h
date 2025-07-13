@@ -24,6 +24,8 @@ public:
     // 获取模型变换矩阵
     glm::mat4 getModelMatrix() ;
 
+    glm::vec3 getPosition()const { return m_Position;}
+
 
 protected:
     // 成员变量（与截图完全一致）

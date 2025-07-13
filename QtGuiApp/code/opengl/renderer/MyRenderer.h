@@ -4,6 +4,7 @@
 #include "../MyMesh.h"
 #include "../../camera/MyCamera.h"
 #include "../Light/MyDirectionalLight.h"
+#include "../Light/MyPointLight.h"
 #include "../Light/MyAmbientLight.h"
 #include "../MyShader.h"
 
@@ -19,7 +20,11 @@ public:
 		MyDirectionalLight* dirLight,
 		MyAmbientLight* ambLight
 	);
-
+	void render(const std::vector<MyMesh*>& meshes,
+		MyCamera* camera,
+		MyPointLight* pointLight,
+		MyAmbientLight* ambLight
+	);
 private:
 	//根据Material类型不同,挑选不同的shader
 	MyShader* pickShader(MaterialType type);
