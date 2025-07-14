@@ -146,7 +146,7 @@ private:
     MyDirectionalLight* m_dirLight = nullptr; // 平行光
 	MyPointLight* m_pointLight = nullptr; // 点光源
     MyAmbientLight* m_ambLight = nullptr;     // 环境光
-
+    float m_animTime = 0.0f;
 
 
 };

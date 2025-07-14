@@ -574,10 +574,10 @@ void MyGLWidget::prepare() {
     auto mesh01 = new::MyMesh(geometry, material01);
 
 
-	auto geometryWhite = MyGeometry::createSphere(0.5f);
+	auto geometryWhite = MyGeometry::createSphere(0.05f);
     auto materialWhite = new MyWhiteMaterial();
     auto meshWhite = new MyMesh(geometryWhite, materialWhite);
-    meshWhite->setPosition(glm::vec3(1.0, 1.0, 1.0));
+    meshWhite->setPosition(glm::vec3(2.1, 0.0, 0.0));
     
 
     // material 也可以存到材质列表里，或由 mesh 持有
@@ -1116,7 +1116,13 @@ void MyGLWidget::paintGL()
     }
     if (m_renderer && !m_meshes.empty())
     {
-        m_meshes[0]->rotateY(0.1f);
+        //m_meshes[0]->rotateY(0.1f);
+        m_animTime += 0.02f; // 控制速度
+        float amplitude = 1.0f; // 控制最大平移距离
+        float x = std::sin(m_animTime) * amplitude;
+
+		glm::vec3 pos = m_meshes[0]->getPosition();
+		m_meshes[0]->setPosition(glm::vec3(x, pos.y, pos.z)); // 更新位置
         m_renderer->render(m_meshes,m_camera, m_pointLight,m_ambLight);
     }
     //变换矩阵
