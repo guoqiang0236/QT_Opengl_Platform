@@ -562,7 +562,7 @@ void MyGLWidget::prepare() {
     m_renderer = new::MyRenderer();
 
     // 1. 创建geometry
-    auto geometry = MyGeometry::createBox(1.0f);
+    auto geometry = MyGeometry::createBox(6.0f);
 
     // 2. 创建一个material并且配置参数
     auto material01 = new MyPhongMaterial();
@@ -574,10 +574,10 @@ void MyGLWidget::prepare() {
     auto mesh01 = new::MyMesh(geometry, material01);
 
 
-	auto geometryWhite = MyGeometry::createSphere(0.05f);
+	auto geometryWhite = MyGeometry::createSphere(0.1f);
     auto materialWhite = new MyWhiteMaterial();
     auto meshWhite = new MyMesh(geometryWhite, materialWhite);
-    meshWhite->setPosition(glm::vec3(2.1, 0.0, 0.0));
+    meshWhite->setPosition(glm::vec3(1.0, 0.0, 0.0));
     
 
     // material 也可以存到材质列表里，或由 mesh 持有
@@ -586,11 +586,18 @@ void MyGLWidget::prepare() {
 
     //m_dirLight = new::MyDirectionalLight(); // 平行光
     // 创建点光源并设置衰减参数
-    m_pointLight = new MyPointLight();
-    m_pointLight->setPosition(meshWhite->getPosition());
-    m_pointLight->mK2 = 0.017f;  // 二次衰减系数
-    m_pointLight->mK1 = 0.07f;   // 线性衰减系数
-    m_pointLight->mKc = 1.0f;    // 常数衰减系数
+    //m_pointLight = new MyPointLight();
+    //m_pointLight->setPosition(meshWhite->getPosition());
+    //m_pointLight->mK2 = 0.017f;  // 二次衰减系数
+    //m_pointLight->mK1 = 0.07f;   // 线性衰减系数
+    //m_pointLight->mKc = 1.0f;    // 常数衰减系数
+
+	m_spotLight = new ::MySpotLight(); // 聚光灯
+	m_spotLight->setPosition(meshWhite->getPosition());
+    m_spotLight->mTargetDirection = glm::vec3(-1.0f, 0.0f, 0.0f);
+    m_spotLight->mInnerAngle = 30.0f;
+    m_spotLight->mOuterAngle = 45.0f;
+
     m_ambLight = new::MyAmbientLight(); // 环境光
 	m_ambLight->mColor = glm::vec3(0.2f, 0.2f, 0.2f); // 设置环境光颜色
 }
@@ -1122,8 +1129,8 @@ void MyGLWidget::paintGL()
         float x = std::sin(m_animTime) * amplitude;
 
 		glm::vec3 pos = m_meshes[0]->getPosition();
-		m_meshes[0]->setPosition(glm::vec3(x, pos.y, pos.z)); // 更新位置
-        m_renderer->render(m_meshes,m_camera, m_pointLight,m_ambLight);
+		//m_meshes[0]->setPosition(glm::vec3(x, pos.y, pos.z)); // 更新位置
+        m_renderer->render(m_meshes,m_camera, m_spotLight,m_ambLight);
     }
     //变换矩阵
     //doTransform();

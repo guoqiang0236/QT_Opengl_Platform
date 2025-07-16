@@ -5,6 +5,7 @@
 #include "../../camera/MyCamera.h"
 #include "../Light/MyDirectionalLight.h"
 #include "../Light/MyPointLight.h"
+#include "../Light/MySpotLight.h"
 #include "../Light/MyAmbientLight.h"
 #include "../MyShader.h"
 
@@ -23,6 +24,11 @@ public:
 	void render(const std::vector<MyMesh*>& meshes,
 		MyCamera* camera,
 		MyPointLight* pointLight,
+		MyAmbientLight* ambLight
+	);
+	void render(const std::vector<MyMesh*>& meshes,
+		MyCamera* camera,
+		MySpotLight* spotLight,
 		MyAmbientLight* ambLight
 	);
 private:
