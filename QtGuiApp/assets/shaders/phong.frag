@@ -46,7 +46,7 @@ struct SpotLight{
 	float specularIntensity;
 };
 
-uniform DirectionalLight directionalLight;
+uniform DirectionalLight MydirectionalLight;
 uniform PointLight MyPointLight;
 uniform SpotLight MySpotLight;
 
@@ -139,9 +139,9 @@ void main()
 	vec3 normalN = normalize(normal);
 	vec3 viewDir = normalize(worldPosition - cameraPosition);
 
-	//result += calculateDirectionalLight(directionalLight,normalN, viewDir);
-	//result += calculatePointLight(MyPointLight,normalN, viewDir);
-	result +=calculateSpotLight(MySpotLight, normalN, viewDir);
+	result += calculateSpotLight(MySpotLight, normalN, viewDir);
+	result += calculateDirectionalLight(MydirectionalLight,normalN, viewDir);
+	result += calculatePointLight(MyPointLight,normalN, viewDir);
 
 	//环境光计算 
 	vec3 objectColor  = texture(sampler, uv).xyz;
@@ -151,6 +151,6 @@ void main()
 
 	vec3 finalColor = result + ambientColor;
 	
-
+	//FragColor = vec4(finalColor,1.0);
 	FragColor = vec4(finalColor,alpha * opacity);
 }

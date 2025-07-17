@@ -17,7 +17,8 @@ MyRenderer::~MyRenderer()
 	}
 }
 
-void MyRenderer::render(const std::vector<MyMesh*>& meshes, MyCamera* camera, MyDirectionalLight* dirLight, MyAmbientLight* ambLight)
+void MyRenderer::render(const std::vector<MyMesh*>& meshes,
+	MyCamera* camera, MyDirectionalLight* dirLight, MyAmbientLight* ambLight)
 {
 	//1 设置当前帧绘制的时候,opengl的必要状态机参数
 	glEnable(GL_DEPTH_TEST);
@@ -60,10 +61,11 @@ void MyRenderer::render(const std::vector<MyMesh*>& meshes, MyCamera* camera, My
 			shader->setMatrix3x3("normalMatrix", normalMatrix);
 
 			// 光源参数的uniform更新
-			shader->setVector3("directionalLight.direction", dirLight->mDirection);
-			shader->setVector3("directionalLight.color", dirLight->mColor);
-			shader->setFloat("directionalLight.specularIntensity", dirLight->mSpecularIntensity);
-			shader->setFloat("directionalLight.intensity", dirLight->mIntensity);
+			//directionalLight
+			shader->setVector3("MydirectionalLight.direction", dirLight->mDirection);
+			shader->setVector3("MydirectionalLight.color", dirLight->mColor);
+			shader->setFloat("MydirectionalLight.specularIntensity", dirLight->mSpecularIntensity);
+			shader->setFloat("MydirectionalLight.intensity", dirLight->mIntensity);
 			shader->setVector3("ambientColor", ambLight->mColor);
 			shader->setFloat("shiness", phongMat->mShiness);
 
@@ -92,7 +94,8 @@ void MyRenderer::render(const std::vector<MyMesh*>& meshes, MyCamera* camera, My
     }
 }
 
-void MyRenderer::render(const std::vector<MyMesh*>& meshes, MyCamera* camera, MyPointLight* pointLight, MyAmbientLight* ambLight)
+void MyRenderer::render(const std::vector<MyMesh*>& meshes,
+	MyCamera* camera, MyPointLight* pointLight, MyAmbientLight* ambLight)
 {
 	//1 设置当前帧绘制的时候,opengl的必要状态机参数
 	glEnable(GL_DEPTH_TEST);
@@ -171,7 +174,9 @@ void MyRenderer::render(const std::vector<MyMesh*>& meshes, MyCamera* camera, My
 	} 
 }
 
-void MyRenderer::render(const std::vector<MyMesh*>& meshes, MyCamera* camera, MySpotLight* spotLight, MyAmbientLight* ambLight)
+void MyRenderer::render(const std::vector<MyMesh*>& meshes,
+	MyCamera* camera, MyDirectionalLight* dirLight, MyPointLight* pointLight,
+	MySpotLight* spotLight, MyAmbientLight* ambLight)
 {
 	//1 设置当前帧绘制的时候,opengl的必要状态机参数
 	glEnable(GL_DEPTH_TEST);
@@ -216,6 +221,7 @@ void MyRenderer::render(const std::vector<MyMesh*>& meshes, MyCamera* camera, My
 
 
 			// 光源参数的uniform更新 
+			//SpotLight
 			shader->setVector3("MySpotLight.position", spotLight->getPosition());
 			shader->setVector3("MySpotLight.color", spotLight->mColor);
 			shader->setVector3("MySpotLight.targetDirection", spotLight->mTargetDirection);
@@ -223,6 +229,21 @@ void MyRenderer::render(const std::vector<MyMesh*>& meshes, MyCamera* camera, My
 			shader->setFloat("MySpotLight.innerLine", glm::cos(glm::radians(spotLight->mInnerAngle)));
 			shader->setFloat("MySpotLight.outerLine", glm::cos(glm::radians(spotLight->mOuterAngle)));
 
+			//directionalLight
+			shader->setVector3("MydirectionalLight.color", dirLight->mColor);
+			shader->setVector3("MydirectionalLight.direction", dirLight->mDirection);
+			shader->setFloat("MydirectionalLight.specularIntensity", dirLight->mSpecularIntensity);
+			shader->setFloat("MydirectionalLight.intensity", dirLight->mIntensity);
+
+			//pointLight
+			shader->setVector3("MyPointLight.color", pointLight->mColor);
+			shader->setVector3("MyPointLight.position", pointLight->getPosition());
+			shader->setFloat("MyPointLight.specularIntensity", pointLight->mSpecularIntensity);
+
+			shader->setFloat("MyPointLight.k2", pointLight->mK2);  // 二次项衰减系数
+			shader->setFloat("MyPointLight.k1", pointLight->mK1);  // 线性衰减系数
+			shader->setFloat("MyPointLight.kc", pointLight->mKc);  // 常数项衰减系数
+		
 			shader->setVector3("ambientColor", ambLight->mColor);
 			shader->setFloat("shiness", phongMat->mShiness);
 

@@ -27,10 +27,9 @@ public:
 		MyAmbientLight* ambLight
 	);
 	void render(const std::vector<MyMesh*>& meshes,
-		MyCamera* camera,
-		MySpotLight* spotLight,
-		MyAmbientLight* ambLight
-	);
+		MyCamera* camera, MyDirectionalLight* dirLight, MyPointLight* pointLight,
+		MySpotLight* spotLight, MyAmbientLight* ambLight);
+	
 private:
 	//根据Material类型不同,挑选不同的shader
 	MyShader* pickShader(MaterialType type);
