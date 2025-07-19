@@ -26,45 +26,13 @@ public:
     ~MyGLWidget();
 
 private:
-    // 学习用的功能函数
     void prapareBackground();
-    void prepareShader();
-    void preparecolortriangleShader();
-    void prepareVBO();
-    void prepareEBOVAO();
-	void prepareVAOcolortriangle();
-    void prepareVAOForGLTriangles();
- 
-    void prepareSingleBuffer();
-    void prepareInterleaveBuffer();
   
-	//SHADER
-    void prepareShaderPtr();
-	void prepareShaderPtrForMat();
-	void prepareShaderPtrForGeometry();
-
-    //VAO
-	void prepareVAOForGLTrianglesWithTexture();
-    void prepareVAOForTexture();
-    void prepareVAOForMipmapTexture();
-    void prepareVAOForLiuYiFei();
-	void prepareVAOForGeometry();
-
-	//TEXTURE
-    void prepareTexture();
-    void prepareTexturePtr();
-    void prepareMipmapTexturePtr();
-    void prepareMixTexturePtr();
-    void prepareMipmapLiuYiFeiTexturePtr();
-	
-   
-
+    
     //渲染
     void prepareStates();
 	void prepareCamera();// 准备摄像机
-	void prepareOrtho();// 准备正交投影
-	void preparareProjection();// 准备透视投影
-    void render();
+   
     void prepare();
     void preparelogo();
 
@@ -76,18 +44,13 @@ private:
     void doRotation();//持续旋转
     void doTransformDieJia();//叠加变换(本地坐标系)
     void preTransformDieJia();//叠加预先变换(本地坐标系)
+
+    //render
     void renderLogoOnScreen();
-
+    void render();
 public slots:
-    void triggerDrawTriangle(); // 供按钮点击触发
-	void triggerDrawTexture(); 
-    void triggerDrawMixTexture();
-    void triggerDrawMipmapTexture();
-    void triggerDrawLiuYiFei();
-
-	void triggerDrawTwoPictures();
-
-	void triggerDrawGeometryBox();
+   
+	
     void triggerDraw();
 
     
