@@ -396,3 +396,79 @@ MyGeometry* MyGeometry::createPlane(float width, float height)
     geometry->glBindVertexArray(0);
     return geometry;
 }
+
+MyGeometry* MyGeometry::createLogoQuad(float width, float height)
+{
+    MyGeometry* geometry = new MyGeometry();
+
+    geometry->mIndicesCount = 6;
+
+    // 顶点坐标（像素空间，左上角为(0,0)，右下角为(width, height)）
+    float positions[] = {
+        0.0f,      0.0f,     0.0f, // 左上
+        width,     0.0f,     0.0f, // 右上
+        width,     height,   0.0f, // 右下
+        0.0f,      height,   0.0f, // 左下
+    };
+
+    float uvs[] = {
+        0.0f, 1.0f, // 左上
+        1.0f, 1.0f, // 右上
+        1.0f, 0.0f, // 右下
+        0.0f, 0.0f, // 左下
+    };
+
+    float normals[] = {
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+    };
+
+    unsigned int indices[] = {
+        0, 1, 2,
+        2, 3, 0
+    };
+
+    // VBO/EBO/VAO 创建
+    GLuint& posVbo = geometry->mPosVbo,
+        uvVbo = geometry->mUvVao,
+        ebo = geometry->mEbo,
+        normalVbo = geometry->mNormalVbo;
+
+    geometry->glGenBuffers(1, &posVbo);
+    geometry->glBindBuffer(GL_ARRAY_BUFFER, posVbo);
+    geometry->glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+
+    geometry->glGenBuffers(1, &uvVbo);
+    geometry->glBindBuffer(GL_ARRAY_BUFFER, uvVbo);
+    geometry->glBufferData(GL_ARRAY_BUFFER, sizeof(uvs), uvs, GL_STATIC_DRAW);
+
+    geometry->glGenBuffers(1, &normalVbo);
+    geometry->glBindBuffer(GL_ARRAY_BUFFER, normalVbo);
+    geometry->glBufferData(GL_ARRAY_BUFFER, sizeof(normals), normals, GL_STATIC_DRAW);
+
+    geometry->glGenBuffers(1, &ebo);
+    geometry->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    geometry->glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    geometry->glGenVertexArrays(1, &geometry->mVao);
+    geometry->glBindVertexArray(geometry->mVao);
+
+    geometry->glBindBuffer(GL_ARRAY_BUFFER, posVbo);
+    geometry->glEnableVertexAttribArray(0);
+    geometry->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
+
+    geometry->glBindBuffer(GL_ARRAY_BUFFER, uvVbo);
+    geometry->glEnableVertexAttribArray(1);
+    geometry->glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void*)0);
+
+    geometry->glBindBuffer(GL_ARRAY_BUFFER, normalVbo);
+    geometry->glEnableVertexAttribArray(2);
+    geometry->glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
+
+    geometry->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+
+    geometry->glBindVertexArray(0);
+    return geometry;
+}

@@ -5,7 +5,8 @@
 // 使用C++的枚举类型
 enum class MaterialType {
     PhongMaterial,
-	WhiteMaterial
+	WhiteMaterial,
+	ImageMaterial
 };
 
 class MyMaterial :public QObject {

@@ -3,6 +3,7 @@
 #include <opencv2/opencv.hpp>
 #include "Material/MyPhongMaterial.h"
 #include "Material/MyWhiteMaterial.h"
+#include "Material/MyImageMaterial.h"
 MyGLWidget::MyGLWidget(QWidget* parent)
     : QOpenGLWidget(parent),
     m_angle(0.0f),
@@ -609,6 +610,34 @@ void MyGLWidget::prepare() {
 	m_ambLight->mColor = glm::vec3(0.2f, 0.2f, 0.2f); // 设置环境光颜色
 }
 
+void MyGLWidget::preparelogo()
+{
+    if (!m_renderer)
+    {
+        m_renderer = new::MyRenderer();
+    }
+    // 1. 创建geometry
+    auto logogeometry = MyGeometry::createLogoQuad(200,100);
+
+    // 2. 创建一个material并且配置参数
+    auto material01 = new MyImageMaterial();
+    //material01->mShiness = 32.0f;
+    //material01->mDiffuse = new MyTexture("../assets/textures/logo.left.top.bmp", 2); // 兼容原有指针成员
+    
+
+    // 3. 生成mesh并用指针管理
+    //auto logo = new::MyMesh(logogeometry, material01);
+
+
+    // material 也可以存到材质列表里，或由 mesh 持有
+    //m_meshes.push_back(logo);
+
+	logoVAO = logogeometry->getVao();
+	m_Shader = std::make_unique<MyShader>("../assets/shaders/logo.vert", "../assets/shaders/logo.frag");
+    logoTexture = new MyTexture("../assets/textures/logo.left.top.bmp", 1); // 兼容原有指针成员
+    bhaslogo = true;
+}
+
 void MyGLWidget::doTranslationTransform()
 {
     //平移变换
@@ -1139,6 +1168,10 @@ void MyGLWidget::paintGL()
 		//m_meshes[0]->setPosition(glm::vec3(x, pos.y, pos.z)); // 更新位置
         m_renderer->render(m_meshes,m_camera, m_dirLight, m_pointLight, m_spotLight,m_ambLight);
     }
+    if (bhaslogo)
+    {
+        renderLogoOnScreen();
+    }
     //变换矩阵
     //doTransform();
     //doTransformDieJia();
@@ -1319,9 +1352,37 @@ void MyGLWidget::triggerDrawGeometryBox()
 void MyGLWidget::triggerDraw()
 {
     makeCurrent();
-    prepareCamera();
     prepare();
+	preparelogo();
+    prepareCamera();
+  
     m_prepared = true;
     doneCurrent();
     update();
+}
+void MyGLWidget::renderLogoOnScreen()
+{
+    // 假设你有 logoVAO, logoShader, logoTexture
+    glBindVertexArray(logoVAO);
+    m_Shader->begin();
+
+    // 1. 构造正交投影矩阵（屏幕空间，左上角为原点）
+    int w = width();
+    int h = height();
+    glm::mat4 ortho = glm::ortho(0.0f, float(w), float(h), 0.0f, -1.0f, 1.0f);
+
+    // 2. 计算 logo 的模型矩阵（左上角，宽高为 logo 像素）
+    float logoWidth = 10.0f;
+    float logoHeight = 10.0f;
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(logoWidth / 2, logoHeight / 2, 0.0f));
+    glm::mat4 mvp = ortho * model;
+
+    m_Shader->setMatrix4x4("mvp", mvp);
+    m_Shader->setInt("logoTex", 1); // 0 表示 GL_TEXTURE0
+    logoTexture->bind();
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    m_Shader->end();
+    glBindVertexArray(0);
 }

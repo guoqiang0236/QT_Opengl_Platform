@@ -13,6 +13,8 @@ public:
     static MyGeometry* createSphere(float size);
     static MyGeometry* createPlane(float width ,float height);
 
+    static MyGeometry* createLogoQuad(float width, float height);
+
 	GLuint getVao()const { return mVao; }
 	uint32_t getIndicesCount() const { return mIndicesCount; }
 private:

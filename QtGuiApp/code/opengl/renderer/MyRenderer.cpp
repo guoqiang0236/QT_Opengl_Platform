@@ -1,11 +1,13 @@
 #include "MyRenderer.h"
 #include "../Material/MyPhongMaterial.h"
 #include "../Material/MyWhiteMaterial.h"
+#include "../Material/MyImageMaterial.h"
 MyRenderer::MyRenderer()
 {
 	initializeOpenGLFunctions();
 	mPhongShader = new MyShader("../assets/shaders/phong.vert", "../assets/shaders/phong.frag");
 	mWhiteShader = new MyShader("../assets/shaders/white.vert", "../assets/shaders/white.frag");
+	mImageShader = new MyShader("../assets/shaders/image.vert", "../assets/shaders/image.frag");
 }
 
 MyRenderer::~MyRenderer()
@@ -259,6 +261,15 @@ void MyRenderer::render(const std::vector<MyMesh*>& meshes,
 
 		}
 										break;
+		case MaterialType::ImageMaterial: {
+			//mvp¾ØÕóµÄ¸üÐÂ
+			shader->setInt("imagesampler", 2);
+			shader->setMatrix4x4("modelMatrix", mesh->getModelMatrix());
+			shader->setMatrix4x4("viewMatrix", camera->getViewMatrix());
+			shader->setMatrix4x4("projectionMatrix", camera->getProjectionMatrix());
+
+		}
+										break;
 		default:
 			continue;
 		}
@@ -282,6 +293,9 @@ MyShader* MyRenderer::pickShader(MaterialType type)
 		break;
 	case MaterialType::WhiteMaterial:
 		result = mWhiteShader;
+		break;
+	case MaterialType::ImageMaterial:
+		result = mImageShader;
 		break;
 	//case MaterialType::DepthMaterial:
 	//	result = mDepthShader;

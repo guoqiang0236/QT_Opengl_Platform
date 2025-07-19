@@ -66,6 +66,7 @@ private:
 	void preparareProjection();// 准备透视投影
     void render();
     void prepare();
+    void preparelogo();
 
     //图形变换
 	void doRotationTransform();//旋转
@@ -75,7 +76,7 @@ private:
     void doRotation();//持续旋转
     void doTransformDieJia();//叠加变换(本地坐标系)
     void preTransformDieJia();//叠加预先变换(本地坐标系)
-
+    void renderLogoOnScreen();
 
 public slots:
     void triggerDrawTriangle(); // 供按钮点击触发
@@ -88,6 +89,8 @@ public slots:
 
 	void triggerDrawGeometryBox();
     void triggerDraw();
+
+    
 
 
 protected:
@@ -112,6 +115,7 @@ private:
     GLuint m_ebo = 0;
     GLuint m_program = 0;
     GLuint m_texture = 0;
+    GLuint logoVAO = 0;
     bool m_prepared = false;
 	std::unique_ptr<MyShader> m_Shader;
 	std::unique_ptr<MyTexture> m_Texture;
@@ -119,6 +123,7 @@ private:
     MyTexture* grassTexture = nullptr;
     MyTexture* landTexture = nullptr;
     MyTexture* noiseTexture = nullptr;
+    MyTexture* logoTexture = nullptr;
     QElapsedTimer m_timer;
 	glm::mat4 m_transform;// 变换矩阵
     glm::mat4 m_transform2;// 变换矩阵
@@ -149,6 +154,8 @@ private:
     MyAmbientLight* m_ambLight = nullptr;     // 环境光
     float m_animTime = 0.0f;
 
+private:
+    bool bhaslogo = false;
 
 };
 

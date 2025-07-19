@@ -37,4 +37,5 @@ private:
 	//生成多种不同的shader对象
 	MyShader* mPhongShader{ nullptr };
 	MyShader* mWhiteShader{ nullptr };
+	MyShader* mImageShader{ nullptr };
 };
