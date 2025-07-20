@@ -177,8 +177,8 @@ void MyRenderer::render(const std::vector<MyMesh*>& meshes,
 }
 
 void MyRenderer::render(const std::vector<MyMesh*>& meshes,
-	MyCamera* camera, MyDirectionalLight* dirLight, MyPointLight* pointLight,
-	MySpotLight* spotLight, MyAmbientLight* ambLight)
+	MyCamera* camera, MyDirectionalLight* dirLight, std::vector<MyPointLight*>& pointLights,
+	MySpotLight* spotLight, MyAmbientLight* ambLight, bool bshow)
 {
 	//1 设置当前帧绘制的时候,opengl的必要状态机参数
 	glEnable(GL_DEPTH_TEST);
@@ -187,6 +187,8 @@ void MyRenderer::render(const std::vector<MyMesh*>& meshes,
 	//2 清理画布
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+	if (!bshow)
+		return;
 	//3 遍历mesh渲染
 	for (int i = 0; i < meshes.size(); i++) {
 		auto mesh = meshes[i];
@@ -238,13 +240,22 @@ void MyRenderer::render(const std::vector<MyMesh*>& meshes,
 			shader->setFloat("MydirectionalLight.intensity", dirLight->mIntensity);
 
 			//pointLight
-			shader->setVector3("MyPointLight.color", pointLight->mColor);
-			shader->setVector3("MyPointLight.position", pointLight->getPosition());
-			shader->setFloat("MyPointLight.specularIntensity", pointLight->mSpecularIntensity);
+			for (int i = 0; i < pointLights.size(); i++) {
+				auto pointLight = pointLights[i];
 
-			shader->setFloat("MyPointLight.k2", pointLight->mK2);  // 二次项衰减系数
-			shader->setFloat("MyPointLight.k1", pointLight->mK1);  // 线性衰减系数
-			shader->setFloat("MyPointLight.kc", pointLight->mKc);  // 常数项衰减系数
+				// 动态构建索引名称
+				std::string baseName = "MyPointLight[";
+				baseName.append(std::to_string(i));
+				baseName.append("]");
+				shader->setVector3(baseName + ".color", pointLight->mColor);
+				shader->setVector3(baseName + ".position", pointLight->getPosition());
+				shader->setFloat(baseName + ".specularIntensity", pointLight->mSpecularIntensity);
+				shader->setFloat(baseName + ".k2", pointLight->mK2);  // 二次项衰减系数
+				shader->setFloat(baseName + ".k1", pointLight->mK1);  // 线性衰减系数
+				shader->setFloat(baseName + ".kc", pointLight->mKc);  // 常数项衰减系数
+
+			}
+			
 		
 			shader->setVector3("ambientColor", ambLight->mColor);
 			shader->setFloat("shiness", phongMat->mShiness);

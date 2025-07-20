@@ -42,6 +42,9 @@ set(CMAKE_AUTORCC ON)   # 自动处理 .qrc 资源文件，生成资源访问代
 file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS
     "code/*.h"  
     "code/*.cpp"
+    "control/*.h"
+    "control/*.cpp"
+    "control/*.png"
 )
 
 # 为每个文件创建对应的文件夹分组

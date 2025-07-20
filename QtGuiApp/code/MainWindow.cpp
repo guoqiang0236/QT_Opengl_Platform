@@ -107,6 +107,12 @@ void MainWindow::ProgressChanged(int value, int max)
 	}
 }
 
+void MainWindow::InitRendererPannel(bool flag)
+{
+    m_ui->widget_logo->setChecked(flag);
+    m_ui->widget_object->setChecked(flag);
+}
+
 
 void MainWindow::InitSlots()
 {
@@ -121,7 +127,10 @@ void MainWindow::InitSlots()
 
     //opengl
     connect(m_ui->pushButton_drawtriangle, &QPushButton::clicked, m_glwidget, &MyGLWidget::triggerDraw);
-    
+    connect(m_ui->widget_logo, &ImageSwitch::checkedChanged, m_glwidget, &MyGLWidget::bShowLogo);
+    connect(m_ui->widget_object, &ImageSwitch::checkedChanged, m_glwidget, &MyGLWidget::bShowRenderer);
+
+    connect(m_glwidget, &MyGLWidget::prepareok, this, &MainWindow::InitRendererPannel);
 }
 
 void MainWindow::UpdateGUI()
@@ -150,7 +159,7 @@ void MainWindow::UpdateGUI()
     m_glwidget->setObjectName("openGLWidget");
 
     m_ui->gridLayout_8->addWidget(m_glwidget, 1, 0, 1, 1);
-   
+	
    
 }
 

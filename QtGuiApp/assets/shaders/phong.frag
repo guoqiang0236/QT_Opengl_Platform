@@ -47,8 +47,9 @@ struct SpotLight{
 };
 
 uniform DirectionalLight MydirectionalLight;
-uniform PointLight MyPointLight;
 uniform SpotLight MySpotLight;
+#define PointLight_NUM 4
+uniform PointLight MyPointLight[PointLight_NUM];
 
 //计算漫反射光照
 vec3 calculateDiffuse(vec3 lightColor, vec3 objectColor, vec3 lightDir, vec3 normal){
@@ -141,7 +142,11 @@ void main()
 
 	result += calculateSpotLight(MySpotLight, normalN, viewDir);
 	result += calculateDirectionalLight(MydirectionalLight,normalN, viewDir);
-	result += calculatePointLight(MyPointLight,normalN, viewDir);
+
+	for(int i =0;i<PointLight_NUM;i++)
+	{
+		result += calculatePointLight(MyPointLight[i],normalN, viewDir);
+	}
 
 	//环境光计算 
 	vec3 objectColor  = texture(sampler, uv).xyz;

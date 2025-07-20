@@ -26,6 +26,11 @@ public:
 
     glm::vec3 getPosition()const { return m_Position;}
 
+    //父子关系
+    void addChild(MyObject* obj);             // 添加子对象
+    std::vector<MyObject*> getChildren();     // 获取所有子对象
+    MyObject* getParent();                    // 获取父对象指针
+
 
 protected:
     // 成员变量（与截图完全一致）
@@ -39,4 +44,9 @@ protected:
 
 
     glm::vec3 m_Scale{ 1.0f };
+
+	//父子关系
+	std::vector<MyObject*> m_Children; // 子物体列表
+	MyObject* m_Parent{ nullptr }; // 父物体指针
+	
 };

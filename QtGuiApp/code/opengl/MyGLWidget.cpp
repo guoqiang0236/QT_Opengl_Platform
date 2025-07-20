@@ -150,6 +150,16 @@ void MyGLWidget::render()
        m_Shader->end();
 }
 
+void MyGLWidget::bShowLogo(bool bshow)
+{
+    bhaslogo = bshow;
+}
+
+void MyGLWidget::bShowRenderer(bool bshow)
+{
+	bhasrenderer = bshow;
+}
+
 void MyGLWidget::doRotationTransform()
 {	//构建一个旋转矩阵，绕着z轴旋转45度角
     //rotate函数：用于生成旋转矩阵
@@ -188,13 +198,38 @@ void MyGLWidget::prepare() {
     m_meshes.push_back(meshWhite);
 
  
-    // 创建点光源并设置衰减参数
-    m_pointLight = new MyPointLight();
-    m_pointLight->setPosition(glm::vec3(0.0f,0.0f,0.6f));
-    m_pointLight->mSpecularIntensity = 0.5f;
-    m_pointLight->mK2 = 0.017f;  // 二次衰减系数
-    m_pointLight->mK1 = 0.07f;   // 线性衰减系数
-    m_pointLight->mKc = 1.0f;    // 常数衰减系数
+    // 创建点光源并设置衰减参数 
+    auto pointLight1 = new MyPointLight();
+    pointLight1->setPosition(glm::vec3(1.0f, 0.0f, 0.0f));
+	pointLight1->mColor = glm::vec3(1.0f, 0.0f, 0.0f); // 设置点光源颜色
+    pointLight1->mK2 = 0.0f;        // 二次衰减系数
+    pointLight1->mK1 = 0.0f;        // 线性衰减系数
+    pointLight1->mKc = 1.0f;        // 常数衰减系数
+    m_pointLights.push_back(pointLight1);
+
+    auto pointLight2 = new MyPointLight();
+    pointLight2->setPosition(glm::vec3(0.0f, 1.0f, 0.0f));
+    pointLight2->mColor = glm::vec3(0.0f, 1.0f, 0.0f);
+    pointLight2->mK2 = 0.0f;
+    pointLight2->mK1 = 0.0f;
+    pointLight2->mKc = 1.0f;
+    m_pointLights.push_back(pointLight2);
+
+    auto pointLight3 = new MyPointLight();
+    pointLight3->setPosition(glm::vec3(0.0f, -1.0f, 0.0f));
+    pointLight3->mColor = glm::vec3(0.0f, 0.0f, 1.0f);
+    pointLight3->mK2 = 0.0f;
+    pointLight3->mK1 = 0.0f;
+    pointLight3->mKc = 1.0f;
+    m_pointLights.push_back(pointLight3);
+
+    auto pointLight4 = new MyPointLight();
+    pointLight4->setPosition(glm::vec3(0.0f, 0.0f, -1.0f));
+    pointLight4->mColor = glm::vec3(1.0f, 1.0f, 0.0f);
+    pointLight4->mK2 = 0.0f;
+    pointLight4->mK1 = 0.0f;
+    pointLight4->mKc = 1.0f;
+    m_pointLights.push_back(pointLight4);
    
 
     // 聚光灯
@@ -210,6 +245,8 @@ void MyGLWidget::prepare() {
 
     m_ambLight = new::MyAmbientLight(); // 环境光
 	m_ambLight->mColor = glm::vec3(0.2f, 0.2f, 0.2f); // 设置环境光颜色
+
+	bhasrenderer = true;
 }
 
 void MyGLWidget::preparelogo()
@@ -320,9 +357,9 @@ void MyGLWidget::paintGL()
 
 		glm::vec3 pos = m_meshes[0]->getPosition();
 		//m_meshes[0]->setPosition(glm::vec3(x, pos.y, pos.z)); // 更新位置
-        m_renderer->render(m_meshes,m_camera, m_dirLight, m_pointLight, m_spotLight,m_ambLight);
+        m_renderer->render(m_meshes,m_camera, m_dirLight, m_pointLights, m_spotLight,m_ambLight, bhasrenderer);
     }
-    if (bhaslogo)
+    if (bhaslogo && logoTexture != 0)
     {
         renderLogoOnScreen();
     }
@@ -419,16 +456,6 @@ void MyGLWidget::showEvent(QShowEvent* event)
     setFocus(Qt::OtherFocusReason); // 这里再次请求焦点
 }
 
-
-
-
-
-
-
-
-
-
-
 void MyGLWidget::triggerDraw()
 {
     makeCurrent();
@@ -437,6 +464,7 @@ void MyGLWidget::triggerDraw()
     prepareCamera();
   
     m_prepared = true;
+    emit prepareok(true);
     doneCurrent();
     update();
 }

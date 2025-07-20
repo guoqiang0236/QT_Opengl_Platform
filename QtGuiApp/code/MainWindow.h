@@ -22,6 +22,7 @@ private slots:
     void OnAnimationFinished();
     void Change_CurrentTime();
 	void ProgressChanged(int value, int max); // 进度条更新
+    void InitRendererPannel(bool flag);
 
 signals:
 

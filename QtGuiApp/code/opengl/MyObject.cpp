@@ -47,3 +47,28 @@ glm::mat4 MyObject::getModelMatrix()
 
 	return model;
 }
+
+void MyObject::addChild(MyObject* obj)
+{
+	//1. 检查是否加入过这个子对象
+	auto iter = std::find(m_Children.begin(), m_Children.end(), obj);
+	if(iter!= m_Children.end())
+	{
+		return; 
+	}
+	//2. 添加子对象到子对象列表
+	m_Children.push_back(obj);
+
+	//3. 设置父对象指针
+	obj->m_Parent = this; 
+}
+
+std::vector<MyObject*> MyObject::getChildren()
+{
+	return m_Children;
+}
+
+MyObject* MyObject::getParent()
+{
+	return m_Parent;
+}
