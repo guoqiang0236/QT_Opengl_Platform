@@ -43,13 +43,16 @@ public:
     QPushButton *pushButton_drawtriangle;
     QWidget *tab_4;
     QGridLayout *gridLayout_3;
-    QGridLayout *gridLayout_logo;
-    ImageSwitch *widget_logo;
-    QLabel *label_logo;
-    QSpacerItem *verticalSpacer;
     QGridLayout *gridLayout_object;
     ImageSwitch *widget_object;
     QLabel *label_object;
+    QGridLayout *gridLayout_logo;
+    ImageSwitch *widget_logo;
+    QLabel *label_logo;
+    QVBoxLayout *verticalLayout_2;
+    QLabel *label_background;
+    QPushButton *pushButton_background;
+    QSpacerItem *verticalSpacer;
     QWidget *tab;
     QComboBox *comboBox;
     QLabel *label_5;
@@ -136,6 +139,27 @@ public:
         tab_4->setObjectName("tab_4");
         gridLayout_3 = new QGridLayout(tab_4);
         gridLayout_3->setObjectName("gridLayout_3");
+        gridLayout_object = new QGridLayout();
+        gridLayout_object->setSpacing(0);
+        gridLayout_object->setObjectName("gridLayout_object");
+        gridLayout_object->setContentsMargins(-1, 10, -1, 10);
+        widget_object = new ImageSwitch(tab_4);
+        widget_object->setObjectName("widget_object");
+        widget_object->setMinimumSize(QSize(100, 25));
+        widget_object->setMaximumSize(QSize(100, 25));
+
+        gridLayout_object->addWidget(widget_object, 0, 1, 1, 1);
+
+        label_object = new QLabel(tab_4);
+        label_object->setObjectName("label_object");
+        label_object->setMinimumSize(QSize(50, 25));
+        label_object->setMaximumSize(QSize(200, 25));
+
+        gridLayout_object->addWidget(label_object, 0, 0, 1, 1);
+
+
+        gridLayout_3->addLayout(gridLayout_object, 0, 0, 1, 1);
+
         gridLayout_logo = new QGridLayout();
         gridLayout_logo->setSpacing(0);
         gridLayout_logo->setObjectName("gridLayout_logo");
@@ -157,30 +181,27 @@ public:
 
         gridLayout_3->addLayout(gridLayout_logo, 1, 0, 1, 1);
 
+        verticalLayout_2 = new QVBoxLayout();
+        verticalLayout_2->setObjectName("verticalLayout_2");
+        label_background = new QLabel(tab_4);
+        label_background->setObjectName("label_background");
+        label_background->setMinimumSize(QSize(100, 50));
+        label_background->setMaximumSize(QSize(200, 50));
+
+        verticalLayout_2->addWidget(label_background);
+
+        pushButton_background = new QPushButton(tab_4);
+        pushButton_background->setObjectName("pushButton_background");
+        pushButton_background->setMaximumSize(QSize(16777215, 50));
+
+        verticalLayout_2->addWidget(pushButton_background);
+
         verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Expanding);
 
-        gridLayout_3->addItem(verticalSpacer, 2, 0, 1, 1);
-
-        gridLayout_object = new QGridLayout();
-        gridLayout_object->setSpacing(0);
-        gridLayout_object->setObjectName("gridLayout_object");
-        gridLayout_object->setContentsMargins(-1, 10, -1, 10);
-        widget_object = new ImageSwitch(tab_4);
-        widget_object->setObjectName("widget_object");
-        widget_object->setMinimumSize(QSize(100, 25));
-        widget_object->setMaximumSize(QSize(100, 25));
-
-        gridLayout_object->addWidget(widget_object, 0, 1, 1, 1);
-
-        label_object = new QLabel(tab_4);
-        label_object->setObjectName("label_object");
-        label_object->setMinimumSize(QSize(50, 25));
-        label_object->setMaximumSize(QSize(200, 25));
-
-        gridLayout_object->addWidget(label_object, 0, 0, 1, 1);
+        verticalLayout_2->addItem(verticalSpacer);
 
 
-        gridLayout_3->addLayout(gridLayout_object, 0, 0, 1, 1);
+        gridLayout_3->addLayout(verticalLayout_2, 2, 0, 1, 1);
 
         tabWidget->addTab(tab_4, QString());
         tab = new QWidget();
@@ -306,8 +327,10 @@ public:
         label_showthreadnum->setText(QCoreApplication::translate("MainWindow_UI", "0", nullptr));
         pushButton_drawtriangle->setText(QCoreApplication::translate("MainWindow_UI", "drawtriangle", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab_3), QCoreApplication::translate("MainWindow_UI", "\346\202\243\350\200\205\344\277\241\346\201\257", nullptr));
-        label_logo->setText(QCoreApplication::translate("MainWindow_UI", "LOGO\346\230\276\347\244\272", nullptr));
         label_object->setText(QCoreApplication::translate("MainWindow_UI", "\346\234\254\344\275\223\346\230\276\347\244\272", nullptr));
+        label_logo->setText(QCoreApplication::translate("MainWindow_UI", "LOGO\346\230\276\347\244\272", nullptr));
+        label_background->setText(QString());
+        pushButton_background->setText(QCoreApplication::translate("MainWindow_UI", "\346\233\264\346\215\242\350\203\214\346\231\257\350\211\262", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab_4), QCoreApplication::translate("MainWindow_UI", "\346\270\262\346\237\223\344\272\244\344\272\222", nullptr));
         comboBox->setItemText(0, QCoreApplication::translate("MainWindow_UI", "ElegantDark", nullptr));
         comboBox->setItemText(1, QCoreApplication::translate("MainWindow_UI", "AMOLED", nullptr));

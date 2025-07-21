@@ -25,10 +25,10 @@ public:
     explicit MyGLWidget(QWidget* parent = nullptr);
     ~MyGLWidget();
 
-private:
-    void prapareBackground();
-  
+    void setBackgroundColor(const QColor& color);
     
+private:
+    void prapareBackground(QColor color = Qt::black);
     //渲染
     void prepareStates();
 	void prepareCamera();// 准备摄像机
@@ -121,6 +121,6 @@ private:
 private:
     bool bhaslogo = false;
     bool bhasrenderer = false;
-
+    QColor m_bgColor = Qt::black;
 };
 

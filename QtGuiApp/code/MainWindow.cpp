@@ -14,6 +14,7 @@
 #include <thread>
 #include <iostream>
 #include <vtkImageFlip.h>
+#include "MyColorSelecter.h"
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent),
     m_ui(std::make_unique<Ui::MainWindow_UI>()),
@@ -67,19 +68,6 @@ void MainWindow::StyleChanged(const QString& style)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 void MainWindow::ShutDown()
 {
     QApplication::quit();
@@ -113,6 +101,25 @@ void MainWindow::InitRendererPannel(bool flag)
     m_ui->widget_object->setChecked(flag);
 }
 
+void MainWindow::SelectColor()
+{
+    // 获取当前 label_background 的背景色
+    QColor initialColor = m_ui->label_background->palette().color(QPalette::Window);
+
+    MyColorSelecter dlg(initialColor, this, "选择颜色");
+  
+    if (dlg.exec() == QDialog::Accepted) {
+        QColor selectedColor = dlg.currentColor();
+        if (selectedColor.isValid()) {
+            m_ui->label_background->setStyleSheet(
+                QString("background-color: %1;").arg(selectedColor.name(QColor::HexArgb))
+            );
+            m_glwidget->setBackgroundColor(selectedColor);
+        }
+
+    }
+}
+
 
 void MainWindow::InitSlots()
 {
@@ -129,7 +136,7 @@ void MainWindow::InitSlots()
     connect(m_ui->pushButton_drawtriangle, &QPushButton::clicked, m_glwidget, &MyGLWidget::triggerDraw);
     connect(m_ui->widget_logo, &ImageSwitch::checkedChanged, m_glwidget, &MyGLWidget::bShowLogo);
     connect(m_ui->widget_object, &ImageSwitch::checkedChanged, m_glwidget, &MyGLWidget::bShowRenderer);
-
+    connect(m_ui->pushButton_background, &QPushButton::clicked, this, &MainWindow::SelectColor);
     connect(m_glwidget, &MyGLWidget::prepareok, this, &MainWindow::InitRendererPannel);
 }
 
@@ -148,11 +155,6 @@ void MainWindow::UpdateGUI()
         m_ui->openGLWidget = nullptr;
       
     }
-   /* if (!m_vaoWidget)
-        return;
-    m_vaoWidget->setObjectName("openGLWidget");
-
-    m_ui->gridLayout_8->addWidget(m_vaoWidget, 1, 0, 1, 1);*/
 
     if (!m_glwidget)
         return;
@@ -160,7 +162,7 @@ void MainWindow::UpdateGUI()
 
     m_ui->gridLayout_8->addWidget(m_glwidget, 1, 0, 1, 1);
 	
-   
+    m_ui->label_background->setStyleSheet("background-color: rgb(0, 0, 0);"); 
 }
 
 void MainWindow::UpdateSize()

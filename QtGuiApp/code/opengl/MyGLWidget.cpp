@@ -31,6 +31,17 @@ MyGLWidget::~MyGLWidget()
     doneCurrent();
 }
 
+void MyGLWidget::setBackgroundColor(const QColor& color)
+{
+    m_bgColor = color;
+    update(); // 触发重绘
+}
+
+void MyGLWidget::prapareBackground(QColor color)
+{
+    glClearColor(color.redF(), color.greenF(), color.blueF(), 1.0f);
+}
+
 void MyGLWidget::initializeGL()
 {
    
@@ -40,12 +51,6 @@ void MyGLWidget::initializeGL()
    
 }
 
-void MyGLWidget::prapareBackground()
-{
-   
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    
-}
 
 
 
@@ -153,11 +158,13 @@ void MyGLWidget::render()
 void MyGLWidget::bShowLogo(bool bshow)
 {
     bhaslogo = bshow;
+    update();
 }
 
 void MyGLWidget::bShowRenderer(bool bshow)
 {
 	bhasrenderer = bshow;
+    update();
 }
 
 void MyGLWidget::doRotationTransform()
@@ -343,6 +350,8 @@ void MyGLWidget::doTransformDieJia()
 
 void MyGLWidget::paintGL()
 {
+    //背景色
+    prapareBackground(m_bgColor);
     //摄像机更新
     if (m_cameraControl)
     {
