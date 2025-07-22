@@ -28,6 +28,8 @@ set (OpenCV_DIR "${CMAKE_SOURCE_DIR}/Packages/OpenCV4100")
 find_package(OpenCV REQUIRED)
 #GLM库
 set (GLM_DIR "${CMAKE_SOURCE_DIR}/Packages/glm-1.0.1-light")
+#assimp库
+set (ASSIMP_DIR "${CMAKE_SOURCE_DIR}/Packages/assimp")
 
 if(NOT VTK_FOUND)
     message(FATAL_ERROR "VTK not found!")
@@ -73,6 +75,7 @@ target_include_directories(QtGuiApp
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${OpenCV_INCLUDE_DIRS}
         ${GLM_DIR}
+        ${ASSIMP_DIR}/include
 )
 
 # 库lib目录
@@ -80,6 +83,7 @@ target_link_directories(QtGuiApp
     PRIVATE
         "${CMAKE_SOURCE_DIR}/lib"
         ${OpenCV_LIB_DIR}
+        ${ASSIMP_DIR}/lib
 )
 
 # 链接lib库
@@ -113,6 +117,8 @@ target_link_libraries(QtGuiApp PRIVATE
     VTK::FiltersGeometry
     VTK::FiltersModeling
     ${OpenCV_LIBS}
+    assimp-vc143-mt.lib
+    zlibstatic.lib
 )
 
 # 设置 VTK 模块依赖（确保头文件正确处理）

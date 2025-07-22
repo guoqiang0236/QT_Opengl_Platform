@@ -7,6 +7,12 @@ class MyGeometry :public QObject,protected QOpenGLFunctions_4_5_Core {
     Q_OBJECT
 public:
     MyGeometry(QObject* parent = nullptr);
+    MyGeometry(
+		const std::vector<float>& positions,
+        const std::vector<float>& normals,
+        const std::vector<float>& uvs,
+        const std::vector<unsigned int>& indices,
+        QObject* parent = nullptr);
     ~MyGeometry();
 
     static MyGeometry* createBox(float size);

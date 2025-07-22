@@ -5,6 +5,62 @@ MyGeometry::MyGeometry(QObject* parent)
     initializeOpenGLFunctions();
 }
 
+MyGeometry::MyGeometry(
+    const std::vector<float>& positions,
+    const std::vector<float>& normals, 
+    const std::vector<float>& uvs, 
+    const std::vector<unsigned int>& indices, QObject* parent)
+{
+    
+    mIndicesCount = indices.size();
+
+    // VBO创建
+    //POS
+    glGenBuffers(1, &mPosVbo);
+    glBindBuffer(GL_ARRAY_BUFFER, mPosVbo);
+    glBufferData(GL_ARRAY_BUFFER, positions.size()*sizeof(float), positions.data(), GL_STATIC_DRAW);
+
+    //UV
+    glGenBuffers(1, &mUvVao);
+    glBindBuffer(GL_ARRAY_BUFFER, mUvVao);
+    glBufferData(GL_ARRAY_BUFFER, normals.size()*sizeof(float), normals.data(), GL_STATIC_DRAW);
+
+    // 法线
+    glGenBuffers(1, &mNormalVbo);
+    glBindBuffer(GL_ARRAY_BUFFER, mNormalVbo);
+    glBufferData(GL_ARRAY_BUFFER, uvs.size()*sizeof(float), uvs.data(), GL_STATIC_DRAW);
+
+    //EBO
+    glGenBuffers(1, &mEbo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEbo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()*sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+
+    // VAO创建
+    glGenVertexArrays(1, &mVao);
+    glBindVertexArray(mVao);
+
+    // 绑定顶点位置
+    glBindBuffer(GL_ARRAY_BUFFER, mPosVbo);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
+
+    // 绑定UV坐标
+    glBindBuffer(GL_ARRAY_BUFFER, mUvVao);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void*)0);
+
+    // 绑定法线
+    glBindBuffer(GL_ARRAY_BUFFER, mNormalVbo);
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
+
+    // 绑定EBO
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEbo);
+
+    glBindVertexArray(0);
+    
+}
+
 MyGeometry::~MyGeometry()
 {
 	if (mVao != 0)
