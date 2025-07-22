@@ -2,7 +2,12 @@
 
 #include "../pch.h"
 #include <glm/glm.hpp>
-
+ 
+enum class ObjectType {
+    Object,
+    Mesh,
+    Scene
+};
 class MyObject :public QObject, protected QOpenGLFunctions_4_5_Core {
     Q_OBJECT
 public:
@@ -18,6 +23,11 @@ public:
     void rotateY(float angle);
     void rotateZ(float angle);
 
+    // 设置角度方法
+    void setAngleX(float angle);
+    void setAngleY(float angle);
+    void setAngleZ(float angle);
+
     // 设置缩放比例
     void setScale(glm::vec3 scale);
 
@@ -31,6 +41,7 @@ public:
     std::vector<MyObject*> getChildren();     // 获取所有子对象
     MyObject* getParent();                    // 获取父对象指针
 
+    ObjectType getType()const { return m_Type; }
 
 protected:
     // 成员变量（与截图完全一致）
@@ -48,5 +59,8 @@ protected:
 	//父子关系
 	std::vector<MyObject*> m_Children; // 子物体列表
 	MyObject* m_Parent{ nullptr }; // 父物体指针
+
+    //类型记录
+    ObjectType m_Type;
 	
 };

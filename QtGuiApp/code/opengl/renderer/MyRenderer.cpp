@@ -176,7 +176,7 @@ void MyRenderer::render(const std::vector<MyMesh*>& meshes,
 	} 
 }
 
-void MyRenderer::render(const std::vector<MyMesh*>& meshes,
+void MyRenderer::render(MyScene* scene,
 	MyCamera* camera, MyDirectionalLight* dirLight, std::vector<MyPointLight*>& pointLights,
 	MySpotLight* spotLight, MyAmbientLight* ambLight, bool bshow)
 {
@@ -189,9 +189,18 @@ void MyRenderer::render(const std::vector<MyMesh*>& meshes,
 
 	if (!bshow)
 		return;
-	//3 遍历mesh渲染
-	for (int i = 0; i < meshes.size(); i++) {
-		auto mesh = meshes[i];
+	//3 将scene当做根节点开始递归渲染
+	rendererObject(scene, camera, dirLight, pointLights, spotLight, ambLight, bshow);
+}
+
+//针对单个object
+void MyRenderer::rendererObject(MyObject* object, MyCamera* camera, 
+	MyDirectionalLight* dirLight, std::vector<MyPointLight*>& pointLights, 
+	MySpotLight* spotLight, MyAmbientLight* ambLight, bool bshow)
+{
+	//1 判断是Mesh还是Object，如果是Mesh就需要渲染
+	if (object->getType() == ObjectType::Mesh) {
+		auto mesh = (MyMesh*)object;
 		auto geometry = mesh->mGeometry;
 		auto material = mesh->mMaterial;
 
@@ -255,8 +264,8 @@ void MyRenderer::render(const std::vector<MyMesh*>& meshes,
 				shader->setFloat(baseName + ".kc", pointLight->mKc);  // 常数项衰减系数
 
 			}
-			
-		
+
+
 			shader->setVector3("ambientColor", ambLight->mColor);
 			shader->setFloat("shiness", phongMat->mShiness);
 
@@ -282,7 +291,7 @@ void MyRenderer::render(const std::vector<MyMesh*>& meshes,
 		}
 										break;
 		default:
-			continue;
+			break;
 		}
 
 		// 3. 绑定vao
@@ -290,7 +299,13 @@ void MyRenderer::render(const std::vector<MyMesh*>& meshes,
 
 		// 4. 执行绘制命令
 		glDrawElements(GL_TRIANGLES, geometry->getIndicesCount(), GL_UNSIGNED_INT, (void*)(sizeof(int) * 0));
+	}
 
+	//2 遍历Object的子节点，对每个子节点都需要调用rendererObject
+	auto children = object->getChildren();
+	for (int i = 0;i < children.size();i++)
+	{
+		rendererObject(children[i], camera, dirLight, pointLights, spotLight, ambLight, bshow);
 	}
 }
 

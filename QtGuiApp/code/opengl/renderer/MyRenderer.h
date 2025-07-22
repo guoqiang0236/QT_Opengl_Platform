@@ -8,6 +8,7 @@
 #include "../Light/MySpotLight.h"
 #include "../Light/MyAmbientLight.h"
 #include "../MyShader.h"
+#include "../MyScene.h"
 
 
 class MyRenderer :protected QOpenGLFunctions_4_5_Core {
@@ -26,9 +27,15 @@ public:
 		MyPointLight* pointLight,
 		MyAmbientLight* ambLight
 	);
-	void render(const std::vector<MyMesh*>& meshes,
+	void render(MyScene * scene,
 		MyCamera* camera, MyDirectionalLight* dirLight, std::vector<MyPointLight*>& pointLights,
 		MySpotLight* spotLight, MyAmbientLight* ambLight,bool bshow =true);
+
+	void rendererObject(
+		MyObject* object,
+		MyCamera* camera, MyDirectionalLight* dirLight, std::vector<MyPointLight*>& pointLights,
+		MySpotLight* spotLight, MyAmbientLight* ambLight, bool bshow = true 
+	);
 	
 private:
 	//根据Material类型不同,挑选不同的shader

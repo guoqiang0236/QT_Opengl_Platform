@@ -2,6 +2,7 @@
 
 MyObject::MyObject()
 {
+	m_Type = ObjectType::Object;
 }
 
 MyObject::~MyObject()
@@ -26,6 +27,21 @@ void MyObject::rotateY(float angle)
 void MyObject::rotateZ(float angle)
 {
 	m_AngleZ += angle;
+}
+
+void MyObject::setAngleX(float angle)
+{
+	m_AngleX = angle;
+}
+
+void MyObject::setAngleY(float angle)
+{
+	m_AngleY = angle;
+}
+
+void MyObject::setAngleZ(float angle)
+{
+	m_AngleZ = angle;
 }
 
 void MyObject::setScale(glm::vec3 scale)

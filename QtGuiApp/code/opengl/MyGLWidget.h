@@ -6,6 +6,7 @@
 #include "MyGeometry.h"
 #include "MyObject.h"
 #include "MyMesh.h"
+#include "MyScene.h"
 
 #include "renderer/MyRenderer.h"
 
@@ -110,7 +111,7 @@ private:
 
     //renderer
 	MyRenderer*m_renderer = nullptr;
-    std::vector<MyMesh*> m_meshes{}; // 存储所有的Mesh对象
+    MyScene* m_scene = nullptr;
     
     MyDirectionalLight* m_dirLight = nullptr; // 平行光
 	std::vector<MyPointLight*> m_pointLights ; // 点光源

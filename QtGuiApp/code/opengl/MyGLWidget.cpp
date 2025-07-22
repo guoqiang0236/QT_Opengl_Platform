@@ -72,8 +72,8 @@ void MyGLWidget::prepareCamera()
         (float)width() / (float)height(), 
         0.1f, 1000.0f,
         this);
-    /*
-    m_camera = new MyOrthographicCamera(
+    
+  /*  m_camera = new MyOrthographicCamera(
         -size, size,
         size, -size,
         size, -size,
@@ -180,19 +180,25 @@ void MyGLWidget::doRotationTransform()
 
 void MyGLWidget::prepare() {
     m_renderer = new::MyRenderer();
-
+    m_scene = new ::MyScene();
     // 1. 创建geometry
     auto geometry = MyGeometry::createBox(3.0f);
+	auto spgeometry = MyGeometry::createSphere(1.0f);
 
     // 2. 创建一个material并且配置参数
     auto material01 = new MyPhongMaterial();
-    material01->mShiness = 32.0f;
+    material01->mShiness = 16.0f;
     material01->mDiffuse = new MyTexture("../assets/textures/box.png", 0); // 兼容原有指针成员
     material01->mSpecularMask = new MyTexture("../assets/textures/sp_mask.png", 1);
 
     // 3. 生成mesh并用智能指针管理
-    auto mesh01 = new::MyMesh(geometry, material01);
+    auto mesh = new::MyMesh(geometry, material01);
+    auto spmesh = new ::MyMesh(spgeometry, material01);
+    spmesh->setPosition(glm::vec3(2.0f, 0.0f, 0.0f));
 
+    //创建父子关系
+    mesh->addChild(spmesh); 
+    m_scene->addChild(mesh);
 
 	auto geometryWhite = MyGeometry::createSphere(0.1f);
     auto materialWhite = new MyWhiteMaterial();
@@ -201,8 +207,7 @@ void MyGLWidget::prepare() {
     
 
     // material 也可以存到材质列表里，或由 mesh 持有
-    m_meshes.push_back(mesh01);
-    m_meshes.push_back(meshWhite);
+    
 
  
     // 创建点光源并设置衰减参数 
@@ -280,7 +285,7 @@ void MyGLWidget::preparelogo()
 
 	logoVAO = logogeometry->getVao();
 	m_Shader = std::make_unique<MyShader>("../assets/shaders/logo.vert", "../assets/shaders/logo.frag");
-    logoTexture = new MyTexture("../assets/textures/logo.left.top.bmp", 1); // 兼容原有指针成员
+    logoTexture = new MyTexture("../assets/textures/logo_left_top.bmp", 1); // 兼容原有指针成员
     bhaslogo = true;
 }
 
@@ -357,16 +362,14 @@ void MyGLWidget::paintGL()
     {
         m_cameraControl->update();
     }
-    if (m_renderer && !m_meshes.empty())
+    if (m_renderer && m_scene)
     {
         //m_meshes[0]->rotateY(0.1f);
         m_animTime += 0.02f; // 控制速度
         float amplitude = 1.0f; // 控制最大平移距离
         float x = std::sin(m_animTime) * amplitude;
 
-		glm::vec3 pos = m_meshes[0]->getPosition();
-		//m_meshes[0]->setPosition(glm::vec3(x, pos.y, pos.z)); // 更新位置
-        m_renderer->render(m_meshes,m_camera, m_dirLight, m_pointLights, m_spotLight,m_ambLight, bhasrenderer);
+        m_renderer->render(m_scene,m_camera, m_dirLight, m_pointLights, m_spotLight,m_ambLight, bhasrenderer);
     }
     if (bhaslogo && logoTexture != 0)
     {
