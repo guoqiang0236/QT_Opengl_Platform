@@ -2,15 +2,16 @@
 
 #include "MyMaterial.h"
 #include "../MyTexture.h"
+namespace MyOpenGL {
+    class MyImageMaterial : public MyMaterial {
+        Q_OBJECT
+    public:
+        MyImageMaterial();
+        ~MyImageMaterial();
 
-class MyImageMaterial : public MyMaterial {
-    Q_OBJECT
-public:
-    MyImageMaterial() ;
-    ~MyImageMaterial();
-
-public:
-    MyTexture* mDiffuse{ nullptr };
-	MyTexture* mSpecularMask{ nullptr };
-    float mShiness{ 1.0f };
-};
+    public:
+        MyOpenGL::MyTexture* mDiffuse{ nullptr };
+        MyOpenGL::MyTexture* mSpecularMask{ nullptr };
+        float mShiness{ 1.0f };
+    };
+}

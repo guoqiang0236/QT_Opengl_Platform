@@ -2,11 +2,12 @@
 
 
 
+namespace MyOpenGL {
+	MyPointLight::MyPointLight()
+	{
+	}
 
-MyPointLight::MyPointLight()
-{
-}
-
-MyPointLight::~MyPointLight()
-{
+	MyPointLight::~MyPointLight()
+	{
+	}
 }

@@ -1,14 +1,15 @@
 #pragma once
 
 #include "../../pch.h"
+namespace MyOpenGL {
+    class MyLight {
+    public:
+        MyLight();
+        ~MyLight();
 
-class MyLight {
-public:
-    MyLight();
-    ~MyLight();
-
-public:
-    glm::vec3 mColor{ 1.0f };
-    float mSpecularIntensity{ 1.0f };
-    float mIntensity{ 1.0f };
-};
+    public:
+        glm::vec3 mColor{ 1.0f };
+        float mSpecularIntensity{ 1.0f };
+        float mIntensity{ 1.0f };
+    };
+}

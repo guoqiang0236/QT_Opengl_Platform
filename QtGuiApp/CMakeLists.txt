@@ -138,3 +138,12 @@ add_custom_command(TARGET QtGuiApp POST_BUILD
     "${OpenCV_DIR}/x64/vc17/bin/opencv_world4100.dll"
     $<TARGET_FILE_DIR:QtGuiApp>
 )
+
+# 复制 assimp 和 zlib 的 DLL 到可执行文件目录
+add_custom_command(TARGET QtGuiApp POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${ASSIMP_DIR}/bin/assimp-vc143-mt.dll"
+        "${ASSIMP_DIR}/bin/assimp-vc143-mtd.dll"
+        $<TARGET_FILE_DIR:QtGuiApp>
+)
+

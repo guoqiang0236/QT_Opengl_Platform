@@ -18,7 +18,7 @@
 
 
 
-
+namespace MyOpenGL{
 class MyGLWidget : public QOpenGLWidget, protected QOpenGLFunctions_4_5_Core
 {
     Q_OBJECT
@@ -104,8 +104,8 @@ private:
 	glm::vec3 m_ambientColor{ 0.2f, 0.2f, 0.2f }; // 环境光颜色 
     
     //摄像机
-    MyCamera* m_camera = nullptr; // 透视摄像机
-    MyCameraControl* m_cameraControl = nullptr; // 摄像机控制器
+    OpenGLCamera::MyCamera* m_camera = nullptr; // 透视摄像机
+    OpenGLCamera::MyCameraControl* m_cameraControl = nullptr; // 摄像机控制器
     MyGeometry* m_geometry = nullptr;
     float m_angle;
 
@@ -124,4 +124,6 @@ private:
     bool bhasrenderer = false;
     QColor m_bgColor = Qt::black;
 };
+
+}
 

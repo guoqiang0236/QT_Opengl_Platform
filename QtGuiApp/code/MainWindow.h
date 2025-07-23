@@ -48,7 +48,7 @@ private:
     std::unique_ptr<MyProgressDialog> m_progressDialog; // 进度对话框指针
 
 
-	MyGLWidget* m_glwidget; // OpenGL Widget
+    MyOpenGL::MyGLWidget* m_glwidget; // OpenGL Widget
 };
 
 #endif // MED_IMG_MAINWINDOW_H

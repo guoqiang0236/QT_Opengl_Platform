@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget* parent)
     m_sub(new QThread(this)),
     m_numsub(new QThread(this)), 
 	//m_vaoWidget(new VAOOpenGLWidget(this))
-	m_glwidget(new MyGLWidget(this))
+	m_glwidget(new MyOpenGL::MyGLWidget(this))
 {
 
     //setWindowFlags(Qt::FramelessWindowHint);
@@ -133,11 +133,11 @@ void MainWindow::InitSlots()
 
 
     //opengl
-    connect(m_ui->pushButton_drawtriangle, &QPushButton::clicked, m_glwidget, &MyGLWidget::triggerDraw);
-    connect(m_ui->widget_logo, &ImageSwitch::checkedChanged, m_glwidget, &MyGLWidget::bShowLogo);
-    connect(m_ui->widget_object, &ImageSwitch::checkedChanged, m_glwidget, &MyGLWidget::bShowRenderer);
+    connect(m_ui->pushButton_drawtriangle, &QPushButton::clicked, m_glwidget, &MyOpenGL::MyGLWidget::triggerDraw);
+    connect(m_ui->widget_logo, &ImageSwitch::checkedChanged, m_glwidget, &MyOpenGL::MyGLWidget::bShowLogo);
+    connect(m_ui->widget_object, &ImageSwitch::checkedChanged, m_glwidget, &MyOpenGL::MyGLWidget::bShowRenderer);
     connect(m_ui->pushButton_background, &QPushButton::clicked, this, &MainWindow::SelectColor);
-    connect(m_glwidget, &MyGLWidget::prepareok, this, &MainWindow::InitRendererPannel);
+    connect(m_glwidget, &MyOpenGL::MyGLWidget::prepareok, this, &MainWindow::InitRendererPannel);
 }
 
 void MainWindow::UpdateGUI()
