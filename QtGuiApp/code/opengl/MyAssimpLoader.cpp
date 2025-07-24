@@ -51,13 +51,13 @@ void MyAssimpLoader::processNode(aiNode* ainode, MyOpenGL::MyObject* parent, con
 	node->setScale(scale);
 
 	//检查有没有mesh并且解析
-	//for (int i = 0; i < ainode->mNumMeshes; i++)
-	//{
-	//	int meshID = ainode->mMeshes[i]; //这里只是知道ID 要找到mesh的对象还得去场景aiScene里面
-	//	aiMesh* aiMesh = scene->mMeshes[meshID];//ainode只是存的ID scene里面才是存的对象
-	//	MyOpenGL::MyMesh* mesh = processMesh(aiMesh, scene, rootPath);
-	//	node->addChild(mesh); //object下面不只会挂节点node 还会挂mesh
-	//}
+	for (int i = 0; i < ainode->mNumMeshes; i++)
+	{
+		int meshID = ainode->mMeshes[i]; //这里只是知道ID 要找到mesh的对象还得去场景aiScene里面
+		aiMesh* aiMesh = scene->mMeshes[meshID];//ainode只是存的ID scene里面才是存的对象
+		MyOpenGL::MyMesh* mesh = processMesh(aiMesh, scene, rootPath);
+		node->addChild(mesh); //object下面不只会挂节点node 还会挂mesh
+	}
 
 	for (int i = 0; i < ainode->mNumChildren; i++)
 	{
@@ -67,86 +67,86 @@ void MyAssimpLoader::processNode(aiNode* ainode, MyOpenGL::MyObject* parent, con
 }
 
 ////处理mesh
-//MyOpenGL::MyMesh* MyAssimpLoader::processMesh(aiMesh* aimesh, const aiScene* scene, const std::string& rootPath) {
-//	std::vector<float> positions;
-//	std::vector<float> normals;
-//	std::vector<float> uvs;
-//	std::vector<unsigned int> indices;
-//
-//	for (int i = 0; i < aimesh->mNumVertices; i++)
-//	{
-//		//第i个定点的位置
-//		positions.push_back(aimesh->mVertices[i].x);
-//		positions.push_back(aimesh->mVertices[i].y);
-//		positions.push_back(aimesh->mVertices[i].z);
-//
-//		//第i个定点的法线
-//		normals.push_back(aimesh->mNormals[i].x);
-//		normals.push_back(aimesh->mNormals[i].y);
-//		normals.push_back(aimesh->mNormals[i].z);
-//
-//		//第i个定点的uv
-//		//一个mesh可能有n套uv(diffuse贴图uv,光照贴图uv...)
-//		//一般关注第0套uv,一般情况下第0套uv是贴图uv
-//		if (aimesh->mTextureCoords[0]) //如果存在第0套uv
-//		{
-//			uvs.push_back(aimesh->mTextureCoords[0][i].x); //u
-//			uvs.push_back(aimesh->mTextureCoords[0][i].y); //v
-//		}
-//		else
-//		{
-//			//如果不存在第0套uv 则设置为默认值
-//			uvs.push_back(0.0f);
-//			uvs.push_back(0.0f);
-//		}
-//	}
-//
-//	//解析mesh中的索引值
-//	//每个三角形就是一个aiFace
-//	//遍历每一个三角形(face) -> 遍历每一个indices
-//	for (int i = 0; i < aimesh->mNumFaces; i++)
-//	{
-//		aiFace face = aimesh->mFaces[i];
-//		for (int j = 0; j < face.mNumIndices; j++)
-//		{
-//			indices.push_back(face.mIndices[j]);
-//		}
-//	}
-//
-//	auto geometry = new Geometry(positions, normals, uvs, indices);
-//	auto material = new PhongMaterial();
-//	//material->mDepthWrite = false;
-//	//进行纹理读取
-//	if (aimesh->mMaterialIndex >= 0)
-//	{
-//		MyOpenGL::MyTexture* texture = nullptr;
-//		aiMaterial* aiMat = scene->mMaterials[aimesh->mMaterialIndex];
-//		//1 读取了diffuse贴图
-//		texture = processTexture(aiMat, aiTextureType_DIFFUSE, scene, rootPath);
-//		if (texture == nullptr)
-//		{
-//			texture = MyOpenGL::MyTexture::createTexture("assets/textures/defaultTexture.jpg", 0);
-//		}
-//		texture->setUnit(0);
-//		material->mDiffuse = texture;
-//		//2 读取specular贴图
-//		auto speclarMask = processTexture(aiMat, aiTextureType_SPECULAR, scene, rootPath);
-//		if (speclarMask == nullptr)
-//		{
-//			speclarMask = MyOpenGL::MyTexture::createTexture("assets/textures/defaultTexture.jpg", 0);
-//		}
-//		speclarMask->setUnit(1);
-//		material->mSpecularMask = speclarMask;
-//	}
-//	else
-//	{
-//		material->mDiffuse = Texture::createTexture("assets/textures/defaultTexture.jpg", 0);
-//	}
-//
-//	return new MyOpenGL::MyMesh(geometry, material);
-//}
-//
-//
+MyOpenGL::MyMesh* MyAssimpLoader::processMesh(aiMesh* aimesh, const aiScene* scene, const std::string& rootPath) {
+	std::vector<float> positions;
+	std::vector<float> normals;
+	std::vector<float> uvs;
+	std::vector<unsigned int> indices;
+
+	for (int i = 0; i < aimesh->mNumVertices; i++)
+	{
+		//第i个定点的位置
+		positions.push_back(aimesh->mVertices[i].x);
+		positions.push_back(aimesh->mVertices[i].y);
+		positions.push_back(aimesh->mVertices[i].z);
+
+		//第i个定点的法线
+		normals.push_back(aimesh->mNormals[i].x);
+		normals.push_back(aimesh->mNormals[i].y);
+		normals.push_back(aimesh->mNormals[i].z);
+
+		//第i个定点的uv
+		//一个mesh可能有n套uv(diffuse贴图uv,光照贴图uv...)
+		//一般关注第0套uv,一般情况下第0套uv是贴图uv
+		if (aimesh->mTextureCoords[0]) //如果存在第0套uv
+		{
+			uvs.push_back(aimesh->mTextureCoords[0][i].x); //u
+			uvs.push_back(aimesh->mTextureCoords[0][i].y); //v
+		}
+		else
+		{
+			//如果不存在第0套uv 则设置为默认值
+			uvs.push_back(0.0f);
+			uvs.push_back(0.0f);
+		}
+	}
+
+	//解析mesh中的索引值
+	//每个三角形就是一个aiFace
+	//遍历每一个三角形(face) -> 遍历每一个indices
+	for (int i = 0; i < aimesh->mNumFaces; i++)
+	{
+		aiFace face = aimesh->mFaces[i];
+		for (int j = 0; j < face.mNumIndices; j++)
+		{
+			indices.push_back(face.mIndices[j]);
+		}
+	}
+
+	auto geometry = new MyOpenGL::MyGeometry(positions, normals, uvs, indices);
+	auto material = new MyOpenGL::MyPhongMaterial();
+	//material->mDepthWrite = false;
+	//进行纹理读取
+	//if (aimesh->mMaterialIndex >= 0)
+	//{
+	//	MyOpenGL::MyTexture* texture = nullptr;
+	//	aiMaterial* aiMat = scene->mMaterials[aimesh->mMaterialIndex];
+	//	//1 读取了diffuse贴图
+	//	texture = processTexture(aiMat, aiTextureType_DIFFUSE, scene, rootPath);
+	//	if (texture == nullptr)
+	//	{
+	//		texture = MyOpenGL::MyTexture::createTexture("assets/textures/defaultTexture.jpg", 0);
+	//	}
+	//	texture->setUnit(0);
+	//	material->mDiffuse = texture;
+	//	//2 读取specular贴图
+	//	auto speclarMask = processTexture(aiMat, aiTextureType_SPECULAR, scene, rootPath);
+	//	if (speclarMask == nullptr)
+	//	{
+	//		speclarMask = MyOpenGL::MyTexture::createTexture("assets/textures/defaultTexture.jpg", 0);
+	//	}
+	//	speclarMask->setUnit(1);
+	//	material->mSpecularMask = speclarMask;
+	//}
+	//else
+	//{
+	//	material->mDiffuse = Texture::createTexture("assets/textures/defaultTexture.jpg", 0);
+	//}
+	material->mDiffuse = new MyOpenGL::MyTexture("assets/textures/defaultTexture.jpg", 0);
+	return new MyOpenGL::MyMesh(geometry, material);
+}
+
+
 //MyOpenGL::MyTexture* MyAssimpLoader::processTexture(const aiMaterial* aimat, const aiTextureType& type, const aiScene* scene, const std::string& rootPath) {
 //	MyOpenGL::MyTexture* texture = nullptr;
 //	//获取图片读取路径
