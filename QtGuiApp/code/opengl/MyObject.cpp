@@ -47,6 +47,7 @@ namespace MyOpenGL {
 	void MyObject::setScale(glm::vec3 scale)
 	{
 		m_Scale = scale;
+		//qDebug() << "setScale:" << m_Scale.x << m_Scale.y << m_Scale.z;
 	}
 
 	glm::mat4 MyObject::getModelMatrix()

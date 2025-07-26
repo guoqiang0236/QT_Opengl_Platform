@@ -117,64 +117,63 @@ MyOpenGL::MyMesh* MyAssimpLoader::processMesh(aiMesh* aimesh, const aiScene* sce
 	auto material = new MyOpenGL::MyPhongMaterial();
 	//material->mDepthWrite = false;
 	//进行纹理读取
-	//if (aimesh->mMaterialIndex >= 0)
-	//{
-	//	MyOpenGL::MyTexture* texture = nullptr;
-	//	aiMaterial* aiMat = scene->mMaterials[aimesh->mMaterialIndex];
-	//	//1 读取了diffuse贴图
-	//	texture = processTexture(aiMat, aiTextureType_DIFFUSE, scene, rootPath);
-	//	if (texture == nullptr)
-	//	{
-	//		texture = MyOpenGL::MyTexture::createTexture("assets/textures/defaultTexture.jpg", 0);
-	//	}
-	//	texture->setUnit(0);
-	//	material->mDiffuse = texture;
-	//	//2 读取specular贴图
-	//	auto speclarMask = processTexture(aiMat, aiTextureType_SPECULAR, scene, rootPath);
-	//	if (speclarMask == nullptr)
-	//	{
-	//		speclarMask = MyOpenGL::MyTexture::createTexture("assets/textures/defaultTexture.jpg", 0);
-	//	}
-	//	speclarMask->setUnit(1);
-	//	material->mSpecularMask = speclarMask;
-	//}
-	//else
-	//{
-	//	material->mDiffuse = Texture::createTexture("assets/textures/defaultTexture.jpg", 0);
-	//}
-	material->mDiffuse = new MyOpenGL::MyTexture("assets/textures/defaultTexture.jpg", 0);
+	if (aimesh->mMaterialIndex >= 0)
+	{
+		MyOpenGL::MyTexture* texture = nullptr;
+		aiMaterial* aiMat = scene->mMaterials[aimesh->mMaterialIndex];
+		//1 读取了diffuse贴图
+		texture = processTexture(aiMat, aiTextureType_DIFFUSE, scene, rootPath);
+		if (texture == nullptr)
+		{
+			texture = MyOpenGL::MyTexture::createTexture("../assets/textures/defaultTexture.jpg", 0);
+		}
+		//texture->setUnit(0);
+		material->mDiffuse = texture;
+		//2 读取specular贴图
+		//auto speclarMask = processTexture(aiMat, aiTextureType_SPECULAR, scene, rootPath);
+		//if (speclarMask == nullptr)
+		//{
+		//	speclarMask = MyOpenGL::MyTexture::createTexture("../assets/textures/defaultTexture.jpg", 0);
+		//}
+		////speclarMask->setUnit(1);
+		//material->mSpecularMask = speclarMask;
+	}
+	else
+	{
+		material->mDiffuse = MyOpenGL::MyTexture::createTexture("../assets/textures/defaultTexture.jpg", 0);
+	}
 	return new MyOpenGL::MyMesh(geometry, material);
 }
 
 
-//MyOpenGL::MyTexture* MyAssimpLoader::processTexture(const aiMaterial* aimat, const aiTextureType& type, const aiScene* scene, const std::string& rootPath) {
-//	MyOpenGL::MyTexture* texture = nullptr;
-//	//获取图片读取路径
-//	aiString aipath;
-//	aimat->Get(AI_MATKEY_TEXTURE(type, 0), aipath); //获取diffuse贴图的第0张
-//	if (!aipath.length)
-//	{
-//		return nullptr;
-//	}
-//
-//	//判断是否是嵌入fbx的图片
-//	const aiTexture* aitexture = scene->GetEmbeddedTexture(aipath.C_Str());//判断当前路径有没有嵌入的纹理与之对应
-//	if (aitexture)
-//	{
-//		//纹理图片是内嵌的
-//		unsigned char* dataIn = reinterpret_cast<unsigned char*>(aitexture->pcData); // reinterpret_cast是强制的类型转换
-//		uint32_t widthIn = aitexture->mWidth; //通常情况下(png, jpg),代表了整张图片的大小(height是0)
-//		uint32_t heightIn = aitexture->mHeight;
-//		texture = MyOpenGL::MyTexture::createTextureFromMemory(aipath.C_Str(), 0, dataIn, widthIn, heightIn);
-//	}
-//	else
-//	{
-//		//纹理图片在硬盘上
-//		std::string fullPath = rootPath + aipath.C_Str();
-//		texture = MyOpenGL::MyTexture::createTexture(fullPath, 0);
-//	}
-//	return texture;
-//}
+MyOpenGL::MyTexture* MyAssimpLoader::processTexture(const aiMaterial* aimat, const aiTextureType& type, const aiScene* scene, const std::string& rootPath) {
+	MyOpenGL::MyTexture* texture = nullptr;
+	//获取图片读取路径
+	aiString aipath;
+	aimat->Get(AI_MATKEY_TEXTURE(type, 0), aipath); //获取diffuse贴图的第0张
+	if (!aipath.length)
+	{
+		return nullptr;
+	}
+
+	//判断是否是嵌入fbx的图片
+	const aiTexture* aitexture = scene->GetEmbeddedTexture(aipath.C_Str());//判断当前路径有没有嵌入的纹理与之对应
+	if (aitexture)
+	{
+		//纹理图片是内嵌的
+		unsigned char* dataIn = reinterpret_cast<unsigned char*>(aitexture->pcData); // reinterpret_cast是强制的类型转换
+		uint32_t widthIn = aitexture->mWidth; //通常情况下(png, jpg),代表了整张图片的大小(height是0)
+		uint32_t heightIn = aitexture->mHeight;
+		texture = MyOpenGL::MyTexture::createTextureFromMemory(aipath.C_Str(), 0, dataIn, widthIn, heightIn);
+	}
+	else
+	{
+		//纹理图片在硬盘上
+		std::string fullPath = rootPath + aipath.C_Str();
+		texture = MyOpenGL::MyTexture::createTexture(fullPath, 0);
+	}
+	return texture;
+}
 //
 
 //将Assimp的aiMatrix转化为openGL的glmat4

@@ -11,7 +11,7 @@ namespace MyOpenGL {
         const std::vector<float>& uvs,
         const std::vector<unsigned int>& indices, QObject* parent)
     {
-
+        initializeOpenGLFunctions();
         mIndicesCount = indices.size();
 
         // VBO创建
@@ -23,12 +23,12 @@ namespace MyOpenGL {
         //UV
         glGenBuffers(1, &mUvVao);
         glBindBuffer(GL_ARRAY_BUFFER, mUvVao);
-        glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(float), normals.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(float), uvs.data(), GL_STATIC_DRAW);
 
         // 法线
         glGenBuffers(1, &mNormalVbo);
         glBindBuffer(GL_ARRAY_BUFFER, mNormalVbo);
-        glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(float), uvs.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(float), normals.data(), GL_STATIC_DRAW);
 
         //EBO
         glGenBuffers(1, &mEbo);

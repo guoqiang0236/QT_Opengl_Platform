@@ -223,7 +223,8 @@ namespace MyOpenGL {
 				phongMat->mDiffuse->bind();
 
 				shader->setInt("specularMaskSampler", 1);
-				phongMat->mSpecularMask->bind();
+				if(phongMat->mSpecularMask)
+					phongMat->mSpecularMask->bind();
 				//mvp矩阵的更新
 				shader->setMatrix4x4("modelMatrix", mesh->getModelMatrix());
 				shader->setMatrix4x4("viewMatrix", camera->getViewMatrix());
@@ -236,13 +237,16 @@ namespace MyOpenGL {
 
 				// 光源参数的uniform更新 
 				//SpotLight
-				shader->setVector3("MySpotLight.position", spotLight->getPosition());
-				shader->setVector3("MySpotLight.color", spotLight->mColor);
-				shader->setVector3("MySpotLight.targetDirection", spotLight->mTargetDirection);
-				shader->setFloat("MySpotLight.specularIntensity", spotLight->mSpecularIntensity);
-				shader->setFloat("MySpotLight.innerLine", glm::cos(glm::radians(spotLight->mInnerAngle)));
-				shader->setFloat("MySpotLight.outerLine", glm::cos(glm::radians(spotLight->mOuterAngle)));
-
+				if (spotLight)
+				{
+					shader->setVector3("MySpotLight.position", spotLight->getPosition());
+					shader->setVector3("MySpotLight.color", spotLight->mColor);
+					shader->setVector3("MySpotLight.targetDirection", spotLight->mTargetDirection);
+					shader->setFloat("MySpotLight.specularIntensity", spotLight->mSpecularIntensity);
+					shader->setFloat("MySpotLight.innerLine", glm::cos(glm::radians(spotLight->mInnerAngle)));
+					shader->setFloat("MySpotLight.outerLine", glm::cos(glm::radians(spotLight->mOuterAngle)));
+				}
+				
 				//directionalLight
 				shader->setVector3("MydirectionalLight.color", dirLight->mColor);
 				shader->setVector3("MydirectionalLight.direction", dirLight->mDirection);

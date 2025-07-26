@@ -23,7 +23,6 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets OpenGLWidgets Quick QuickW
 message(STATUS "Qt6 found at: ${Qt6_DIR}")
 message(STATUS "Qt6 version: ${Qt6_VERSION}")
 message(STATUS "Qt6 libraries: ${Qt6_LIBRARIES}")
-find_package(VTK REQUIRED)
 set (OpenCV_DIR "${CMAKE_SOURCE_DIR}/Packages/OpenCV4100")
 find_package(OpenCV REQUIRED)
 #GLM库
@@ -31,9 +30,6 @@ set (GLM_DIR "${CMAKE_SOURCE_DIR}/Packages/glm-1.0.1-light")
 #assimp库
 set (ASSIMP_DIR "${CMAKE_SOURCE_DIR}/Packages/assimp")
 
-if(NOT VTK_FOUND)
-    message(FATAL_ERROR "VTK not found!")
-endif()
 
 # 启用 AUTOMOC（QT关键！）
 set(CMAKE_AUTOMOC ON)   # 自动运行 moc，处理 Q_OBJECT 宏，生成元对象代码（信号槽机制依赖）
@@ -71,7 +67,6 @@ target_precompile_headers(QtGuiApp PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/code/pch
 # 库头文件目录
 target_include_directories(QtGuiApp
     PRIVATE 
-        ${VTK_INCLUDE_DIRS}
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${OpenCV_INCLUDE_DIRS}
         ${GLM_DIR}
@@ -95,36 +90,12 @@ target_link_libraries(QtGuiApp PRIVATE
     Qt6::Quick
     Qt6::QuickWidgets
     Qt6::SerialPort
-    VTK::GUISupportQt  
-    VTK::RenderingOpenGL2
-    VTK::InteractionStyle
-    VTK::CommonCore
-    VTK::RenderingImage     
-    VTK::IOImage
-    VTK::ViewsContext2D
-    VTK::RenderingCore
-    VTK::CommonColor
-    VTK::CommonDataModel
-    VTK::ImagingCore
-    VTK::InteractionImage
-    VTK::RenderingContextOpenGL2
-    VTK::RenderingFreeType
-    VTK::RenderingGL2PSOpenGL2
-    VTK::RenderingVolumeOpenGL2
-    VTK::RenderingAnnotation 
-    VTK::RenderingVolume
-    VTK::FiltersGeneral
-    VTK::FiltersGeometry
-    VTK::FiltersModeling
     ${OpenCV_LIBS}
     assimp-vc143-mt.lib
     zlibstatic.lib
+    opengl32.lib    
 )
 
-# 设置 VTK 模块依赖（确保头文件正确处理）
-if(TARGET VTK::moc)
-    add_dependencies(QtGuiApp VTK::moc)
-endif()
 
 #使用 QT_NO_DEBUG_OUTPUT 宏禁止release模式下的调试输出
 #if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")

@@ -7,6 +7,7 @@
 #include "MyObject.h"
 #include "MyMesh.h"
 #include "MyScene.h"
+#include "MyAssimpLoader.h"
 
 #include "renderer/MyRenderer.h"
 
@@ -15,6 +16,7 @@
 #include "../camera/MyPerspectiveCamera.h"
 #include "../camera/MyTrackBallCameraControl.h"
 #include "../camera/MyGameCameraControl.h"
+
 
 
 
@@ -36,6 +38,7 @@ private:
    
     void prepare();
     void preparelogo();
+	void preparemoxing();// 准备模型
 
     //图形变换
 	void doRotationTransform();//旋转

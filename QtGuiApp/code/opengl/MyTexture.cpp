@@ -1,6 +1,8 @@
 ﻿#include "MyTexture.h"
 #include <opencv2/opencv.hpp>
 namespace MyOpenGL {
+    std::map<std::string, MyTexture*> MyTexture::mTextureCache;
+
     MyTexture::MyTexture(const std::string& path, unsigned int unit)
     {
         initializeOpenGLFunctions();
@@ -80,8 +82,86 @@ namespace MyOpenGL {
           •	GL_MIRROR_CLAMP_TO_EDGE（OpenGL 4.4 + ）：超出范围时，先镜像再 clamp 到边缘。*/
     }
 
+    MyTexture::MyTexture(unsigned int unit, unsigned char* dataIn, uint32_t widthIn, uint32_t heightIn)
+    {
+        initializeOpenGLFunctions();
+        mUnit = unit;
+
+        // 1. 用 OpenCV 解码内存图片
+        uint32_t dataInSize = heightIn == 0 ? widthIn : widthIn * heightIn * 4;
+        std::vector<uchar> buf(dataIn, dataIn + dataInSize);
+        cv::Mat img = cv::imdecode(buf, cv::IMREAD_UNCHANGED);
+
+        if (img.empty()) {
+            qDebug() << "图片内存解码失败";
+            return;
+        }
+
+        cv::flip(img, img, 0);
+
+        if (img.channels() == 1) {
+            cv::cvtColor(img, img, cv::COLOR_GRAY2RGBA);
+        }
+
+        if (img.channels() == 3) {
+            cv::cvtColor(img, img, cv::COLOR_BGR2RGBA);
+        }
+        else if (img.channels() == 4) {
+            cv::cvtColor(img, img, cv::COLOR_BGRA2RGBA);
+        }
+
+        mWidth = img.cols;
+        mHeight = img.rows;
+
+        // 2. 生成纹理并激活单元绑定
+        glGenTextures(1, &mTexture);
+        glActiveTexture(GL_TEXTURE0 + mUnit);
+        glBindTexture(GL_TEXTURE_2D, mTexture);
+
+        // 3. 上传纹理数据
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, mWidth, mHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, img.data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        // 4. 设置参数
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // 放大过滤器
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR); // 缩小过滤器
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    }
+
     MyTexture::~MyTexture()
     {
+    }
+
+    MyTexture* MyTexture::createTexture(const std::string& path, unsigned int unit)
+    {
+        //1 检查是否缓存过本路径对应的纹理对象
+        auto iter = mTextureCache.find(path);
+        if (iter != mTextureCache.end())
+        {
+            //对于iterater, first->key, second->value
+            return iter->second;
+        }
+        //2 如果本路径对应的texture没有生成过,则重新生成
+        auto texture = new MyTexture(path, unit);
+        mTextureCache[path] = texture;
+        return texture;
+    }
+
+    MyTexture* MyTexture::createTextureFromMemory(const std::string& path, unsigned int unit, unsigned char* dataIn, uint32_t widthIn, uint32_t heightIn)
+    {
+        //1 检查是否缓存过本路径对应的纹理对象
+        auto iter = mTextureCache.find(path);
+        if (iter != mTextureCache.end())
+        {
+            //对于iterater, first->key, second->value
+            return iter->second;
+        }
+
+        //2 如果本路径对应的texture没有生成过,则重新生成
+        auto texture = new MyTexture(unit, dataIn, widthIn, heightIn);
+        mTextureCache[path] = texture;
+        return texture;
     }
 
     void MyTexture::bind()

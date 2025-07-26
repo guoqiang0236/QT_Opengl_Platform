@@ -4,14 +4,10 @@
 #include <QTimer>
 #include "MainWindow.h"
 #include "CustomSplashScreen.h"
-#include<vtkAutoInit.h>
-#include <vtkOutputWindow.h>
 #include <QFile>
 #include "GlobalConfig.h"
 
-VTK_MODULE_INIT(vtkRenderingOpenGL2);
-VTK_MODULE_INIT(vtkInteractionStyle);
-VTK_MODULE_INIT(vtkRenderingVolumeOpenGL2)
+
 
 int main(int argc, char* argv[]) {
     
@@ -28,7 +24,6 @@ int main(int argc, char* argv[]) {
     format.setProfile(QSurfaceFormat::CoreProfile);
     QSurfaceFormat::setDefaultFormat(format);
     QApplication app(argc, argv);
-    vtkOutputWindow::SetGlobalWarningDisplay(0);
 
     //loading加载界面
     //CustomSplashScreen loadingflash;

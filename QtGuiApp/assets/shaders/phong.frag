@@ -1,4 +1,4 @@
-#version 460 core
+#version 450 core
 out vec4 FragColor;
 
 in vec2 uv;
@@ -140,13 +140,13 @@ void main()
 	vec3 normalN = normalize(normal);
 	vec3 viewDir = normalize(worldPosition - cameraPosition);
 
-	result += calculateSpotLight(MySpotLight, normalN, viewDir);
+	//result += calculateSpotLight(MySpotLight, normalN, viewDir);
 	result += calculateDirectionalLight(MydirectionalLight,normalN, viewDir);
 
-	for(int i =0;i<PointLight_NUM;i++)
-	{
-		result += calculatePointLight(MyPointLight[i],normalN, viewDir);
-	}
+//	for(int i =0;i<PointLight_NUM;i++)
+//	{
+//		result += calculatePointLight(MyPointLight[i],normalN, viewDir);
+//	}
 
 	//环境光计算 
 	vec3 objectColor  = texture(sampler, uv).xyz;

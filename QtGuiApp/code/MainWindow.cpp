@@ -1,11 +1,5 @@
 ﻿#include "MainWindow.h"
 // 移除不存在的头文件
-#include <vtkImageData.h>
-#include <vtkSphereSource.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkActor.h>
-#include <vtkCamera.h>
-#include <vtkRenderWindow.h>
 #include <QDebug>
 #include <QIcon>
 #include <QFileDialog>
@@ -13,7 +7,6 @@
 #include "MainWindow-UI.h"
 #include <thread>
 #include <iostream>
-#include <vtkImageFlip.h>
 #include "MyColorSelecter.h"
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent),

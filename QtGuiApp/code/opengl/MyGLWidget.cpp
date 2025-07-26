@@ -185,7 +185,7 @@ namespace MyOpenGL {
         m_scene = new ::MyOpenGL::MyScene();
         // 1. 创建geometry
         auto geometry = MyGeometry::createBox(3.0f);
-        auto spgeometry = MyGeometry::createSphere(1.0f);
+        auto spgeometry = MyGeometry::createBox(1.0f);
 
         // 2. 创建一个material并且配置参数
         auto material01 = new MyPhongMaterial();
@@ -291,6 +291,29 @@ namespace MyOpenGL {
         bhaslogo = true;
     }
 
+    void MyGLWidget::preparemoxing()
+    {
+		m_renderer = new::MyOpenGL::MyRenderer();
+        m_scene = new ::MyOpenGL::MyScene();
+        
+		auto testmodel = MyAssimpLoader::load("../assets/fbx/Fist Fight B.fbx");
+        //testmodel->setScale(glm::vec3(0.01f));
+        if (!testmodel)
+            return;
+        m_scene->addChild(testmodel);
+        
+
+        //平行光
+		m_dirLight = new::MyOpenGL::MyDirectionalLight();
+        m_dirLight->mDirection = glm::vec3(-1.0f);
+
+        // 环境光
+		m_ambLight = new ::MyOpenGL::MyAmbientLight(); 
+		m_ambLight->mColor = glm::vec3(0.2f); 
+
+        bhasrenderer = true;
+    }
+
     void MyGLWidget::doTranslationTransform()
     {
         //平移变换
@@ -377,11 +400,7 @@ namespace MyOpenGL {
         {
             renderLogoOnScreen();
         }
-        //变换矩阵
-        //doTransform();
-        //doTransformDieJia();
-        //渲染
-        //render();
+  
         update();
     }
 
@@ -473,7 +492,8 @@ namespace MyOpenGL {
     void MyGLWidget::triggerDraw()
     {
         makeCurrent();
-        prepare();
+        //prepare();
+        preparemoxing();
         preparelogo();
         prepareCamera();
 

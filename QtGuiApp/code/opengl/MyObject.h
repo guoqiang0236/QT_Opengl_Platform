@@ -54,7 +54,7 @@ namespace MyOpenGL {
         float m_AngleZ{ 0.0f };        // Z轴旋转角度（弧度）
 
 
-        glm::vec3 m_Scale{ 1.0f };
+        glm::vec3 m_Scale{ 0.1f };
 
         //父子关系
         std::vector<MyObject*> m_Children; // 子物体列表
