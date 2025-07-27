@@ -181,9 +181,10 @@ namespace MyOpenGL {
 		OpenGLCamera::MyCamera* camera, MyDirectionalLight* dirLight, std::vector<MyPointLight*>& pointLights,
 		MySpotLight* spotLight, MyAmbientLight* ambLight, bool bshow)
 	{
-		//1 设置当前帧绘制的时候,opengl的必要状态机参数
+		////1 设置当前帧绘制的时候,opengl的必要状态机参数
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LESS);
+		glDepthMask(GL_TRUE);
 
 		//2 清理画布
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -204,6 +205,9 @@ namespace MyOpenGL {
 			auto mesh = (MyOpenGL::MyMesh*)object;
 			auto geometry = mesh->mGeometry;
 			auto material = mesh->mMaterial;
+
+			//设置渲染状态
+			setDepthState(material);
 
 			// 1. 决定使用哪个Shader
 			MyOpenGL::MyShader* shader = pickShader(material->mType);
@@ -354,6 +358,28 @@ namespace MyOpenGL {
 			break;
 		}
 		return result;
+	}
+	void MyRenderer::setDepthState(MyOpenGL::MyMaterial* material)
+	{
+		//检测深度状态
+		if (material->mDepthTest)
+		{
+			glEnable(GL_DEPTH_TEST);
+			glDepthFunc(material->mDepthFunc);
+		}
+		else
+		{
+			glDisable(GL_DEPTH_TEST);
+		}
+
+		if (material->mDepthWrite)
+		{
+			glDepthMask(GL_TRUE);
+		}
+		else
+		{
+			glDepthMask(GL_FALSE);
+		}
 	}
 }
 

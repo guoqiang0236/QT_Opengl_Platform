@@ -127,16 +127,16 @@ MyOpenGL::MyMesh* MyAssimpLoader::processMesh(aiMesh* aimesh, const aiScene* sce
 		{
 			texture = MyOpenGL::MyTexture::createTexture("../assets/textures/defaultTexture.jpg", 0);
 		}
-		//texture->setUnit(0);
+		texture->setUnit(0);
 		material->mDiffuse = texture;
 		//2 读取specular贴图
-		//auto speclarMask = processTexture(aiMat, aiTextureType_SPECULAR, scene, rootPath);
-		//if (speclarMask == nullptr)
-		//{
-		//	speclarMask = MyOpenGL::MyTexture::createTexture("../assets/textures/defaultTexture.jpg", 0);
-		//}
-		////speclarMask->setUnit(1);
-		//material->mSpecularMask = speclarMask;
+		auto speclarMask = processTexture(aiMat, aiTextureType_SPECULAR, scene, rootPath);
+		if (speclarMask == nullptr)
+		{
+			speclarMask = MyOpenGL::MyTexture::createTexture("../assets/textures/defaultTexture.jpg", 0);
+		}
+		speclarMask->setUnit(1);
+		material->mSpecularMask = speclarMask;
 	}
 	else
 	{
@@ -146,7 +146,11 @@ MyOpenGL::MyMesh* MyAssimpLoader::processMesh(aiMesh* aimesh, const aiScene* sce
 }
 
 
-MyOpenGL::MyTexture* MyAssimpLoader::processTexture(const aiMaterial* aimat, const aiTextureType& type, const aiScene* scene, const std::string& rootPath) {
+MyOpenGL::MyTexture* MyAssimpLoader::processTexture(
+	const aiMaterial* aimat,
+	const aiTextureType& type,
+	const aiScene* scene, 
+	const std::string& rootPath) {
 	MyOpenGL::MyTexture* texture = nullptr;
 	//获取图片读取路径
 	aiString aipath;

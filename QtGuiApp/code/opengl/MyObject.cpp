@@ -52,6 +52,14 @@ namespace MyOpenGL {
 
 	glm::mat4 MyObject::getModelMatrix()
 	{
+		//首先获取父亲的变换矩阵
+		glm::mat4 parentMatrix{ 1.0f };
+		if (m_Parent != nullptr)
+		{
+			parentMatrix = m_Parent->getModelMatrix();
+		}
+
+
 		//unity:缩放，旋转，平移
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::scale(model, m_Scale);//缩放
@@ -60,7 +68,7 @@ namespace MyOpenGL {
 		model = glm::rotate(model, glm::radians(m_AngleZ), glm::vec3(0.0f, 0.0f, 1.0f));//roll
 
 
-		model = glm::translate(glm::mat4(1.0f), m_Position) * model;//平移
+		model = parentMatrix * glm::translate(glm::mat4(1.0f), m_Position) * model;//平移
 
 		return model;
 	}

@@ -1,42 +1,39 @@
-#设置cmake的最低版本要求
+
 cmake_minimum_required(VERSION 3.20)
 
-#复制shader文件到构建目录
+# 在 VS 工程中显示 assets 文件夹
 file(GLOB ASSETS "./assets" )
 file(COPY ${ASSETS} DESTINATION ${CMAKE_BINARY_DIR})
-
-# 递归收集 assets 文件夹下所有文件
 file(GLOB_RECURSE ASSET_FILES "${CMAKE_CURRENT_SOURCE_DIR}/assets/*")
-# 在 VS 工程中显示 assets 文件夹
-source_group("assets" FILES ${ASSET_FILES})
+message(STATUS "Assets folder path: ${CMAKE_CURRENT_SOURCE_DIR}/assets")
+add_custom_target(AssetsInIDE SOURCES ${ASSET_FILES})
+foreach(ASSET_FILE IN LISTS ASSET_FILES)
+    file(RELATIVE_PATH ASSET_REL_PATH "${CMAKE_CURRENT_SOURCE_DIR}" "${ASSET_FILE}")
+    get_filename_component(ASSET_GROUP "${ASSET_REL_PATH}" DIRECTORY)
+    string(REPLACE "/" "\\" ASSET_GROUP "${ASSET_GROUP}")
+    source_group("${ASSET_GROUP}" FILES "${ASSET_FILE}")
+endforeach()
 
-#设置c++标准
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# 设置项目名称和版本
 project(QtGuiApp LANGUAGES CXX)
 
 # 查找所需要的库
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets OpenGLWidgets Quick QuickWidgets SerialPort)
-# 调试信息：显示 Qt6 的路径
 message(STATUS "Qt6 found at: ${Qt6_DIR}")
 message(STATUS "Qt6 version: ${Qt6_VERSION}")
 message(STATUS "Qt6 libraries: ${Qt6_LIBRARIES}")
 set (OpenCV_DIR "${CMAKE_SOURCE_DIR}/Packages/OpenCV4100")
 find_package(OpenCV REQUIRED)
-#GLM库
 set (GLM_DIR "${CMAKE_SOURCE_DIR}/Packages/glm-1.0.1-light")
-#assimp库
 set (ASSIMP_DIR "${CMAKE_SOURCE_DIR}/Packages/assimp")
 
 
-# 启用 AUTOMOC（QT关键！）
 set(CMAKE_AUTOMOC ON)   # 自动运行 moc，处理 Q_OBJECT 宏，生成元对象代码（信号槽机制依赖）
 set(CMAKE_AUTOUIC ON)   # 自动处理 .ui 文件，生成对应的界面代码
 set(CMAKE_AUTORCC ON)   # 自动处理 .qrc 资源文件，生成资源访问代码
 
-# 收集源文件（递归收集所有子文件夹中的头文件和源文件）
 file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS
     "code/*.h"  
     "code/*.cpp"
@@ -45,7 +42,6 @@ file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS
     "control/*.png"
 )
 
-# 为每个文件创建对应的文件夹分组
 foreach(FILE_PATH IN LISTS SRC_FILES)
     file(RELATIVE_PATH REL_PATH "${CMAKE_CURRENT_SOURCE_DIR}" "${FILE_PATH}")
     get_filename_component(FILE_DIR "${REL_PATH}" DIRECTORY)
@@ -58,13 +54,12 @@ qt_add_resources(RESOURCES resources.qrc)
 
 
 # 创建可执行文件，根据构建类型动态设置 WIN32 选项
-#add_executable(QtGuiApp WIN32 ${SRC_FILES} ${RESOURCES} res/icon/apprc.rc ${ASSET_FILES})  # Release 模式：无控制台
-add_executable(QtGuiApp ${SRC_FILES} ${RESOURCES}  res/icon/apprc.rc ${ASSET_FILES})
+#add_executable(QtGuiApp WIN32 ${SRC_FILES} ${RESOURCES} res/icon/apprc.rc)  # Release 模式：无控制台
+add_executable(QtGuiApp ${SRC_FILES} ${RESOURCES}  res/icon/apprc.rc)
 
 # 添加预编译头支持
 target_precompile_headers(QtGuiApp PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/code/pch.h")
 
-# 库头文件目录
 target_include_directories(QtGuiApp
     PRIVATE 
         ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -72,16 +67,12 @@ target_include_directories(QtGuiApp
         ${GLM_DIR}
         ${ASSIMP_DIR}/include
 )
-
-# 库lib目录
 target_link_directories(QtGuiApp
     PRIVATE
         "${CMAKE_SOURCE_DIR}/lib"
         ${OpenCV_LIB_DIR}
         ${ASSIMP_DIR}/lib
 )
-
-# 链接lib库
 target_link_libraries(QtGuiApp PRIVATE
     Qt6::Core
     Qt6::Gui
