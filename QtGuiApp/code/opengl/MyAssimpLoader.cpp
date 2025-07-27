@@ -63,7 +63,9 @@ void MyAssimpLoader::processNode(aiNode* ainode, MyOpenGL::MyObject* parent, con
 	{
 		processNode(ainode->mChildren[i], node, scene, rootPath);
 	}
-
+	/*int i = 7;
+	if(i < ainode->mNumChildren)
+		processNode(ainode->mChildren[i], node, scene, rootPath);*/
 }
 
 ////¥¶¿Ìmesh

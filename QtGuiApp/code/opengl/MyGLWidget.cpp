@@ -296,37 +296,37 @@ namespace MyOpenGL {
 		m_renderer = new::MyOpenGL::MyRenderer();
         m_scene = new ::MyOpenGL::MyScene();
         
-		/*auto testmodel = MyAssimpLoader::load("../assets/fbx/bag/backpack.obj");
-        testmodel->setScale(glm::vec3(0.5f));
+		auto testmodel = MyAssimpLoader::load("../assets/fbx/Fist Fight B.fbx");
+        testmodel->setScale(glm::vec3(0.1f));
         if (!testmodel)
             return;
-        m_scene->addChild(testmodel);*/
+        m_scene->addChild(testmodel);
 
 
         //深度测试
-		auto geometry = MyGeometry::createPlane(5.0f,5.0f);
-		auto materialA = new MyPhongMaterial();
-		materialA->mDiffuse = new MyTexture("../assets/textures/goku.jpg", 0); // 兼容原有指针成员
-		auto meshA = new::MyOpenGL::MyMesh(geometry, materialA);
-        m_scene->addChild(meshA);
+		//auto geometry = MyGeometry::createPlane(5.0f,5.0f);
+		//auto materialA = new MyPhongMaterial();
+		//materialA->mDiffuse = new MyTexture("../assets/textures/goku.jpg", 0); // 兼容原有指针成员
+		//auto meshA = new::MyOpenGL::MyMesh(geometry, materialA);
+  //      m_scene->addChild(meshA);
 
-        auto materialB = new MyPhongMaterial();
-        materialB->mDiffuse = new MyTexture("../assets/textures/box.png", 0); // 兼容原有指针成员
-        //materialB->mDepthWrite = false;
-        auto meshB = new::MyOpenGL::MyMesh(geometry, materialB);
-		meshB->setPosition(glm::vec3(2.0f, 0.5f, -1.0f));
-        m_scene->addChild(meshB);
+  //      auto materialB = new MyPhongMaterial();
+  //      materialB->mDiffuse = new MyTexture("../assets/textures/box.png", 0); // 兼容原有指针成员
+  //      //materialB->mDepthWrite = false;
+  //      auto meshB = new::MyOpenGL::MyMesh(geometry, materialB);
+		//meshB->setPosition(glm::vec3(2.0f, 0.5f, -1.0f));
+  //      m_scene->addChild(meshB);
 
-        auto materialC = new MyPhongMaterial();
-        materialC->mDiffuse = new MyTexture("../assets/textures/earth.png", 0); // 兼容原有指针成员
-        auto meshC = new::MyOpenGL::MyMesh(geometry, materialC);
-        meshC->setPosition(glm::vec3(4.0f, 1.0f, -2.0f));
-        m_scene->addChild(meshC);
+  //      auto materialC = new MyPhongMaterial();
+  //      materialC->mDiffuse = new MyTexture("../assets/textures/earth.png", 0); // 兼容原有指针成员
+  //      auto meshC = new::MyOpenGL::MyMesh(geometry, materialC);
+  //      meshC->setPosition(glm::vec3(4.0f, 1.0f, -2.0f));
+  //      m_scene->addChild(meshC);
 
         //平行光
 		m_dirLight = new::MyOpenGL::MyDirectionalLight();
         m_dirLight->mDirection = glm::vec3(-1.0f);
-        m_dirLight->mSpecularIntensity = 0.1f;
+        m_dirLight->mSpecularIntensity = 0.4f;
         
         // 环境光
 		m_ambLight = new ::MyOpenGL::MyAmbientLight(); 
