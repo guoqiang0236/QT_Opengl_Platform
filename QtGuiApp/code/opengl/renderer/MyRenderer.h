@@ -41,10 +41,12 @@ namespace MyOpenGL {
 		//根据Material类型不同,挑选不同的shader
 		MyOpenGL::MyShader* pickShader(MaterialType type);
 		void setDepthState(MyOpenGL::MyMaterial* material);
+		void setPolygonOffsetState(MyOpenGL::MyMaterial* material);
 	private:
 		//生成多种不同的shader对象
 		MyOpenGL::MyShader* mPhongShader{ nullptr };
 		MyOpenGL::MyShader* mWhiteShader{ nullptr };
 		MyOpenGL::MyShader* mImageShader{ nullptr };
+		MyOpenGL::MyShader* mDepthShader{ nullptr };
 	};
 }

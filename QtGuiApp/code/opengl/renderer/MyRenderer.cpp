@@ -9,6 +9,7 @@ namespace MyOpenGL {
 		mPhongShader = new MyOpenGL::MyShader("../assets/shaders/phong.vert", "../assets/shaders/phong.frag");
 		mWhiteShader = new MyOpenGL::MyShader("../assets/shaders/white.vert", "../assets/shaders/white.frag");
 		mImageShader = new MyOpenGL::MyShader("../assets/shaders/image.vert", "../assets/shaders/image.frag");
+		mDepthShader = new MyOpenGL::MyShader("../assets/shaders/depth.vert", "../assets/shaders/depth.frag");
 	}
 
 	MyRenderer::~MyRenderer()
@@ -186,6 +187,9 @@ namespace MyOpenGL {
 		glDepthFunc(GL_LESS);
 		glDepthMask(GL_TRUE);
 
+		glDisable(GL_POLYGON_OFFSET_FILL);// 关闭多边形偏移填充
+		glDisable(GL_POLYGON_OFFSET_LINE);// 关闭多边形偏移线
+
 		//2 清理画布
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -208,7 +212,7 @@ namespace MyOpenGL {
 
 			//设置渲染状态
 			setDepthState(material);
-
+			setPolygonOffsetState(material);
 			// 1. 决定使用哪个Shader
 			MyOpenGL::MyShader* shader = pickShader(material->mType);
 
@@ -290,12 +294,24 @@ namespace MyOpenGL {
 
 			}
 											break;
+			
 			case MaterialType::ImageMaterial: {
 				//mvp矩阵的更新
 				shader->setInt("imagesampler", 2);
 				shader->setMatrix4x4("modelMatrix", mesh->getModelMatrix());
 				shader->setMatrix4x4("viewMatrix", camera->getViewMatrix());
 				shader->setMatrix4x4("projectionMatrix", camera->getProjectionMatrix());
+
+			}
+											break;
+			case MaterialType::DepthMaterial: {
+				//mvp矩阵的更新
+				shader->setMatrix4x4("modelMatrix", mesh->getModelMatrix());
+				shader->setMatrix4x4("viewMatrix", camera->getViewMatrix());
+				shader->setMatrix4x4("projectionMatrix", camera->getProjectionMatrix());
+
+				shader->setFloat("near", camera->mNear);
+				shader->setFloat("far", camera->mFar);
 
 			}
 											break;
@@ -314,6 +330,7 @@ namespace MyOpenGL {
 		auto children = object->getChildren();
 		for (int i = 0;i < children.size();i++)
 		{
+
 			rendererObject(children[i], camera, dirLight, pointLights, spotLight, ambLight, bshow);
 		}
 	}
@@ -332,9 +349,9 @@ namespace MyOpenGL {
 		case MaterialType::ImageMaterial:
 			result = mImageShader;
 			break;
-			//case MaterialType::DepthMaterial:
-			//	result = mDepthShader;
-			//	break;
+		case MaterialType::DepthMaterial:
+			result = mDepthShader;
+			break;
 			//case MaterialType::OpacityMaskMaterial:
 			//	result = mOpacityMaskShader;
 			//	break;
@@ -379,6 +396,19 @@ namespace MyOpenGL {
 		else
 		{
 			glDepthMask(GL_FALSE);
+		}
+	}
+	void MyRenderer::setPolygonOffsetState(MyOpenGL::MyMaterial* material)
+	{
+		// 检测多边形偏移状态
+		if (material->mPolygonOffset)
+		{
+			glEnable(material->mPolygonOffsetType);
+			glPolygonOffset(material->mFactor, material->mUnit);
+		}
+		else
+		{
+			glDisable(material->mPolygonOffsetType);
 		}
 	}
 }

@@ -6,7 +6,8 @@ namespace MyOpenGL {
     enum class MaterialType {
         PhongMaterial,
         WhiteMaterial,
-        ImageMaterial
+        ImageMaterial,
+        DepthMaterial
     };
 
     class MyMaterial :public QObject {
@@ -21,5 +22,11 @@ namespace MyOpenGL {
         bool mDepthTest{ true };
         GLenum mDepthFunc{ GL_LEQUAL };//小于等于的时候才能通过测试
         bool mDepthWrite{ true };
+
+        //polygonOffset相关
+        bool mPolygonOffset{ false };
+        unsigned int mPolygonOffsetType{ GL_POLYGON_OFFSET_FILL };
+        float mFactor{ 0.0f };
+        float mUnit{ 0.0f };
     };
 }
