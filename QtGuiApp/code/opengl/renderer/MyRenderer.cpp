@@ -182,13 +182,18 @@ namespace MyOpenGL {
 		OpenGLCamera::MyCamera* camera, MyDirectionalLight* dirLight, std::vector<MyPointLight*>& pointLights,
 		MySpotLight* spotLight, MyAmbientLight* ambLight, bool bshow)
 	{
-		////1 设置当前帧绘制的时候,opengl的必要状态机参数
+		//1 设置当前帧绘制的时候,opengl的必要状态机参数
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LESS);
-		glDepthMask(GL_TRUE);
+		glDepthMask(GL_TRUE);//保证每一帧能顺利清楚深度缓冲(否则如果最后一个mesh把深度写入关了,就没法clear,产生bug)
 
 		glDisable(GL_POLYGON_OFFSET_FILL);// 关闭多边形偏移填充
 		glDisable(GL_POLYGON_OFFSET_LINE);// 关闭多边形偏移线
+
+		//开启测试 设置基本写入状态 打开模版测试写入
+		glEnable(GL_STENCIL_TEST);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);// fail/zfail/zpass 的处理
+		glStencilMask(0xff);//开启写入 保证了模版缓冲可以被清理
 
 		//2 清理画布
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -213,6 +218,7 @@ namespace MyOpenGL {
 			//设置渲染状态
 			setDepthState(material);
 			setPolygonOffsetState(material);
+			setStencilState(material);
 			// 1. 决定使用哪个Shader
 			MyOpenGL::MyShader* shader = pickShader(material->mType);
 
@@ -330,7 +336,7 @@ namespace MyOpenGL {
 		auto children = object->getChildren();
 		for (int i = 0;i < children.size();i++)
 		{
-
+			
 			rendererObject(children[i], camera, dirLight, pointLights, spotLight, ambLight, bshow);
 		}
 	}
@@ -409,6 +415,20 @@ namespace MyOpenGL {
 		else
 		{
 			glDisable(material->mPolygonOffsetType);
+		}
+	}
+
+	void MyRenderer::setStencilState(MyOpenGL::MyMaterial* material) {
+		if (material->mStencilTest)
+		{
+			glEnable(GL_STENCIL_TEST);
+			glStencilOp(material->mSFail, material->mZFail, material->mZPass);
+			glStencilMask(material->mStencilMask);
+			glStencilFunc(material->mStencilFunc, material->mStencilRef, material->mStencilFuncMask);
+		}
+		else
+		{
+			glDisable(GL_STENCIL_TEST);
 		}
 	}
 }

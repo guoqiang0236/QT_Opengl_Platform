@@ -85,7 +85,8 @@ namespace MyOpenGL {
         m_cameraControl = new OpenGLCamera::MyTrackBallCameraControl(this);
         //m_cameraControl = new MyGameCameraControl(this);
         m_cameraControl->setcamera(m_camera);
-
+        m_cameraControl->setSensitivity(0.4f);
+        m_cameraControl->setScaleSpeed(0.01f);
 
     }
 
@@ -302,27 +303,8 @@ namespace MyOpenGL {
         if (!testmodel)
             return;
         m_scene->addChild(testmodel);*/
-
-
-        //深度测试
-		auto geometry = MyGeometry::createPlane(5.0f,5.0f);
-		auto materialA = new MyPhongMaterial();
-		materialA->mDiffuse = new MyTexture("../assets/textures/goku.jpg", 0); // 兼容原有指针成员
-		auto meshA = new::MyOpenGL::MyMesh(geometry, materialA);
-        m_scene->addChild(meshA);
-
-        auto materialB = new MyPhongMaterial();
-        materialB->mDiffuse = new MyTexture("../assets/textures/box.png", 0); // 兼容原有指针成员
-        materialB->mPolygonOffset = true;
-		materialB->mFactor = 1.0f; // 设置偏移因子
-        materialB->mUnit = 1.0f;
-
-
-        //materialB->mDepthWrite = false;
-        auto meshB = new::MyOpenGL::MyMesh(geometry, materialB);
-		meshB->setPosition(glm::vec3(2.0f, 0.5f, -0.000000001f));
-        m_scene->addChild(meshB);
-
+        //shendutest();
+        mobantest();
       
         //平行光
 		m_dirLight = new::MyOpenGL::MyDirectionalLight();
@@ -331,9 +313,112 @@ namespace MyOpenGL {
         
         // 环境光
 		m_ambLight = new ::MyOpenGL::MyAmbientLight(); 
-		m_ambLight->mColor = glm::vec3(0.1f); 
+		m_ambLight->mColor = glm::vec3(0.2f); 
 
         bhasrenderer = true;
+    }
+
+    void MyGLWidget::shendutest()
+    {
+        //深度测试
+        auto geometry = MyGeometry::createPlane(5.0f, 5.0f);
+        auto materialA = new MyPhongMaterial();
+        materialA->mDiffuse = new MyTexture("../assets/textures/goku.jpg", 0); // 兼容原有指针成员
+        auto meshA = new::MyOpenGL::MyMesh(geometry, materialA);
+        m_scene->addChild(meshA);
+
+        auto materialB = new MyPhongMaterial();
+        materialB->mDiffuse = new MyTexture("../assets/textures/box.png", 0); // 兼容原有指针成员
+        materialB->mPolygonOffset = true;
+        materialB->mFactor = 1.0f; // 设置偏移因子
+        materialB->mUnit = 1.0f;
+
+
+        //materialB->mDepthWrite = false;
+        auto meshB = new::MyOpenGL::MyMesh(geometry, materialB);
+        meshB->setPosition(glm::vec3(2.0f, 0.5f, -0.000000001f));
+        m_scene->addChild(meshB);
+    }
+
+    void MyGLWidget::mobantest()
+    {
+        //1 创建一个普通方块
+        auto geometry = MyGeometry::createBox(4.0f);
+        auto meterialA = new MyPhongMaterial();
+        meterialA->mDiffuse = new MyTexture("../assets/textures/goku.jpg", 0); // 兼容原有指针成员
+
+        auto meshA = new MyMesh(geometry, meterialA);
+        m_scene->addChild(meshA);
+        //设置模版测试参数
+        meterialA->mStencilTest = true;
+        meterialA->mSFail = GL_KEEP;
+        meterialA->mZFail = GL_KEEP;
+        meterialA->mZPass = GL_REPLACE;
+        //控制写入
+        meterialA->mStencilMask = 0xff;
+        //模版参数规则
+		meterialA->mStencilFunc = GL_ALWAYS; 
+        meterialA->mStencilRef = 1;
+        meterialA->mStencilFuncMask = 0xff;
+
+        //2 创建一个勾选方块
+        auto meterialbound = new MyWhiteMaterial();
+        auto meshbound = new MyMesh(geometry, meterialbound);
+        meterialbound->mDepthTest = false;
+        meshbound->setPosition(meshA->getPosition());
+        meshbound->setScale(glm::vec3(1.01f));
+        m_scene->addChild(meshbound);
+
+        //设置模版测试参数
+        meterialbound->mStencilTest = true;
+        meterialbound->mSFail = GL_KEEP;
+        meterialbound->mZFail = GL_KEEP;
+        meterialbound->mZPass = GL_KEEP;
+        //控制写入
+        meterialbound->mStencilMask = 0x00;
+        //模版参数规则
+        meterialbound->mStencilFunc = GL_NOTEQUAL;
+        meterialbound->mStencilRef = 1;
+        meterialbound->mStencilFuncMask = 0xff;
+
+        //meshB 创建一个普通方块
+        auto geometryB = MyGeometry::createBox(4.0f);
+        auto meterialB = new MyPhongMaterial();
+        meterialB->mDiffuse = new MyTexture("../assets/textures/wall.jpg", 0); // 兼容原有指针成员
+        auto meshB = new MyMesh(geometryB, meterialB);
+        meshB->setPosition(glm::vec3(3.0f, 1.0f, 1.0f));
+        m_scene->addChild(meshB);
+        //设置模版测试参数
+        meterialB->mStencilTest = true;
+        meterialB->mSFail = GL_KEEP;
+        meterialB->mZFail = GL_KEEP;
+        meterialB->mZPass = GL_REPLACE;
+        //控制写入
+        meterialB->mStencilMask = 0xff;
+        //模版参数规则
+        meterialB->mStencilFunc = GL_ALWAYS;
+        meterialB->mStencilRef = 1;
+        meterialB->mStencilFuncMask = 0xff;
+
+        //meshB 创建一个勾选方块
+        auto meterialBbound = new MyWhiteMaterial();
+        auto meshBbound = new MyMesh(geometryB, meterialBbound);
+        meterialBbound->mDepthTest = false;
+        meshBbound->setPosition(meshB->getPosition());
+        meshBbound->setScale(glm::vec3(1.01f));
+        m_scene->addChild(meshBbound);
+
+        //设置模版测试参数
+        meterialBbound->mStencilTest = true;
+        meterialBbound->mSFail = GL_KEEP;
+        meterialBbound->mZFail = GL_KEEP;
+        meterialBbound->mZPass = GL_KEEP;
+        //控制写入
+        meterialBbound->mStencilMask = 0x00;
+        //模版参数规则
+        meterialBbound->mStencilFunc = GL_NOTEQUAL;
+        meterialBbound->mStencilRef = 1;
+        meterialBbound->mStencilFuncMask = 0xff;
     }
 
     void MyGLWidget::doTranslationTransform()

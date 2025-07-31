@@ -40,6 +40,9 @@ private:
     void preparelogo();
 	void preparemoxing();// 准备模型
 
+    void shendutest();
+    void mobantest();
+
     //图形变换
 	void doRotationTransform();//旋转
     void doTranslationTransform();//平移变换

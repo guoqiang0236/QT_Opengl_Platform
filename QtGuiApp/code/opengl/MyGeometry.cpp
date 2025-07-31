@@ -95,7 +95,7 @@ namespace MyOpenGL {
     {
         MyGeometry* geometry = new MyGeometry();
         // 立方体顶点数据（边长 = 2 * halfSize）
-        const float halfSize = 0.5f; // 立方体半边长
+        const float halfSize = size*0.5f; // 立方体半边长
 
         geometry->mIndicesCount = 36; // 立方体有6个面，每个面2个三角形，每个三角形3个顶点，总共6*2*3=36个顶点
 
