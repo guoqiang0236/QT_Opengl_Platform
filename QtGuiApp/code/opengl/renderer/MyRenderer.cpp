@@ -189,11 +189,15 @@ namespace MyOpenGL {
 
 		glDisable(GL_POLYGON_OFFSET_FILL);// 关闭多边形偏移填充
 		glDisable(GL_POLYGON_OFFSET_LINE);// 关闭多边形偏移线
-
+ 
 		//开启测试 设置基本写入状态 打开模版测试写入
 		glEnable(GL_STENCIL_TEST);
 		glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);// fail/zfail/zpass 的处理
 		glStencilMask(0xff);//开启写入 保证了模版缓冲可以被清理
+
+		//打开颜色混合
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		//2 清理画布
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);

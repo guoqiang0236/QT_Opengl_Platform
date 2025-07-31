@@ -42,6 +42,7 @@ private:
 
     void shendutest();
     void mobantest();
+    void colorblendtest();
 
     //图形变换
 	void doRotationTransform();//旋转

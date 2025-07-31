@@ -304,8 +304,10 @@ namespace MyOpenGL {
             return;
         m_scene->addChild(testmodel);*/
         //shendutest();
-        mobantest();
-      
+        //mobantest();
+        colorblendtest();
+
+
         //平行光
 		m_dirLight = new::MyOpenGL::MyDirectionalLight();
         m_dirLight->mDirection = glm::vec3(-1.0f);
@@ -419,6 +421,26 @@ namespace MyOpenGL {
         meterialBbound->mStencilFunc = GL_NOTEQUAL;
         meterialBbound->mStencilRef = 1;
         meterialBbound->mStencilFuncMask = 0xff;
+    }
+
+    void MyGLWidget::colorblendtest()
+    {
+        //box 
+        auto boxgeo = MyGeometry::createBox(4.0);
+        auto boxmat = new MyPhongMaterial();
+        boxmat->mDiffuse =new MyTexture("../assets/textures/box.png", 0);
+
+        auto boxmesh = new MyMesh(boxgeo, boxmat);
+        m_scene->addChild(boxmesh);
+
+        //plane
+        auto planegeo = MyGeometry::createPlane(6.0, 6.0);
+        auto planemat = new MyPhongMaterial();
+        planemat->mDiffuse = new MyTexture("../assets/textures/window.png", 0);
+
+        auto planemesh = new MyMesh(planegeo, planemat);
+        planemesh->setPosition(glm::vec3(0.0, 0.0, 4.0));
+        m_scene->addChild(planemesh);
     }
 
     void MyGLWidget::doTranslationTransform()
