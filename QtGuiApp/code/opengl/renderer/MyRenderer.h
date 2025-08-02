@@ -29,12 +29,12 @@ namespace MyOpenGL {
 		);
 		void render(MyOpenGL::MyScene* scene,
 			OpenGLCamera::MyCamera* camera, MyDirectionalLight* dirLight, std::vector<MyPointLight*>& pointLights,
-			MySpotLight* spotLight, MyAmbientLight* ambLight, bool bshow = true);
+			MySpotLight* spotLight, MyAmbientLight* ambLight);
 
 		void rendererObject(
 			MyOpenGL::MyObject* object,
 			OpenGLCamera::MyCamera* camera, MyDirectionalLight* dirLight, std::vector<MyPointLight*>& pointLights,
-			MySpotLight* spotLight, MyAmbientLight* ambLight, bool bshow = true
+			MySpotLight* spotLight, MyAmbientLight* ambLight
 		);
 
 	private:
@@ -43,6 +43,7 @@ namespace MyOpenGL {
 		void setDepthState(MyOpenGL::MyMaterial* material);
 		void setPolygonOffsetState(MyOpenGL::MyMaterial* material);
 		void setStencilState(MyOpenGL::MyMaterial* material);
+		void setBlendState(MyOpenGL::MyMaterial* material);
 	private:
 		//生成多种不同的shader对象
 		MyOpenGL::MyShader* mPhongShader{ nullptr };

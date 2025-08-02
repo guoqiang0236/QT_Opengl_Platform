@@ -180,8 +180,10 @@ namespace MyOpenGL {
 
 	void MyRenderer::render(MyOpenGL::MyScene* scene,
 		OpenGLCamera::MyCamera* camera, MyDirectionalLight* dirLight, std::vector<MyPointLight*>& pointLights,
-		MySpotLight* spotLight, MyAmbientLight* ambLight, bool bshow)
+		MySpotLight* spotLight, MyAmbientLight* ambLight)
 	{
+		
+
 		//1 设置当前帧绘制的时候,opengl的必要状态机参数
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LESS);
@@ -195,23 +197,22 @@ namespace MyOpenGL {
 		glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);// fail/zfail/zpass 的处理
 		glStencilMask(0xff);//开启写入 保证了模版缓冲可以被清理
 
-		//打开颜色混合
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		//默认颜色混合
+		glDisable(GL_BLEND);
 
 		//2 清理画布
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-		if (!bshow)
+		if (!scene->getShow())
 			return;
 		//3 将scene当做根节点开始递归渲染
-		rendererObject(scene, camera, dirLight, pointLights, spotLight, ambLight, bshow);
+		rendererObject(scene, camera, dirLight, pointLights, spotLight, ambLight);
 	}
 
 	//针对单个object
 	void MyRenderer::rendererObject(MyOpenGL::MyObject* object, OpenGLCamera::MyCamera* camera,
 		MyDirectionalLight* dirLight, std::vector<MyPointLight*>& pointLights,
-		MySpotLight* spotLight, MyAmbientLight* ambLight, bool bshow)
+		MySpotLight* spotLight, MyAmbientLight* ambLight)
 	{
 		//1 判断是Mesh还是Object，如果是Mesh就需要渲染
 		if (object->getType() == MyOpenGL::ObjectType::Mesh) {
@@ -223,6 +224,7 @@ namespace MyOpenGL {
 			setDepthState(material);
 			setPolygonOffsetState(material);
 			setStencilState(material);
+			setBlendState(material);
 			// 1. 决定使用哪个Shader
 			MyOpenGL::MyShader* shader = pickShader(material->mType);
 
@@ -294,6 +296,9 @@ namespace MyOpenGL {
 
 				//相机信息更新
 				shader->setVector3("cameraPosition", camera->mPosition);
+
+				//透明度
+				shader->setFloat("opacity", material->mOpacity);
 			}
 											break;
 			case MaterialType::WhiteMaterial: {
@@ -341,7 +346,7 @@ namespace MyOpenGL {
 		for (int i = 0;i < children.size();i++)
 		{
 			
-			rendererObject(children[i], camera, dirLight, pointLights, spotLight, ambLight, bshow);
+			rendererObject(children[i], camera, dirLight, pointLights, spotLight, ambLight);
 		}
 	}
 
@@ -386,6 +391,10 @@ namespace MyOpenGL {
 		}
 		return result;
 	}
+
+
+	
+
 	void MyRenderer::setDepthState(MyOpenGL::MyMaterial* material)
 	{
 		//检测深度状态
@@ -433,6 +442,18 @@ namespace MyOpenGL {
 		else
 		{
 			glDisable(GL_STENCIL_TEST);
+		}
+	}
+	void MyRenderer::setBlendState(MyOpenGL::MyMaterial* material)
+	{
+		if (material->mBlend)
+		{
+			glEnable(GL_BLEND);
+			glBlendFunc(material->mSFactor, material->mDFactor);
+		}
+		else
+		{
+			glDisable(GL_BLEND);
 		}
 	}
 }

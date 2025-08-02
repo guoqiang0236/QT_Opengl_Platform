@@ -43,7 +43,12 @@ namespace MyOpenGL {
 
         ObjectType getType()const { return m_Type; }
 
+        //控制显示
+		void setShow(bool show) { bshow = show; }
+		bool getShow() const { return bshow; }
     protected:
+        //是否显示
+        bool bshow{ true };
         // 成员变量（与截图完全一致）
         glm::vec3 m_Position{ 0.0f };  // 物体位置
 
@@ -63,5 +68,6 @@ namespace MyOpenGL {
         //类型记录
         ObjectType m_Type;
 
+       
     };
 }

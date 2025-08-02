@@ -43,6 +43,7 @@ private:
     void shendutest();
     void mobantest();
     void colorblendtest();
+    void colorblendshendutest();
 
     //图形变换
 	void doRotationTransform();//旋转
@@ -56,6 +57,10 @@ private:
     //render
     void renderLogoOnScreen();
     void render();
+
+    //设置
+    void setModelBlend(MyObject* obj, bool blend, float opacity);
+
 
 Q_SIGNALS:
     void prepareok(bool bhaveprepareok);

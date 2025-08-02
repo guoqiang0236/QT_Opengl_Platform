@@ -156,7 +156,5 @@ void main()
 
 	vec3 finalColor = result + ambientColor;
 	
-	//FragColor = vec4(finalColor,0.4);
-	FragColor = vec4(finalColor,alpha);
-	//FragColor = vec4(finalColor,alpha * opacity);
+    FragColor = vec4(finalColor,alpha * opacity);
 }

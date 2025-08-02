@@ -40,5 +40,12 @@ namespace MyOpenGL {
         unsigned int mStencilFunc{ GL_ALWAYS };
         unsigned int mStencilRef{ 0 };
         unsigned int mStencilFuncMask{ 0xff };
+
+        //ÑÕÉ«»ìºÏ
+		bool mBlend{ false };
+		unsigned int mSFactor{ GL_SRC_ALPHA };
+        unsigned int mDFactor{ GL_ONE_MINUS_SRC_ALPHA };
+
+        float mOpacity{ 1.0f };
     };
 }

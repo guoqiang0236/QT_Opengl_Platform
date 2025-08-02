@@ -63,9 +63,7 @@ void MyAssimpLoader::processNode(aiNode* ainode, MyOpenGL::MyObject* parent, con
 	{
 		processNode(ainode->mChildren[i], node, scene, rootPath);
 	}
-	/*int i = 7;
-	if(i < ainode->mNumChildren)
-		processNode(ainode->mChildren[i], node, scene, rootPath);*/
+	
 }
 
 ////处理mesh
@@ -117,7 +115,7 @@ MyOpenGL::MyMesh* MyAssimpLoader::processMesh(aiMesh* aimesh, const aiScene* sce
 
 	auto geometry = new MyOpenGL::MyGeometry(positions, normals, uvs, indices);
 	auto material = new MyOpenGL::MyPhongMaterial();
-	//material->mDepthWrite = false;
+	material->mDepthWrite = false;
 	//进行纹理读取
 	if (aimesh->mMaterialIndex >= 0)
 	{

@@ -76,7 +76,7 @@ namespace MyOpenGL {
             0.1f, 1000.0f,
             this);
 
-        /*  m_camera = new MyOrthographicCamera(
+       /*   m_camera = new OpenGLCamera::MyOrthographicCamera(
               -size, size,
               size, -size,
               size, -size,
@@ -159,6 +159,24 @@ namespace MyOpenGL {
             m_Shader->end();
     }
 
+    void MyGLWidget::setModelBlend(MyObject* obj, bool blend, float opacity)
+    {
+        if (obj->getType() == MyOpenGL::ObjectType::Mesh)
+        {
+            MyMesh* mesh = static_cast<MyMesh*> (obj);
+            MyMaterial* mat = mesh->mMaterial;
+            mat->mBlend = blend;
+            mat->mOpacity = opacity;
+            mat->mDepthWrite = false;
+        }
+
+        auto children = obj->getChildren();
+        for (int i = 0; i < children.size(); i++)
+        {
+            setModelBlend(children[i], blend, opacity);
+        }
+    }
+
     void MyGLWidget::bShowLogo(bool bshow)
     {
         bhaslogo = bshow;
@@ -167,7 +185,8 @@ namespace MyOpenGL {
 
     void MyGLWidget::bShowRenderer(bool bshow)
     {
-        bhasrenderer = bshow;
+        if (m_scene)
+            m_scene->setShow(bshow);
         update();
     }
 
@@ -276,6 +295,7 @@ namespace MyOpenGL {
 
         // 2. 创建一个material并且配置参数
         auto material01 = new MyImageMaterial();
+        
         //material01->mShiness = 32.0f;
         //material01->mDiffuse = new MyTexture("../assets/textures/logo.left.top.bmp", 2); // 兼容原有指针成员
 
@@ -303,10 +323,11 @@ namespace MyOpenGL {
         if (!testmodel)
             return;
         m_scene->addChild(testmodel);*/
+
         //shendutest();
         //mobantest();
-        colorblendtest();
-
+        //colorblendtest();
+        colorblendshendutest();
 
         //平行光
 		m_dirLight = new::MyOpenGL::MyDirectionalLight();
@@ -443,6 +464,34 @@ namespace MyOpenGL {
         m_scene->addChild(planemesh);
     }
 
+    void MyGLWidget::colorblendshendutest()
+    {
+        //背包
+        auto bagmodel = MyAssimpLoader::load("../assets/fbx/bag/backpack.obj");
+        setModelBlend(bagmodel, true, 0.5);
+        
+        bagmodel->setPosition(glm::vec3(0.0f, 0.0f, -1.0f));
+        m_scene->addChild(bagmodel);
+
+        //白色盒子
+		/*auto boxgeo = MyGeometry::createBox(4.0);
+        auto boxmat = new MyWhiteMaterial();
+
+        auto boxmesh = new MyMesh(boxgeo, boxmat);
+        m_scene->addChild(boxmesh);*/
+
+        //盒子
+  //      auto boxgeo = MyGeometry::createBox(4.0);
+  //      auto boxmat = new MyPhongMaterial();
+		//boxmat->mDiffuse = new MyTexture("../assets/textures/window.png", 0); // 兼容原有指针成员
+		//boxmat->mBlend = true; // 开启混合
+  //      boxmat->mOpacity = 1;
+  //      boxmat->mDepthWrite = false;
+  //      auto boxmesh = new MyMesh(boxgeo, boxmat);
+  //      
+  //       m_scene->addChild(boxmesh);
+    }
+
     void MyGLWidget::doTranslationTransform()
     {
         //平移变换
@@ -523,7 +572,7 @@ namespace MyOpenGL {
             float amplitude = 1.0f; // 控制最大平移距离
             float x = std::sin(m_animTime) * amplitude;
 
-            m_renderer->render(m_scene, m_camera, m_dirLight, m_pointLights, m_spotLight, m_ambLight, bhasrenderer);
+            m_renderer->render(m_scene, m_camera, m_dirLight, m_pointLights, m_spotLight, m_ambLight);
         }
         if (bhaslogo && logoTexture != 0)
         {
@@ -652,6 +701,7 @@ namespace MyOpenGL {
         m_Shader->setInt("logoTex", 2); // 0 表示 GL_TEXTURE0
         logoTexture->bind();
 
+        glEnable(GL_BLEND);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         m_Shader->end();
