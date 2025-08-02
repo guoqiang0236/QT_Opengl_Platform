@@ -7,7 +7,13 @@ namespace MyOpenGL {
         PhongMaterial,
         WhiteMaterial,
         ImageMaterial,
-        DepthMaterial
+        DepthMaterial,
+        OpacityMaskMaterial,
+        ScreenMaterial,
+        CubeMaterial,
+        PhongEnvMaterial,
+        PhongInstanceMaterial,
+        GrassInstanceMaterial
     };
 
     class MyMaterial :public QObject {

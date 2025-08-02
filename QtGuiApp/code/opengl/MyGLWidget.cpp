@@ -5,6 +5,7 @@
 #include "Material/MyWhiteMaterial.h"
 #include "Material/MyImageMaterial.h"
 #include "Material/MydepthMaterial.h"
+#include "Material/MyopacityMaskMaterial.h"
 
 namespace MyOpenGL {
     MyGLWidget::MyGLWidget(QWidget* parent)
@@ -327,7 +328,8 @@ namespace MyOpenGL {
         //shendutest();
         //mobantest();
         //colorblendtest();
-        colorblendshendutest();
+        //colorblendshendutest();
+        opacityMaskTest();
 
         //平行光
 		m_dirLight = new::MyOpenGL::MyDirectionalLight();
@@ -490,6 +492,22 @@ namespace MyOpenGL {
   //      auto boxmesh = new MyMesh(boxgeo, boxmat);
   //      
   //       m_scene->addChild(boxmesh);
+    }
+
+    void MyGLWidget::opacityMaskTest()
+    {
+		auto planegeo = MyGeometry::createPlane(5.0, 5.0);
+		auto planemat = new MyOpacityMaskMaterial();
+		planemat->mDiffuse = new MyTexture("../assets/textures/grass.jpg", 0); 
+		planemat->mOpacityMask = new MyTexture("../assets/textures/grassMask.png", 1); 
+		planemat->mBlend = true; // 开启混合
+
+		auto planemesh = new MyMesh(planegeo, planemat);
+		
+		m_scene->addChild(planemesh);
+
+
+    
     }
 
     void MyGLWidget::doTranslationTransform()

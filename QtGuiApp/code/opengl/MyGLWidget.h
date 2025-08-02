@@ -44,6 +44,7 @@ private:
     void mobantest();
     void colorblendtest();
     void colorblendshendutest();
+	void opacityMaskTest();
 
     //图形变换
 	void doRotationTransform();//旋转

@@ -50,7 +50,7 @@ namespace MyOpenGL {
 		//qDebug() << "setScale:" << m_Scale.x << m_Scale.y << m_Scale.z;
 	}
 
-	glm::mat4 MyObject::getModelMatrix()
+	glm::mat4 MyObject::getModelMatrix()const
 	{
 		//首先获取父亲的变换矩阵
 		glm::mat4 parentMatrix{ 1.0f };

@@ -32,7 +32,7 @@ namespace MyOpenGL {
         void setScale(glm::vec3 scale);
 
         // 获取模型变换矩阵
-        glm::mat4 getModelMatrix();
+        glm::mat4 getModelMatrix()const;
 
         glm::vec3 getPosition()const { return m_Position; }
 

@@ -2,6 +2,7 @@
 #include "../Material/MyPhongMaterial.h"
 #include "../Material/MyWhiteMaterial.h"
 #include "../Material/MyImageMaterial.h"
+#include "../Material/MyopacityMaskMaterial.h"
 namespace MyOpenGL {
 	MyRenderer::MyRenderer()
 	{
@@ -10,6 +11,8 @@ namespace MyOpenGL {
 		mWhiteShader = new MyOpenGL::MyShader("../assets/shaders/white.vert", "../assets/shaders/white.frag");
 		mImageShader = new MyOpenGL::MyShader("../assets/shaders/image.vert", "../assets/shaders/image.frag");
 		mDepthShader = new MyOpenGL::MyShader("../assets/shaders/depth.vert", "../assets/shaders/depth.frag");
+		mOpacityMaskShader = new MyOpenGL::MyShader("../assets/shaders/phongOpacityMask.vert", "../assets/shaders/phongOpacityMask.frag");
+
 	}
 
 	MyRenderer::~MyRenderer()
@@ -202,11 +205,44 @@ namespace MyOpenGL {
 
 		//2 清理画布
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
+		
 		if (!scene->getShow())
 			return;
-		//3 将scene当做根节点开始递归渲染
-		rendererObject(scene, camera, dirLight, pointLights, spotLight, ambLight);
+		//清空两个队列
+		mOpacityObjects.clear();
+		mTransparentObjects.clear();
+		projectObject(scene);
+
+		std::sort(mTransparentObjects.begin(), mTransparentObjects.end(),
+			[camera](MyOpenGL::MyMesh* a, MyOpenGL::MyMesh* b) {
+				auto viewMatrix = camera->getViewMatrix();
+				//1 计算A的相机系的Z
+				auto modelMatrixA = a->getModelMatrix();
+				auto worldPositionA = modelMatrixA * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+				//乘上他的模型变换矩阵就是世界空间的坐标
+				auto cameraPositionA = viewMatrix * worldPositionA;
+
+				//2 计算B的相机系的Z
+				auto modelMatrixB = b->getModelMatrix();
+				auto worldPositionB= modelMatrixB * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+				auto cameraPositionB = viewMatrix * worldPositionB;
+
+				return cameraPositionA.z < cameraPositionB.z; // Z值越小，越远离相机
+			});
+
+		//3 渲染两个队列
+	    //先渲染不透明
+		for (int i = 0; i < mOpacityObjects.size(); i++)
+		{
+			rendererObject(mOpacityObjects[i], camera, dirLight, pointLights, spotLight, ambLight);
+		}
+
+		//再渲染透明
+		for (int i = 0; i < mTransparentObjects.size(); i++)
+		{
+			rendererObject(mTransparentObjects[i], camera, dirLight, pointLights, spotLight, ambLight);
+
+		}
 	}
 
 	//针对单个object
@@ -330,6 +366,38 @@ namespace MyOpenGL {
 
 			}
 											break;
+			case MaterialType::OpacityMaskMaterial: {
+				MyOpacityMaskMaterial* opacityMat = static_cast<MyOpacityMaskMaterial*>(material);
+				//将纹理采样器与纹理单元挂钩
+				//diffuse蒙版的帧更新
+				shader->setInt("sampler", 0);
+				//将纹理与纹理单元进行挂钩
+				opacityMat->mDiffuse->bind();
+				//opacityMask蒙版的帧更新
+				shader->setInt("opacityMaskSampler", 1);
+				opacityMat->mOpacityMask->bind();
+				//MVP
+				shader->setMatrix4x4("modelMatrix", mesh->getModelMatrix());
+				shader->setMatrix4x4("viewMatrix", camera->getViewMatrix());
+				shader->setMatrix4x4("projectionMatrix", camera->getProjectionMatrix());
+
+				auto normalMatrix = glm::mat3(glm::transpose(glm::inverse(mesh->getModelMatrix())));
+				shader->setMatrix3x3("normalMatrix", normalMatrix);
+
+				//光源参数的uniform更新 
+				//directionalLight的更新
+				shader->setVector3("directionalLight.color", dirLight->mColor);
+				shader->setVector3("directionalLight.direction", dirLight->mDirection);
+				shader->setFloat("directionalLight.specularIntensity", dirLight->mSpecularIntensity);
+
+				shader->setFloat("shiness", opacityMat->mShiness);
+				//相机信息更新
+				shader->setVector3("cameraPosition", camera->mPosition);
+
+				//透明度
+				shader->setFloat("opacity", material->mOpacity);
+			}
+												  break;
 			default:
 				break;
 			}
@@ -350,6 +418,33 @@ namespace MyOpenGL {
 		}
 	}
 
+	void MyRenderer::projectObject(MyObject* obj)
+	{
+		if (obj->getType() == MyOpenGL::ObjectType::Mesh)
+		{
+			MyMesh* mesh = static_cast<MyMesh*>(obj);
+
+			auto material = mesh->mMaterial;
+
+			if (material->mBlend)
+			{
+				mTransparentObjects.push_back(mesh);
+			}
+			else
+			{
+				mOpacityObjects.push_back(mesh);
+			}
+			
+		}
+
+		auto children = obj->getChildren();
+		for (int i = 0; i < children.size(); i++)
+		{
+			projectObject(children[i]);
+		}
+		
+	}
+
 	MyOpenGL::MyShader* MyRenderer::pickShader(MaterialType type)
 	{
 		MyOpenGL::MyShader* result = nullptr;
@@ -367,9 +462,9 @@ namespace MyOpenGL {
 		case MaterialType::DepthMaterial:
 			result = mDepthShader;
 			break;
-			//case MaterialType::OpacityMaskMaterial:
-			//	result = mOpacityMaskShader;
-			//	break;
+		case MaterialType::OpacityMaskMaterial:
+			result = mOpacityMaskShader;
+			break;
 			//case MaterialType::ScreenMaterial:
 			//	result = mScreenShader;
 			//	break;

@@ -38,6 +38,9 @@ namespace MyOpenGL {
 		);
 
 	private:
+
+		void projectObject(MyObject* obj);
+
 		//根据Material类型不同,挑选不同的shader
 		MyOpenGL::MyShader* pickShader(MaterialType type);
 		void setDepthState(MyOpenGL::MyMaterial* material);
@@ -50,5 +53,11 @@ namespace MyOpenGL {
 		MyOpenGL::MyShader* mWhiteShader{ nullptr };
 		MyOpenGL::MyShader* mImageShader{ nullptr };
 		MyOpenGL::MyShader* mDepthShader{ nullptr };
+		MyOpenGL::MyShader* mOpacityMaskShader{ nullptr };
+
+		//不透明物体与透明物体的队列
+	//注意!! 每一帧绘制前需要清空两个队列
+		std::vector<MyOpenGL::MyMesh*> mOpacityObjects{};
+		std::vector<MyOpenGL::MyMesh*> mTransparentObjects{};
 	};
 }
