@@ -52,6 +52,11 @@ namespace MyOpenGL {
 		unsigned int mSFactor{ GL_SRC_ALPHA };
         unsigned int mDFactor{ GL_ONE_MINUS_SRC_ALPHA };
 
+        //face culling
+        bool mFaceCulling{ false };
+        unsigned int mFrontFace{ GL_CCW };
+        unsigned int mCullFace{ GL_BACK };
+
         float mOpacity{ 1.0f };
     };
 }

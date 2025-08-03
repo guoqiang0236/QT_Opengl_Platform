@@ -18,15 +18,15 @@ namespace MyOpenGL {
         static MyGeometry* createBox(float size);
         static MyGeometry* createSphere(float size);
         static MyGeometry* createPlane(float width, float height);
-
+        static MyGeometry* createScreenPlane(float left, float right, float bottom, float top);
         static MyGeometry* createLogoQuad(float width, float height);
-
+        
         GLuint getVao()const { return mVao; }
         uint32_t getIndicesCount() const { return mIndicesCount; }
     private:
         GLuint mVao{ 0 };
         GLuint mPosVbo{ 0 };
-        GLuint mUvVao{ 0 };
+        GLuint mUvVbo{ 0 };
         GLuint mNormalVbo{ 0 };
         GLuint mEbo{ 0 };
 

@@ -40,11 +40,17 @@ private:
     void preparelogo();
 	void preparemoxing();// 准备模型
 
+
     void shendutest();
     void mobantest();
     void colorblendtest();
     void colorblendshendutest();
 	void opacityMaskTest();
+    void FaceCullingTest();
+
+	void prepareGrass();
+    void prepareScreen();
+   
 
     //图形变换
 	void doRotationTransform();//旋转
@@ -56,7 +62,6 @@ private:
     void preTransformDieJia();//叠加预先变换(本地坐标系)
 
     //render
-    void renderLogoOnScreen();
     void render();
 
     //设置

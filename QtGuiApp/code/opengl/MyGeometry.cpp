@@ -21,8 +21,8 @@ namespace MyOpenGL {
         glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(float), positions.data(), GL_STATIC_DRAW);
 
         //UV
-        glGenBuffers(1, &mUvVao);
-        glBindBuffer(GL_ARRAY_BUFFER, mUvVao);
+        glGenBuffers(1, &mUvVbo);
+        glBindBuffer(GL_ARRAY_BUFFER, mUvVbo);
         glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(float), uvs.data(), GL_STATIC_DRAW);
 
         // 法线
@@ -45,7 +45,7 @@ namespace MyOpenGL {
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
 
         // 绑定UV坐标
-        glBindBuffer(GL_ARRAY_BUFFER, mUvVao);
+        glBindBuffer(GL_ARRAY_BUFFER, mUvVbo);
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void*)0);
 
@@ -73,10 +73,10 @@ namespace MyOpenGL {
             glDeleteBuffers(1, &mPosVbo);
             mPosVbo = 0;
         }
-        if (mUvVao != 0)
+        if (mUvVbo != 0)
         {
-            glDeleteBuffers(1, &mUvVao);
-            mUvVao = 0;
+            glDeleteBuffers(1, &mUvVbo);
+            mUvVbo = 0;
         }
         if (mEbo != 0)
         {
@@ -207,7 +207,7 @@ namespace MyOpenGL {
 
         // VBO创建
         GLuint& posVbo = geometry->mPosVbo,
-            uvVbo = geometry->mUvVao,
+            uvVbo = geometry->mUvVbo,
             ebo = geometry->mEbo,
             normalVbo = geometry->mNormalVbo;
 
@@ -318,7 +318,7 @@ namespace MyOpenGL {
 
         // VBO创建
         GLuint& posVbo = geometry->mPosVbo,
-            uvVbo = geometry->mUvVao,
+            uvVbo = geometry->mUvVbo,
             ebo = geometry->mEbo,
             normalVbo = geometry->mNormalVbo;
         // POS
@@ -404,7 +404,7 @@ namespace MyOpenGL {
 
         // VBO创建
         GLuint& posVbo = geometry->mPosVbo,
-            uvVbo = geometry->mUvVao,
+            uvVbo = geometry->mUvVbo,
             ebo = geometry->mEbo,
             normalVbo = geometry->mNormalVbo;
         //POS
@@ -453,6 +453,63 @@ namespace MyOpenGL {
         return geometry;
     }
 
+    MyGeometry* MyGeometry::createScreenPlane(float left, float right, float bottom, float top)
+    {
+        MyGeometry* geometry = new MyGeometry();
+        geometry->mIndicesCount = 6;
+
+        //构建数据positions uv
+        float positions[] = {
+              left,  top,
+              left,  bottom,
+              right, bottom,
+              right, top
+        };
+
+        float uvs[] = {
+            0.0f, 1.0f,
+            0.0f, 0.0f,
+            1.0f, 0.0f,
+            1.0f, 1.0f
+        };
+
+        unsigned int indices[] = {
+            0, 1, 2,
+            0, 2, 3
+        };
+
+        //创建vao vbo等
+        GLuint& posVbo = geometry->mPosVbo, uvVbo = geometry->mUvVbo;
+        geometry->glGenBuffers(1, &posVbo);
+		geometry->glBindBuffer(GL_ARRAY_BUFFER, posVbo);
+		geometry->glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+
+		geometry->glGenBuffers(1, &uvVbo);
+		geometry->glBindBuffer(GL_ARRAY_BUFFER, uvVbo);
+		geometry->glBufferData(GL_ARRAY_BUFFER, sizeof(uvs), uvs, GL_STATIC_DRAW);
+
+        geometry->glGenBuffers(1, &geometry->mEbo);
+        geometry->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geometry->mEbo);
+        geometry->glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+        //vao
+		geometry->glGenVertexArrays(1, &geometry->mVao);
+		geometry->glBindVertexArray(geometry->mVao);
+
+		geometry->glBindBuffer(GL_ARRAY_BUFFER, posVbo);
+		geometry->glEnableVertexAttribArray(0);
+		geometry->glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void*)0);
+
+        geometry->glBindBuffer(GL_ARRAY_BUFFER, uvVbo);
+        geometry->glEnableVertexAttribArray(1);
+        geometry->glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void*)0);
+
+        geometry->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geometry->mEbo);
+		geometry->glBindVertexArray(0);
+
+        return geometry;
+    }
+
     MyGeometry* MyGeometry::createLogoQuad(float width, float height)
     {
         MyGeometry* geometry = new MyGeometry();
@@ -488,7 +545,7 @@ namespace MyOpenGL {
 
         // VBO/EBO/VAO 创建
         GLuint& posVbo = geometry->mPosVbo,
-            uvVbo = geometry->mUvVao,
+            uvVbo = geometry->mUvVbo,
             ebo = geometry->mEbo,
             normalVbo = geometry->mNormalVbo;
 

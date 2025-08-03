@@ -36,6 +36,8 @@ namespace MyOpenGL {
 			OpenGLCamera::MyCamera* camera, MyDirectionalLight* dirLight, std::vector<MyPointLight*>& pointLights,
 			MySpotLight* spotLight, MyAmbientLight* ambLight
 		);
+	public:
+		MyMaterial* mGlobalMaterial{ nullptr }; //全局材质
 
 	private:
 
@@ -47,6 +49,7 @@ namespace MyOpenGL {
 		void setPolygonOffsetState(MyOpenGL::MyMaterial* material);
 		void setStencilState(MyOpenGL::MyMaterial* material);
 		void setBlendState(MyOpenGL::MyMaterial* material);
+		void setFaceCullingState(MyOpenGL::MyMaterial* material);
 	private:
 		//生成多种不同的shader对象
 		MyOpenGL::MyShader* mPhongShader{ nullptr };
@@ -54,9 +57,11 @@ namespace MyOpenGL {
 		MyOpenGL::MyShader* mImageShader{ nullptr };
 		MyOpenGL::MyShader* mDepthShader{ nullptr };
 		MyOpenGL::MyShader* mOpacityMaskShader{ nullptr };
+		MyOpenGL::MyShader* mScreenShader{ nullptr };
+
 
 		//不透明物体与透明物体的队列
-	//注意!! 每一帧绘制前需要清空两个队列
+		//注意!! 每一帧绘制前需要清空两个队列
 		std::vector<MyOpenGL::MyMesh*> mOpacityObjects{};
 		std::vector<MyOpenGL::MyMesh*> mTransparentObjects{};
 	};

@@ -3,6 +3,7 @@
 #include "../Material/MyWhiteMaterial.h"
 #include "../Material/MyImageMaterial.h"
 #include "../Material/MyopacityMaskMaterial.h"
+#include "../Material/MyscreenMaterial.h"
 namespace MyOpenGL {
 	MyRenderer::MyRenderer()
 	{
@@ -12,7 +13,7 @@ namespace MyOpenGL {
 		mImageShader = new MyOpenGL::MyShader("../assets/shaders/image.vert", "../assets/shaders/image.frag");
 		mDepthShader = new MyOpenGL::MyShader("../assets/shaders/depth.vert", "../assets/shaders/depth.frag");
 		mOpacityMaskShader = new MyOpenGL::MyShader("../assets/shaders/phongOpacityMask.vert", "../assets/shaders/phongOpacityMask.frag");
-
+		mScreenShader = new MyOpenGL::MyShader("../assets/shaders/screen.vert", "../assets/shaders/screen.frag");
 	}
 
 	MyRenderer::~MyRenderer()
@@ -254,13 +255,25 @@ namespace MyOpenGL {
 		if (object->getType() == MyOpenGL::ObjectType::Mesh) {
 			auto mesh = (MyOpenGL::MyMesh*)object;
 			auto geometry = mesh->mGeometry;
-			auto material = mesh->mMaterial;
 
+			//如果是全局材质,则使用全局材质
+			MyMaterial* material = nullptr;
+			if (mGlobalMaterial != nullptr)
+			{
+				material = mGlobalMaterial;
+			}
+			else
+			{
+				material = mesh->mMaterial;
+			}
+			
 			//设置渲染状态
 			setDepthState(material);
 			setPolygonOffsetState(material);
 			setStencilState(material);
 			setBlendState(material);
+			setFaceCullingState(material);
+
 			// 1. 决定使用哪个Shader
 			MyOpenGL::MyShader* shader = pickShader(material->mType);
 
@@ -397,7 +410,15 @@ namespace MyOpenGL {
 				//透明度
 				shader->setFloat("opacity", material->mOpacity);
 			}
-												  break;
+											break;
+			case MaterialType::ScreenMaterial: {
+				MyScreenMaterial* screenMat = static_cast<MyScreenMaterial*>(material);
+				shader->setInt("screenTexSampler", 0);
+				screenMat->mScreenTexture->bind();
+				//shader->setFloat("texWidth", 1600);//先写死 后面再优化
+				//shader->setFloat("texHeight", 1200);
+			}
+											 break;
 			default:
 				break;
 			}
@@ -465,9 +486,9 @@ namespace MyOpenGL {
 		case MaterialType::OpacityMaskMaterial:
 			result = mOpacityMaskShader;
 			break;
-			//case MaterialType::ScreenMaterial:
-			//	result = mScreenShader;
-			//	break;
+		case MaterialType::ScreenMaterial:
+			result = mScreenShader;
+			break;
 			//case MaterialType::CubeMaterial:
 			//	result = mCubeShader;
 			//	break;
@@ -549,6 +570,19 @@ namespace MyOpenGL {
 		else
 		{
 			glDisable(GL_BLEND);
+		}
+	}
+	void MyRenderer::setFaceCullingState(MyOpenGL::MyMaterial* material)
+	{
+		if (material->mFaceCulling)
+		{
+			glEnable(GL_CULL_FACE);
+			glFrontFace(material->mFrontFace);
+			glCullFace(material->mCullFace);
+		}
+		else
+		{
+			glDisable(GL_CULL_FACE);
 		}
 	}
 }
