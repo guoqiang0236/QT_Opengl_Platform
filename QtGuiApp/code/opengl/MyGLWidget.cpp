@@ -533,7 +533,6 @@ namespace MyOpenGL {
 		mat->mScreenTexture = new MyTexture("../assets/textures/box.png", 0); // 设置屏幕纹理
         
 		auto screenMesh = new MyMesh(geo, mat);
-       
 		m_scene->addChild(screenMesh);
     }
 
