@@ -47,10 +47,12 @@ private:
     void colorblendshendutest();
 	void opacityMaskTest();
     void FaceCullingTest();
+    void DoublepassTest();
 
 	void prepareGrass();
     void prepareScreen();
-   
+    void prepareFBO();
+    
 
     //图形变换
 	void doRotationTransform();//旋转
@@ -73,8 +75,7 @@ Q_SIGNALS:
 public slots:
     void triggerDraw();
 	void bShowLogo(bool bshow);
-    void bShowRenderer(bool bshow);
-
+    void bShowMoxing(bool bshow);
 
 protected:
     void initializeGL() override;
@@ -99,6 +100,8 @@ private:
     GLuint m_program = 0;
     GLuint m_texture = 0;
     GLuint logoVAO = 0;
+    GLuint fbo = 0;
+
     bool m_prepared = false;
 	std::unique_ptr<MyShader> m_Shader;
 	std::unique_ptr<MyTexture> m_Texture;
@@ -107,6 +110,7 @@ private:
     MyTexture* landTexture = nullptr;
     MyTexture* noiseTexture = nullptr;
     MyTexture* logoTexture = nullptr;
+    MyTexture* colorAttachment = nullptr;
     QElapsedTimer m_timer;
 	glm::mat4 m_transform;// 变换矩阵
     glm::mat4 m_transform2;// 变换矩阵
@@ -130,6 +134,7 @@ private:
     //renderer
 	MyRenderer*m_renderer = nullptr;
     MyScene* m_scene = nullptr;
+    MyScene* m_inscreenscene = nullptr;
     
     MyDirectionalLight* m_dirLight = nullptr; // 平行光
 	std::vector<MyPointLight*> m_pointLights ; // 点光源
@@ -137,6 +142,9 @@ private:
     MyAmbientLight* m_ambLight = nullptr;     // 环境光
     float m_animTime = 0.0f;
 
+    //mesh
+	MyMesh* logomesh = nullptr;
+    MyMesh* moxingmesh = nullptr;
 private:
     bool bhaslogo = false;
     bool bhasrenderer = false;

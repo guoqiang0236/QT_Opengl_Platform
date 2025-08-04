@@ -28,8 +28,11 @@ namespace MyOpenGL {
 			MyAmbientLight* ambLight
 		);
 		void render(MyOpenGL::MyScene* scene,
-			OpenGLCamera::MyCamera* camera, MyDirectionalLight* dirLight, std::vector<MyPointLight*>& pointLights,
-			MySpotLight* spotLight, MyAmbientLight* ambLight);
+			OpenGLCamera::MyCamera* camera, MyDirectionalLight* dirLight, 
+			std::vector<MyPointLight*>& pointLights,
+			MySpotLight* spotLight, MyAmbientLight* ambLight,
+			unsigned int fbo = 0
+		);
 
 		void rendererObject(
 			MyOpenGL::MyObject* object,

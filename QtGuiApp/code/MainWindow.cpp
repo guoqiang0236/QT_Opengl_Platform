@@ -128,7 +128,7 @@ void MainWindow::InitSlots()
     //opengl
     connect(m_ui->pushButton_drawtriangle, &QPushButton::clicked, m_glwidget, &MyOpenGL::MyGLWidget::triggerDraw);
     connect(m_ui->widget_logo, &ImageSwitch::checkedChanged, m_glwidget, &MyOpenGL::MyGLWidget::bShowLogo);
-    connect(m_ui->widget_object, &ImageSwitch::checkedChanged, m_glwidget, &MyOpenGL::MyGLWidget::bShowRenderer);
+    connect(m_ui->widget_object, &ImageSwitch::checkedChanged, m_glwidget, &MyOpenGL::MyGLWidget::bShowMoxing);
     connect(m_ui->pushButton_background, &QPushButton::clicked, this, &MainWindow::SelectColor);
     connect(m_glwidget, &MyOpenGL::MyGLWidget::prepareok, this, &MainWindow::InitRendererPannel);
 }

@@ -184,9 +184,9 @@ namespace MyOpenGL {
 
 	void MyRenderer::render(MyOpenGL::MyScene* scene,
 		OpenGLCamera::MyCamera* camera, MyDirectionalLight* dirLight, std::vector<MyPointLight*>& pointLights,
-		MySpotLight* spotLight, MyAmbientLight* ambLight)
+		MySpotLight* spotLight, MyAmbientLight* ambLight, unsigned int fbo)
 	{
-		
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);// 绑定帧缓冲对象
 
 		//1 设置当前帧绘制的时候,opengl的必要状态机参数
 		glEnable(GL_DEPTH_TEST);
@@ -207,8 +207,6 @@ namespace MyOpenGL {
 		//2 清理画布
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		
-		if (!scene->getShow())
-			return;
 		//清空两个队列
 		mOpacityObjects.clear();
 		mTransparentObjects.clear();
@@ -254,6 +252,8 @@ namespace MyOpenGL {
 		//1 判断是Mesh还是Object，如果是Mesh就需要渲染
 		if (object->getType() == MyOpenGL::ObjectType::Mesh) {
 			auto mesh = (MyOpenGL::MyMesh*)object;
+			if (mesh->getShow() == false)
+				return;
 			auto geometry = mesh->mGeometry;
 
 			//如果是全局材质,则使用全局材质
