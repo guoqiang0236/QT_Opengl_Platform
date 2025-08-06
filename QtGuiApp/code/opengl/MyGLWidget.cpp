@@ -313,6 +313,7 @@ namespace MyOpenGL {
 		m_renderer = new::MyOpenGL::MyRenderer();
         m_scene = new ::MyOpenGL::MyScene();
         m_inscreenscene = new ::MyOpenGL::MyScene();
+		framebuffer = new Framebuffer(width(), height());
 	/*	auto testmodel = MyAssimpLoader::load("../assets/fbx/Fist Fight B.fbx");
         testmodel->setScale(glm::vec3(0.1f));
         if (!testmodel)
@@ -534,10 +535,12 @@ namespace MyOpenGL {
         //贴到屏幕上的矩形
         auto geo = MyGeometry::createScreenPlane(-1,1,-1,1);
         auto mat = new MyScreenMaterial();
-        mat->mScreenTexture = colorAttachment;//!!!!重要!!!!!
+        if(framebuffer)
+            mat->mScreenTexture = framebuffer->mColorAttachment;//!!!!重要!!!!!
 
         auto mesh = new MyMesh(geo, mat);
-        m_inscreenscene->addChild(mesh);
+        if(m_inscreenscene)
+            m_inscreenscene->addChild(mesh);
         
     }
 
@@ -567,29 +570,7 @@ namespace MyOpenGL {
 		m_scene->addChild(moxingmesh);
     }
 
-    void MyGLWidget::prepareFBO()
-    {
-        //1 生成FBO对象并且绑定
-	    glGenFramebuffers(1, &fbo);
-	    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	    //2 生成颜色附件,并且加入FBO
-	    colorAttachment = new MyTexture(width(), height(), 0);
-	    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorAttachment->getTexture(), 0);
-	    //3 生成depth Stencil附件,加入FBO
-	    unsigned int depthStencil;
-	    glGenTextures(1, &depthStencil);
-	    glBindTexture(GL_TEXTURE_2D, depthStencil);
-	    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width(), height(), 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
-	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthStencil, 0);
-	    //检查当前构建的fbo是否完整
-	    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-	    {
-		    std::cout << "Error: FrameBuffer is not complete" << std::endl;
-	    }
-	    glBindFramebuffer(GL_FRAMEBUFFER, 0); //解绑FBO
-    }
+
 
     void MyGLWidget::doTranslationTransform()
     {
@@ -672,13 +653,16 @@ namespace MyOpenGL {
             float x = std::sin(m_animTime) * amplitude;
 
             // pass01 将box渲染到colorAttachment上，新的fbo上 
-            m_renderer->render(m_scene, m_camera, m_dirLight, m_pointLights, m_spotLight, m_ambLight,fbo);
+            m_renderer->render(m_scene, m_camera, m_dirLight, m_pointLights, m_spotLight, m_ambLight,framebuffer->mFBO);
+          
 
+            
             if (m_inscreenscene)
             {
                 // pass02 将colorAttachment作为纹理，绘制到整个屏幕上
-                m_renderer->render(m_inscreenscene, m_camera, m_dirLight, m_pointLights, m_spotLight, m_ambLight);
+                //m_renderer->render(m_inscreenscene, m_camera, m_dirLight, m_pointLights, m_spotLight, m_ambLight);
             }
+           
         }
   
         update();
@@ -773,7 +757,7 @@ namespace MyOpenGL {
     {
         makeCurrent();
         //prepare();
-        prepareFBO();
+       
         preparemoxing();
        
 		//prepareGrass();
@@ -783,7 +767,7 @@ namespace MyOpenGL {
         m_prepared = true;
         emit prepareok(true);
         doneCurrent();
-        update();
+       
     }
    
 

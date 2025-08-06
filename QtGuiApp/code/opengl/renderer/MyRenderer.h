@@ -10,6 +10,7 @@
 #include "../MyShader.h"
 #include "../MyScene.h"
 
+
 namespace MyOpenGL {
 	class MyRenderer :protected QOpenGLFunctions_4_5_Core {
 	public:
@@ -17,7 +18,7 @@ namespace MyOpenGL {
 		~MyRenderer();
 		//渲染功能函数:
 		//1 每次调用都会渲染一帧
-		void render(const std::vector<MyOpenGL::MyMesh*>& meshes,
+	/*	void render(const std::vector<MyOpenGL::MyMesh*>& meshes,
 			OpenGLCamera::MyCamera* camera,
 			MyDirectionalLight* dirLight,
 			MyAmbientLight* ambLight
@@ -26,7 +27,7 @@ namespace MyOpenGL {
 			OpenGLCamera::MyCamera* camera,
 			MyPointLight* pointLight,
 			MyAmbientLight* ambLight
-		);
+		);*/
 		void render(MyOpenGL::MyScene* scene,
 			OpenGLCamera::MyCamera* camera, MyDirectionalLight* dirLight, 
 			std::vector<MyPointLight*>& pointLights,

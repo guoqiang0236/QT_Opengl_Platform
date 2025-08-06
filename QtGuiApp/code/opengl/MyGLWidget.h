@@ -10,7 +10,7 @@
 #include "MyAssimpLoader.h"
 
 #include "renderer/MyRenderer.h"
-
+#include "framebuffer/framebuffer.h"
 //引入相机+控制器
 #include "../camera/MyOrthographicCamera.h"
 #include "../camera/MyPerspectiveCamera.h"
@@ -51,7 +51,7 @@ private:
 
 	void prepareGrass();
     void prepareScreen();
-    void prepareFBO();
+
     
 
     //图形变换
@@ -100,7 +100,7 @@ private:
     GLuint m_program = 0;
     GLuint m_texture = 0;
     GLuint logoVAO = 0;
-    GLuint fbo = 0;
+	Framebuffer* framebuffer = nullptr;
 
     bool m_prepared = false;
 	std::unique_ptr<MyShader> m_Shader;
@@ -110,7 +110,7 @@ private:
     MyTexture* landTexture = nullptr;
     MyTexture* noiseTexture = nullptr;
     MyTexture* logoTexture = nullptr;
-    MyTexture* colorAttachment = nullptr;
+
     QElapsedTimer m_timer;
 	glm::mat4 m_transform;// 变换矩阵
     glm::mat4 m_transform2;// 变换矩阵

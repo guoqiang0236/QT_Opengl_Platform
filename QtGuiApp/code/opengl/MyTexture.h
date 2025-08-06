@@ -12,7 +12,7 @@ namespace MyOpenGL {
 			uint32_t heightIn		//高度
 		);//从内存中读取图片并初始化(部分fbx加载模型的时候会把贴图也一起加载到内存中)
 		MyTexture(unsigned int width, unsigned int height, unsigned int unit);
-
+		MyTexture();
 		~MyTexture();
 
 		static MyTexture* createTexture(const std::string& path, unsigned int unit);
@@ -23,6 +23,8 @@ namespace MyOpenGL {
 			uint32_t widthIn,		//宽度
 			uint32_t heightIn		//高度
 		);
+		static MyTexture* createColorAttachment(unsigned int width, unsigned int height, unsigned int unit);
+		static MyTexture* createDepthStencilAttachment(unsigned int width, unsigned int height, unsigned int unit);
 
 		void bind();
 

@@ -25,168 +25,168 @@ namespace MyOpenGL {
 		}
 	}
 
-	void MyRenderer::render(const std::vector<MyOpenGL::MyMesh*>& meshes,
-		OpenGLCamera::MyCamera* camera, MyDirectionalLight* dirLight, MyAmbientLight* ambLight)
-	{
-		//1 设置当前帧绘制的时候,opengl的必要状态机参数
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LESS);
+	//void MyRenderer::render(const std::vector<MyOpenGL::MyMesh*>& meshes,
+	//	OpenGLCamera::MyCamera* camera, MyDirectionalLight* dirLight, MyAmbientLight* ambLight)
+	//{
+	//	//1 设置当前帧绘制的时候,opengl的必要状态机参数
+	//	glEnable(GL_DEPTH_TEST);
+	//	glDepthFunc(GL_LESS);
 
-		//2 清理画布
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	//	//2 清理画布
+	//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-		//3 遍历mesh渲染
-		for (int i = 0; i < meshes.size(); i++) {
-			auto mesh = meshes[i];
-			auto geometry = mesh->mGeometry;
-			auto material = mesh->mMaterial;
+	//	//3 遍历mesh渲染
+	//	for (int i = 0; i < meshes.size(); i++) {
+	//		auto mesh = meshes[i];
+	//		auto geometry = mesh->mGeometry;
+	//		auto material = mesh->mMaterial;
 
-			// 1. 决定使用哪个Shader
-			MyOpenGL::MyShader* shader = pickShader(material->mType);
-
-
-			// 2. 更新shader的uniform
-			shader->begin();
-
-			switch (material->mType) {
-			case MaterialType::PhongMaterial: {
-				MyPhongMaterial* phongMat = static_cast<MyPhongMaterial*>(material);
-
-				//diffuse贴图
-				//将纹理采样器与纹理单元挂钩
-				shader->setInt("sampler", 0);
-				//将纹理与纹理单元进行挂钩
-				phongMat->mDiffuse->bind();
-
-				shader->setInt("specularMaskSampler", 1);
-				phongMat->mSpecularMask->bind();
-				//mvp矩阵的更新
-				shader->setMatrix4x4("modelMatrix", mesh->getModelMatrix());
-				shader->setMatrix4x4("viewMatrix", camera->getViewMatrix());
-				shader->setMatrix4x4("projectionMatrix", camera->getProjectionMatrix());
-
-				auto normalMatrix = glm::mat3(glm::transpose(glm::inverse(mesh->getModelMatrix())));
-				shader->setMatrix3x3("normalMatrix", normalMatrix);
-
-				// 光源参数的uniform更新
-				//directionalLight
-				shader->setVector3("MydirectionalLight.direction", dirLight->mDirection);
-				shader->setVector3("MydirectionalLight.color", dirLight->mColor);
-				shader->setFloat("MydirectionalLight.specularIntensity", dirLight->mSpecularIntensity);
-				shader->setFloat("MydirectionalLight.intensity", dirLight->mIntensity);
-				shader->setVector3("ambientColor", ambLight->mColor);
-				shader->setFloat("shiness", phongMat->mShiness);
-
-				//相机信息更新
-				shader->setVector3("cameraPosition", camera->mPosition);
-			}
-											break;
-			case MaterialType::WhiteMaterial: {
-				//mvp矩阵的更新
-				shader->setMatrix4x4("modelMatrix", mesh->getModelMatrix());
-				shader->setMatrix4x4("viewMatrix", camera->getViewMatrix());
-				shader->setMatrix4x4("projectionMatrix", camera->getProjectionMatrix());
-
-			}
-											break;
-			default:
-				continue;
-			}
-
-			// 3. 绑定vao
-			glBindVertexArray(geometry->getVao());
-
-			// 4. 执行绘制命令
-			glDrawElements(GL_TRIANGLES, geometry->getIndicesCount(), GL_UNSIGNED_INT, (void*)(sizeof(int) * 0));
-
-		}
-	}
-
-	void MyRenderer::render(const std::vector<MyOpenGL::MyMesh*>& meshes,
-		OpenGLCamera::MyCamera* camera, MyPointLight* pointLight, MyAmbientLight* ambLight)
-	{
-		//1 设置当前帧绘制的时候,opengl的必要状态机参数
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LESS);
-
-		//2 清理画布
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-		//3 遍历mesh渲染
-		for (int i = 0; i < meshes.size(); i++) {
-			auto mesh = meshes[i];
-			auto geometry = mesh->mGeometry;
-			auto material = mesh->mMaterial;
-
-			// 1. 决定使用哪个Shader
-			MyOpenGL::MyShader* shader = pickShader(material->mType);
+	//		// 1. 决定使用哪个Shader
+	//		MyOpenGL::MyShader* shader = pickShader(material->mType);
 
 
-			// 2. 更新shader的uniform
-			shader->begin();
+	//		// 2. 更新shader的uniform
+	//		shader->begin();
 
-			switch (material->mType) {
-			case MaterialType::PhongMaterial: {
-				MyPhongMaterial* phongMat = static_cast<MyPhongMaterial*>(material);
+	//		switch (material->mType) {
+	//		case MaterialType::PhongMaterial: {
+	//			MyPhongMaterial* phongMat = static_cast<MyPhongMaterial*>(material);
 
-				//diffuse贴图
-				//将纹理采样器与纹理单元挂钩
-				shader->setInt("sampler", 0);
-				//将纹理与纹理单元进行挂钩
-				phongMat->mDiffuse->bind();
+	//			//diffuse贴图
+	//			//将纹理采样器与纹理单元挂钩
+	//			shader->setInt("sampler", 0);
+	//			//将纹理与纹理单元进行挂钩
+	//			phongMat->mDiffuse->bind();
 
-				shader->setInt("specularMaskSampler", 1);
-				phongMat->mSpecularMask->bind();
-				//mvp矩阵的更新
-				shader->setMatrix4x4("modelMatrix", mesh->getModelMatrix());
-				shader->setMatrix4x4("viewMatrix", camera->getViewMatrix());
-				shader->setMatrix4x4("projectionMatrix", camera->getProjectionMatrix());
+	//			shader->setInt("specularMaskSampler", 1);
+	//			phongMat->mSpecularMask->bind();
+	//			//mvp矩阵的更新
+	//			shader->setMatrix4x4("modelMatrix", mesh->getModelMatrix());
+	//			shader->setMatrix4x4("viewMatrix", camera->getViewMatrix());
+	//			shader->setMatrix4x4("projectionMatrix", camera->getProjectionMatrix());
 
-				auto normalMatrix = glm::mat3(glm::transpose(glm::inverse(mesh->getModelMatrix())));
-				shader->setMatrix3x3("normalMatrix", normalMatrix);
+	//			auto normalMatrix = glm::mat3(glm::transpose(glm::inverse(mesh->getModelMatrix())));
+	//			shader->setMatrix3x3("normalMatrix", normalMatrix);
 
-				// 光源参数的uniform更新
-				//光源参数的uniform更新
-				shader->setVector3("MyPointLight.position", pointLight->getPosition());
-				shader->setVector3("MyPointLight.color", pointLight->mColor);
-				shader->setFloat("MyPointLight.specularIntensity", pointLight->mSpecularIntensity);
-				shader->setFloat("MyPointLight.k2", pointLight->mK2);  // 二次项衰减系数
-				shader->setFloat("MyPointLight.k1", pointLight->mK1);  // 线性衰减系数
-				shader->setFloat("MyPointLight.kc", pointLight->mKc);  // 常数项衰减系数
+	//			// 光源参数的uniform更新
+	//			//directionalLight
+	//			shader->setVector3("MydirectionalLight.direction", dirLight->mDirection);
+	//			shader->setVector3("MydirectionalLight.color", dirLight->mColor);
+	//			shader->setFloat("MydirectionalLight.specularIntensity", dirLight->mSpecularIntensity);
+	//			shader->setFloat("MydirectionalLight.intensity", dirLight->mIntensity);
+	//			shader->setVector3("ambientColor", ambLight->mColor);
+	//			shader->setFloat("shiness", phongMat->mShiness);
 
-				shader->setVector3("ambientColor", ambLight->mColor);
-				shader->setFloat("shiness", phongMat->mShiness);
+	//			//相机信息更新
+	//			shader->setVector3("cameraPosition", camera->mPosition);
+	//		}
+	//										break;
+	//		case MaterialType::WhiteMaterial: {
+	//			//mvp矩阵的更新
+	//			shader->setMatrix4x4("modelMatrix", mesh->getModelMatrix());
+	//			shader->setMatrix4x4("viewMatrix", camera->getViewMatrix());
+	//			shader->setMatrix4x4("projectionMatrix", camera->getProjectionMatrix());
 
-				//相机信息更新
-				shader->setVector3("cameraPosition", camera->mPosition);
-			}
-											break;
-			case MaterialType::WhiteMaterial: {
-				//mvp矩阵的更新
-				shader->setMatrix4x4("modelMatrix", mesh->getModelMatrix());
-				shader->setMatrix4x4("viewMatrix", camera->getViewMatrix());
-				shader->setMatrix4x4("projectionMatrix", camera->getProjectionMatrix());
+	//		}
+	//										break;
+	//		default:
+	//			continue;
+	//		}
 
-			}
-											break;
-			default:
-				continue;
-			}
+	//		// 3. 绑定vao
+	//		glBindVertexArray(geometry->getVao());
 
-			// 3. 绑定vao
-			glBindVertexArray(geometry->getVao());
+	//		// 4. 执行绘制命令
+	//		glDrawElements(GL_TRIANGLES, geometry->getIndicesCount(), GL_UNSIGNED_INT, (void*)(sizeof(int) * 0));
 
-			// 4. 执行绘制命令
-			glDrawElements(GL_TRIANGLES, geometry->getIndicesCount(), GL_UNSIGNED_INT, (void*)(sizeof(int) * 0));
+	//	}
+	//}
 
-		}
-	}
+	//void MyRenderer::render(const std::vector<MyOpenGL::MyMesh*>& meshes,
+	//	OpenGLCamera::MyCamera* camera, MyPointLight* pointLight, MyAmbientLight* ambLight)
+	//{
+	//	//1 设置当前帧绘制的时候,opengl的必要状态机参数
+	//	glEnable(GL_DEPTH_TEST);
+	//	glDepthFunc(GL_LESS);
+
+	//	//2 清理画布
+	//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+	//	//3 遍历mesh渲染
+	//	for (int i = 0; i < meshes.size(); i++) {
+	//		auto mesh = meshes[i];
+	//		auto geometry = mesh->mGeometry;
+	//		auto material = mesh->mMaterial;
+
+	//		// 1. 决定使用哪个Shader
+	//		MyOpenGL::MyShader* shader = pickShader(material->mType);
+
+
+	//		// 2. 更新shader的uniform
+	//		shader->begin();
+
+	//		switch (material->mType) {
+	//		case MaterialType::PhongMaterial: {
+	//			MyPhongMaterial* phongMat = static_cast<MyPhongMaterial*>(material);
+
+	//			//diffuse贴图
+	//			//将纹理采样器与纹理单元挂钩
+	//			shader->setInt("sampler", 0);
+	//			//将纹理与纹理单元进行挂钩
+	//			phongMat->mDiffuse->bind();
+
+	//			shader->setInt("specularMaskSampler", 1);
+	//			phongMat->mSpecularMask->bind();
+	//			//mvp矩阵的更新
+	//			shader->setMatrix4x4("modelMatrix", mesh->getModelMatrix());
+	//			shader->setMatrix4x4("viewMatrix", camera->getViewMatrix());
+	//			shader->setMatrix4x4("projectionMatrix", camera->getProjectionMatrix());
+
+	//			auto normalMatrix = glm::mat3(glm::transpose(glm::inverse(mesh->getModelMatrix())));
+	//			shader->setMatrix3x3("normalMatrix", normalMatrix);
+
+	//			// 光源参数的uniform更新
+	//			//光源参数的uniform更新
+	//			shader->setVector3("MyPointLight.position", pointLight->getPosition());
+	//			shader->setVector3("MyPointLight.color", pointLight->mColor);
+	//			shader->setFloat("MyPointLight.specularIntensity", pointLight->mSpecularIntensity);
+	//			shader->setFloat("MyPointLight.k2", pointLight->mK2);  // 二次项衰减系数
+	//			shader->setFloat("MyPointLight.k1", pointLight->mK1);  // 线性衰减系数
+	//			shader->setFloat("MyPointLight.kc", pointLight->mKc);  // 常数项衰减系数
+
+	//			shader->setVector3("ambientColor", ambLight->mColor);
+	//			shader->setFloat("shiness", phongMat->mShiness);
+
+	//			//相机信息更新
+	//			shader->setVector3("cameraPosition", camera->mPosition);
+	//		}
+	//										break;
+	//		case MaterialType::WhiteMaterial: {
+	//			//mvp矩阵的更新
+	//			shader->setMatrix4x4("modelMatrix", mesh->getModelMatrix());
+	//			shader->setMatrix4x4("viewMatrix", camera->getViewMatrix());
+	//			shader->setMatrix4x4("projectionMatrix", camera->getProjectionMatrix());
+
+	//		}
+	//										break;
+	//		default:
+	//			continue;
+	//		}
+
+	//		// 3. 绑定vao
+	//		glBindVertexArray(geometry->getVao());
+
+	//		// 4. 执行绘制命令
+	//		glDrawElements(GL_TRIANGLES, geometry->getIndicesCount(), GL_UNSIGNED_INT, (void*)(sizeof(int) * 0));
+
+	//	}
+	//}
 
 	void MyRenderer::render(MyOpenGL::MyScene* scene,
 		OpenGLCamera::MyCamera* camera, MyDirectionalLight* dirLight, std::vector<MyPointLight*>& pointLights,
 		MySpotLight* spotLight, MyAmbientLight* ambLight, unsigned int fbo)
 	{
-		glBindFramebuffer(GL_FRAMEBUFFER, fbo);// 绑定帧缓冲对象
+		//glBindFramebuffer(GL_FRAMEBUFFER, fbo);// 绑定帧缓冲对象
 
 		//1 设置当前帧绘制的时候,opengl的必要状态机参数
 		glEnable(GL_DEPTH_TEST);

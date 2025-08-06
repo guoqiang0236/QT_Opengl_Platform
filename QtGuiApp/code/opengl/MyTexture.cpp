@@ -145,6 +145,10 @@ namespace MyOpenGL {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
 
+    MyTexture::MyTexture()
+    {
+    }
+
     MyTexture::~MyTexture()
     {
     }
@@ -178,6 +182,30 @@ namespace MyOpenGL {
         auto texture = new MyTexture(unit, dataIn, widthIn, heightIn);
         mTextureCache[path] = texture;
         return texture;
+    }
+
+    MyTexture* MyTexture::createColorAttachment(unsigned int width, unsigned int height, unsigned int unit)
+    {
+        return new MyTexture(width, height, unit);
+    }
+
+    MyTexture* MyTexture::createDepthStencilAttachment(unsigned int width, unsigned int height, unsigned int unit)
+    {
+        
+        MyTexture* dsTex = new MyTexture();
+        dsTex->initializeOpenGLFunctions();
+        unsigned int depthStencil;
+        dsTex->glGenTextures(1, &depthStencil);
+        dsTex->glBindTexture(GL_TEXTURE_2D, depthStencil);
+        dsTex->glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
+        dsTex->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        dsTex->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        dsTex->mTexture = depthStencil;
+        dsTex->mWidth = width;
+        dsTex->mHeight = height;
+        dsTex->mUnit = unit;
+        return dsTex;
     }
 
     void MyTexture::bind()

@@ -62,8 +62,11 @@ void main()
 {
 	//vec3 color = colorInvert(texture(screenTexSampler, uv).rgb);
 	//vec3 color = grayCorrect(texture(screenTexSampler, uv).rgb);
-	vec3 color = texture(screenTexSampler, uv).rgb; 
-	float alpha =  texture(screenTexSampler, uv).a;
+	//vec3 color = texture(screenTexSampler, uv).rgb; 
+	//float alpha =  texture(screenTexSampler, uv).a;
 	//vec3 color = blur();
-	FragColor = vec4(color, 1.0f*alpha);
+	//FragColor = vec4(color, 1.0f*alpha);
+	//FragColor = vec4(color, 1.0f);
+	//FragColor =texture(screenTexSampler, uv);
+	FragColor = vec4(1,0,0,1);
 }
