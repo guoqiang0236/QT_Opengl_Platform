@@ -186,7 +186,7 @@ namespace MyOpenGL {
 		OpenGLCamera::MyCamera* camera, MyDirectionalLight* dirLight, std::vector<MyPointLight*>& pointLights,
 		MySpotLight* spotLight, MyAmbientLight* ambLight, unsigned int fbo)
 	{
-		//glBindFramebuffer(GL_FRAMEBUFFER, fbo);// 绑定帧缓冲对象
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);// 绑定帧缓冲对象
 
 		//1 设置当前帧绘制的时候,opengl的必要状态机参数
 		glEnable(GL_DEPTH_TEST);

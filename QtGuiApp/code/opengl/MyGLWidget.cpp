@@ -660,7 +660,7 @@ namespace MyOpenGL {
             if (m_inscreenscene)
             {
                 // pass02 将colorAttachment作为纹理，绘制到整个屏幕上
-                //m_renderer->render(m_inscreenscene, m_camera, m_dirLight, m_pointLights, m_spotLight, m_ambLight);
+                m_renderer->render(m_inscreenscene, m_camera, m_dirLight, m_pointLights, m_spotLight, m_ambLight,defaultFramebufferObject());
             }
            
         }
