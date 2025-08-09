@@ -12,6 +12,8 @@ namespace MyOpenGL {
 			uint32_t heightIn		//高度
 		);//从内存中读取图片并初始化(部分fbx加载模型的时候会把贴图也一起加载到内存中)
 		MyTexture(unsigned int width, unsigned int height, unsigned int unit);
+		MyTexture(const std::vector<std::string>& paths, unsigned int unit);
+
 		MyTexture();
 		~MyTexture();
 
@@ -39,6 +41,7 @@ namespace MyOpenGL {
 		int mWidth{ 0 };
 		int mHeight{ 0 };
 		unsigned int mUnit{ 0 };
+		unsigned int mTextureTarget{ GL_TEXTURE_2D };
 
 		//注意: 静态!! 属于类的 不属于某个对象 
 		static std::map<std::string, MyTexture*> mTextureCache;

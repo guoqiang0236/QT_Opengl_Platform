@@ -1,10 +1,9 @@
 #version 460 core
 out vec4 FragColor;
 
-in vec2 uv;
-
 in vec3 uvw;
 uniform sampler2D sphericalSampler;
+uniform samplerCube cubeSampler;
 
 const float PI = 3.1415926535897;
 
@@ -20,7 +19,6 @@ void main()
 {
 	//vec3 uvwN = normalize(uvw);
 	//vec2 uv = uvwToUv(uvwN);
-	//FragColor = texture(sphericalSampler, uvw);
+	FragColor = texture(cubeSampler, uvw);
 
-	FragColor=vec4(texture(sphericalSampler,uv).rgb,1.0);
 }

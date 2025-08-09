@@ -145,6 +145,43 @@ namespace MyOpenGL {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
 
+    MyTexture::MyTexture(const std::vector<std::string>& paths, unsigned int unit)
+    {
+        initializeOpenGLFunctions();
+		mUnit = unit;
+		mTextureTarget = GL_TEXTURE_CUBE_MAP;
+
+        //1 创建CubeMap对象
+		glGenTextures(1, &mTexture);
+		glActiveTexture(GL_TEXTURE0 + mUnit);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, mTexture);
+
+        //2 循环读取六张贴图,并且放置到cubemap的六个GPU空间内
+        for (int i = 0; i < paths.size(); i++)
+        {
+            //CubeMap不需要翻转Y轴
+            cv::Mat data = cv::imread(paths[i], cv::IMREAD_UNCHANGED);
+            if (data.empty()) {
+                qDebug() << "图片加载失败";
+                return;
+            }
+            // 保证为RGBA格式
+            if (data.channels() == 3)
+                cv::cvtColor(data, data, cv::COLOR_BGR2RGBA);
+            else if (data.channels() == 4)
+                cv::cvtColor(data, data, cv::COLOR_BGRA2RGBA);
+
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, data.cols, data.rows, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data);
+        }
+
+        //3 设置纹理的参数
+        glTexParameteri(mTextureTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // 放大过滤器
+        glTexParameteri(mTextureTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST); // 缩小过滤器
+        glTexParameteri(mTextureTarget, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(mTextureTarget, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    }
+
     MyTexture::MyTexture()
     {
     }
@@ -212,6 +249,6 @@ namespace MyOpenGL {
     {
         //先切换纹理单元，然后绑定texture对象
         glActiveTexture(GL_TEXTURE0 + mUnit);
-        glBindTexture(GL_TEXTURE_2D, mTexture);
+        glBindTexture(mTextureTarget, mTexture);
     }
 }

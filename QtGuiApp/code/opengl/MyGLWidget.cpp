@@ -8,6 +8,7 @@
 #include "Material/MyopacityMaskMaterial.h"
 #include "Material/MyscreenMaterial.h"
 #include "Material/MycubeMaterial.h"
+#include "Material/MyphongEnvMaterial.h"
 
 namespace MyOpenGL {
     MyGLWidget::MyGLWidget(QWidget* parent)
@@ -86,7 +87,7 @@ namespace MyOpenGL {
               this
           );*/
         m_cameraControl = new OpenGLCamera::MyTrackBallCameraControl(this);
-        //m_cameraControl = new MyGameCameraControl(this);
+        //m_cameraControl = new OpenGLCamera::MyGameCameraControl(this);
         m_cameraControl->setcamera(m_camera);
         m_cameraControl->setSensitivity(0.4f);
         m_cameraControl->setScaleSpeed(0.01f);
@@ -338,11 +339,11 @@ namespace MyOpenGL {
         //平行光
 		m_dirLight = new::MyOpenGL::MyDirectionalLight();
         m_dirLight->mDirection = glm::vec3(-1.0f);
-        m_dirLight->mSpecularIntensity = 0.4f;
+        m_dirLight->mSpecularIntensity = 0.0f;
         
         // 环境光
 		m_ambLight = new ::MyOpenGL::MyAmbientLight(); 
-		m_ambLight->mColor = glm::vec3(0.2f); 
+		m_ambLight->mColor = glm::vec3(0.0f); 
 
         bhasrenderer = true;
     }
@@ -578,12 +579,33 @@ namespace MyOpenGL {
 
     void MyGLWidget::prepareMengGuRen()
     {
-		auto boxgeo = MyGeometry::createBox(1.0f);
-		auto mat = new MyCubeMaterial();
-		mat->mDiffuse = new MyTexture("../assets/textures/wall.jpg", 0); // 设置屏幕纹理
+        std::vector<std::string> paths = {
+            "../assets/textures/skybox/right.jpg",
+            "../assets/textures/skybox/left.jpg",
+            "../assets/textures/skybox/top.jpg",
+            "../assets/textures/skybox/bottom.jpg",
+            "../assets/textures/skybox/back.jpg",
+            "../assets/textures/skybox/front.jpg",
+		};
+        MyTexture* envTexBox = new MyTexture(paths, 0);
+        auto boxgeo = MyGeometry::createBox(1.0f);
+        auto boxmat = new MyCubeMaterial();
+        boxmat->mDiffuse = envTexBox; // 设置屏幕纹理
+        boxmat->mDepthWrite = false;
+        moxingmesh = new MyMesh(boxgeo, boxmat);
+        m_scene->addChild(moxingmesh);
 
-		moxingmesh = new MyMesh(boxgeo, mat);
-		m_scene->addChild(moxingmesh);
+        MyTexture* envTex = new MyTexture(paths, 1);
+        auto spheregeo = MyGeometry::createSphere(4.0f);
+        auto spheremat = new MyPhongEnvMaterial();
+        spheremat->mDiffuse = new MyTexture("../assets/textures/earth.jpg", 0); // 设置屏幕纹理
+        spheremat->mEnv = envTex;
+        auto spheremesh = new MyMesh(spheregeo, spheremat);
+        m_scene->addChild(spheremesh);
+
+		
+
+       
     }
 
 

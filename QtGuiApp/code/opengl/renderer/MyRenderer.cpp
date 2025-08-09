@@ -5,6 +5,7 @@
 #include "../Material/MyopacityMaskMaterial.h"
 #include "../Material/MyscreenMaterial.h"
 #include "../Material/MycubeMaterial.h"
+#include "../Material/MyphongEnvMaterial.h"
 namespace MyOpenGL {
 	MyRenderer::MyRenderer()
 	{
@@ -16,6 +17,8 @@ namespace MyOpenGL {
 		mOpacityMaskShader = new MyOpenGL::MyShader("../assets/shaders/phongOpacityMask.vert", "../assets/shaders/phongOpacityMask.frag");
 		mScreenShader = new MyOpenGL::MyShader("../assets/shaders/screen.vert", "../assets/shaders/screen.frag");
 		mCubeShader = new MyOpenGL::MyShader("../assets/shaders/cube.vert", "../assets/shaders/cube.frag");
+		mPhongEnvShader = new MyOpenGL::MyShader("../assets/shaders/phongEnv.vert", "../assets/shaders/PhongEnv.frag");
+
 	}
 
 	MyRenderer::~MyRenderer()
@@ -272,7 +275,7 @@ namespace MyOpenGL {
 
 				mesh->setPosition(camera->mPosition);
 				//sphericalSampler
-				shader->setInt("sphericalSampler", 0);
+				shader->setInt("cubeSampler", 0);
 				cubeMat->mDiffuse->bind();
 				//MVP
 				shader->setMatrix4x4("modelMatrix", mesh->getModelMatrix());
@@ -283,6 +286,74 @@ namespace MyOpenGL {
 			
 			}
 										   break;
+			case MaterialType::PhongEnvMaterial: {
+				MyPhongEnvMaterial* phongMat = static_cast<MyPhongEnvMaterial*>(material);
+
+				shader->setInt("sampler", 0);
+				phongMat->mDiffuse->bind();
+
+				shader->setInt("envSampler", 1);
+				phongMat->mEnv->bind();
+
+				shader->setInt("specularMaskSampler", 1);
+				if (phongMat->mSpecularMask)
+					phongMat->mSpecularMask->bind();
+				//mvp矩阵的更新
+				shader->setMatrix4x4("modelMatrix", mesh->getModelMatrix());
+				shader->setMatrix4x4("viewMatrix", camera->getViewMatrix());
+				shader->setMatrix4x4("projectionMatrix", camera->getProjectionMatrix());
+
+				auto normalMatrix = glm::mat3(glm::transpose(glm::inverse(mesh->getModelMatrix())));
+				shader->setMatrix3x3("normalMatrix", normalMatrix);
+
+
+
+				// 光源参数的uniform更新 
+				//SpotLight
+				if (spotLight)
+				{
+					shader->setVector3("MySpotLight.position", spotLight->getPosition());
+					shader->setVector3("MySpotLight.color", spotLight->mColor);
+					shader->setVector3("MySpotLight.targetDirection", spotLight->mTargetDirection);
+					shader->setFloat("MySpotLight.specularIntensity", spotLight->mSpecularIntensity);
+					shader->setFloat("MySpotLight.innerLine", glm::cos(glm::radians(spotLight->mInnerAngle)));
+					shader->setFloat("MySpotLight.outerLine", glm::cos(glm::radians(spotLight->mOuterAngle)));
+				}
+
+				//directionalLight
+				shader->setVector3("MydirectionalLight.color", dirLight->mColor);
+				shader->setVector3("MydirectionalLight.direction", dirLight->mDirection);
+				shader->setFloat("MydirectionalLight.specularIntensity", dirLight->mSpecularIntensity);
+				shader->setFloat("MydirectionalLight.intensity", dirLight->mIntensity);
+
+				//pointLight
+				for (int i = 0; i < pointLights.size(); i++) {
+					auto pointLight = pointLights[i];
+
+					// 动态构建索引名称
+					std::string baseName = "MyPointLight[";
+					baseName.append(std::to_string(i));
+					baseName.append("]");
+					shader->setVector3(baseName + ".color", pointLight->mColor);
+					shader->setVector3(baseName + ".position", pointLight->getPosition());
+					shader->setFloat(baseName + ".specularIntensity", pointLight->mSpecularIntensity);
+					shader->setFloat(baseName + ".k2", pointLight->mK2);  // 二次项衰减系数
+					shader->setFloat(baseName + ".k1", pointLight->mK1);  // 线性衰减系数
+					shader->setFloat(baseName + ".kc", pointLight->mKc);  // 常数项衰减系数
+
+				}
+
+
+				shader->setVector3("ambientColor", ambLight->mColor);
+				shader->setFloat("shiness", phongMat->mShiness);
+
+				//相机信息更新
+				shader->setVector3("cameraPosition", camera->mPosition);
+
+				//透明度
+				shader->setFloat("opacity", material->mOpacity);
+			}
+											break;
 			default:
 				break;
 			}
@@ -356,9 +427,9 @@ namespace MyOpenGL {
 			case MaterialType::CubeMaterial:
 				result = mCubeShader;
 				break;
-			//case MaterialType::PhongEnvMaterial:
-			//	result = mPhongEnvShader;
-			//	break;
+		case MaterialType::PhongEnvMaterial:
+			result = mPhongEnvShader;
+			break;
 			//case MaterialType::PhongInstanceMaterial:
 			//	result = mPhongInstancedShader;
 			//	break;

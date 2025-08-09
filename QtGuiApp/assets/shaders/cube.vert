@@ -1,8 +1,8 @@
 #version 460 core
 layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec2 aUV;
 
-out vec2 uv;
+
+
 
 out vec3 uvw;
 out vec3 normal;
@@ -21,10 +21,9 @@ void main()
 
 	gl_Position = projectionMatrix * viewMatrix * transformPosition;
 
-	uv= aUV;
 
-//	gl_Position = gl_Position.xyww;
-//
-//	uvw = aPos;
+	gl_Position = gl_Position.xyww;//使深度始终为1 
+
+	uvw = aPos;
 	
 } 

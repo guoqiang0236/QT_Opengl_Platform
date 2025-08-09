@@ -26,7 +26,7 @@ namespace MyOpenGL {
 
         //深度检测相关
         bool mDepthTest{ true };
-        GLenum mDepthFunc{ GL_LEQUAL };//小于等于的时候才能通过测试
+        GLenum mDepthFunc{ GL_LEQUAL };//小于等于的时候（天空盒）才能通过测试
         bool mDepthWrite{ true };
 
         //polygonOffset相关
