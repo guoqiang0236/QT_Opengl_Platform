@@ -7,6 +7,7 @@
 #include "Material/MydepthMaterial.h"
 #include "Material/MyopacityMaskMaterial.h"
 #include "Material/MyscreenMaterial.h"
+#include "Material/MycubeMaterial.h"
 
 namespace MyOpenGL {
     MyGLWidget::MyGLWidget(QWidget* parent)
@@ -314,6 +315,9 @@ namespace MyOpenGL {
         m_scene = new ::MyOpenGL::MyScene();
         m_inscreenscene = new ::MyOpenGL::MyScene();
 		framebuffer = new Framebuffer(width(), height());
+
+        //preparelogo();
+
 	/*	auto testmodel = MyAssimpLoader::load("../assets/fbx/Fist Fight B.fbx");
         testmodel->setScale(glm::vec3(0.1f));
         if (!testmodel)
@@ -327,7 +331,9 @@ namespace MyOpenGL {
         //opacityMaskTest();
         //FaceCullingTest();
         //prepareScreen();
-        DoublepassTest();
+        
+        //DoublepassTest();
+        prepareMengGuRen();
 
         //平行光
 		m_dirLight = new::MyOpenGL::MyDirectionalLight();
@@ -570,6 +576,16 @@ namespace MyOpenGL {
 		m_scene->addChild(moxingmesh);
     }
 
+    void MyGLWidget::prepareMengGuRen()
+    {
+		auto boxgeo = MyGeometry::createBox(1.0f);
+		auto mat = new MyCubeMaterial();
+		mat->mDiffuse = new MyTexture("../assets/textures/wall.jpg", 0); // 设置屏幕纹理
+
+		moxingmesh = new MyMesh(boxgeo, mat);
+		m_scene->addChild(moxingmesh);
+    }
+
 
 
     void MyGLWidget::doTranslationTransform()
@@ -640,6 +656,9 @@ namespace MyOpenGL {
     {
         //背景色
         prapareBackground(m_bgColor);
+
+        
+        
         //摄像机更新
         if (m_cameraControl)
         {
@@ -647,21 +666,19 @@ namespace MyOpenGL {
         }
         if (m_renderer && m_scene)
         {
-            //m_meshes[0]->rotateY(0.1f);
-            m_animTime += 0.02f; // 控制速度
-            float amplitude = 1.0f; // 控制最大平移距离
-            float x = std::sin(m_animTime) * amplitude;
-
+            //更新窗口大小数据
+			m_renderer->setWidth(width());
+            m_renderer->setHeight(height());
             // pass01 将box渲染到colorAttachment上，新的fbo上 
             m_renderer->render(m_scene, m_camera, m_dirLight, m_pointLights, m_spotLight, m_ambLight,framebuffer->mFBO);
           
 
             
-            if (m_inscreenscene)
-            {
-                // pass02 将colorAttachment作为纹理，绘制到整个屏幕上
-                m_renderer->render(m_inscreenscene, m_camera, m_dirLight, m_pointLights, m_spotLight, m_ambLight,defaultFramebufferObject());
-            }
+            //if (m_inscreenscene)
+            //{
+            //    // pass02 将colorAttachment作为纹理，绘制到整个屏幕上
+            //    m_renderer->render(m_inscreenscene, m_camera, m_dirLight, m_pointLights, m_spotLight, m_ambLight,defaultFramebufferObject());
+            //}
            
         }
   
@@ -756,12 +773,12 @@ namespace MyOpenGL {
     void MyGLWidget::triggerDraw()
     {
         makeCurrent();
-        //prepare();
-       
+   
+        
         preparemoxing();
-       
-		//prepareGrass();
-        //preparelogo();
+        
+
+      
         prepareCamera();
 
         m_prepared = true;

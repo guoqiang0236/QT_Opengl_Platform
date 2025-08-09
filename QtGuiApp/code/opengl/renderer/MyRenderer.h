@@ -16,18 +16,6 @@ namespace MyOpenGL {
 	public:
 		MyRenderer();
 		~MyRenderer();
-		//渲染功能函数:
-		//1 每次调用都会渲染一帧
-	/*	void render(const std::vector<MyOpenGL::MyMesh*>& meshes,
-			OpenGLCamera::MyCamera* camera,
-			MyDirectionalLight* dirLight,
-			MyAmbientLight* ambLight
-		);
-		void render(const std::vector<MyOpenGL::MyMesh*>& meshes,
-			OpenGLCamera::MyCamera* camera,
-			MyPointLight* pointLight,
-			MyAmbientLight* ambLight
-		);*/
 		void render(MyOpenGL::MyScene* scene,
 			OpenGLCamera::MyCamera* camera, MyDirectionalLight* dirLight, 
 			std::vector<MyPointLight*>& pointLights,
@@ -42,6 +30,9 @@ namespace MyOpenGL {
 		);
 	public:
 		MyMaterial* mGlobalMaterial{ nullptr }; //全局材质
+
+		void setWidth(int w) { m_width = w; }
+		void setHeight(int h) { m_height = h; }
 
 	private:
 
@@ -62,11 +53,14 @@ namespace MyOpenGL {
 		MyOpenGL::MyShader* mDepthShader{ nullptr };
 		MyOpenGL::MyShader* mOpacityMaskShader{ nullptr };
 		MyOpenGL::MyShader* mScreenShader{ nullptr };
-
+		MyOpenGL::MyShader* mCubeShader{ nullptr };
 
 		//不透明物体与透明物体的队列
 		//注意!! 每一帧绘制前需要清空两个队列
 		std::vector<MyOpenGL::MyMesh*> mOpacityObjects{};
 		std::vector<MyOpenGL::MyMesh*> mTransparentObjects{};
+
+		int m_width{ 0 };
+		int m_height{ 0 };
 	};
 }

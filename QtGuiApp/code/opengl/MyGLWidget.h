@@ -51,6 +51,7 @@ private:
 
 	void prepareGrass();
     void prepareScreen();
+	void prepareMengGuRen();
 
     
 
