@@ -7,7 +7,7 @@
 #include "assimp/postprocess.h"
 
 #include "tools/Mytools.h"
-#include "MyMesh.h"
+#include "mesh/MyMesh.h"
 #include "material/MyPhongMaterial.h"
 #include "MyTexture.h"
 

@@ -8,17 +8,18 @@ uniform samplerCube cubeSampler;
 const float PI = 3.1415926535897;
 
 vec2 uvwToUv(vec3 uvwN){
-	float phi = asin(uvwN.y);
-	float theta = atan(uvwN.z, uvwN.x);
-	float u = theta / (2.0 * PI) + 0.5;
-	float v = phi / PI + 0.5;
+	float phi = asin(uvwN.y);//[-PI/2, PI/2]
+	float theta = atan(uvwN.z, uvwN.x);//[-PI, PI]
+	float u = theta / (2.0 * PI) + 0.5;//使uv范围至-1 - 1
+	float v = phi / PI + 0.5;//使uv范围至-1 - 1
 	return vec2(u,v);
 }
 
 void main()
 {
-	//vec3 uvwN = normalize(uvw);
-	//vec2 uv = uvwToUv(uvwN);
-	FragColor = texture(cubeSampler, uvw);
+	vec3 uvwN = normalize(uvw);
+	vec2 uv = uvwToUv(uvwN);
+	FragColor = texture(sphericalSampler, uv);
+	//FragColor = texture(cubeSampler, uvw);
 
 }

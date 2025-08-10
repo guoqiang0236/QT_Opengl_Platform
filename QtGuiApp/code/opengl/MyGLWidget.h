@@ -5,7 +5,8 @@
 
 #include "MyGeometry.h"
 #include "MyObject.h"
-#include "MyMesh.h"
+#include "mesh/MyMesh.h"
+#include "mesh/MyinstancedMesh.h"
 #include "MyScene.h"
 #include "MyAssimpLoader.h"
 
@@ -52,7 +53,7 @@ private:
 	void prepareGrass();
     void prepareScreen();
 	void prepareMengGuRen();
-
+    void prepareJizuobiao();
     
 
     //图形变换

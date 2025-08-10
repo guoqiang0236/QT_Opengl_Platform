@@ -6,7 +6,8 @@ namespace MyOpenGL {
     enum class ObjectType {
         Object,
         Mesh,
-        Scene
+        Scene,
+        InstancedMesh
     };
     class MyObject :public QObject, protected QOpenGLFunctions_4_5_Core {
         Q_OBJECT

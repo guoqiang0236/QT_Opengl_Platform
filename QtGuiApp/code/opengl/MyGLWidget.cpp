@@ -9,6 +9,7 @@
 #include "Material/MyscreenMaterial.h"
 #include "Material/MycubeMaterial.h"
 #include "Material/MyphongEnvMaterial.h"
+#include "Material/MyphongInstanceMaterial.h"
 
 namespace MyOpenGL {
     MyGLWidget::MyGLWidget(QWidget* parent)
@@ -334,7 +335,8 @@ namespace MyOpenGL {
         //prepareScreen();
         
         //DoublepassTest();
-        prepareMengGuRen();
+        //prepareMengGuRen();
+        prepareJizuobiao();
 
         //平行光
 		m_dirLight = new::MyOpenGL::MyDirectionalLight();
@@ -606,6 +608,29 @@ namespace MyOpenGL {
 		
 
        
+    }
+
+    void MyGLWidget::prepareJizuobiao()
+    {
+    
+        auto boxgeo = MyGeometry::createBox(1.0f);
+        auto boxmat = new MyCubeMaterial();
+        boxmat->mDiffuse = new MyTexture("../assets/textures/bk.jpg", 0);
+        moxingmesh = new MyMesh(boxgeo, boxmat);
+        m_scene->addChild(moxingmesh);
+
+        auto spheregeo = MyGeometry::createSphere(4.0f);
+        auto spheremat = new MyPhongInstanceMaterial();
+        spheremat->mDiffuse = new MyTexture("../assets/textures/earth.jpg", 0); // 设置屏幕纹理
+        auto spheremesh = new MyInstancedMesh(spheregeo, spheremat,3);
+        glm::mat4 transform0 = glm::mat4(1.0f);
+		glm::mat4 transform1 = glm::translate(glm::mat4(1.0f), glm::vec3(5.0f, 0.0f, 0.0f));
+        glm::mat4 transform2 = glm::translate(glm::mat4(1.0f), glm::vec3(5.0f, 8.0f, 0.0f));
+        spheremesh->mInstanceMatrices[0] = transform0;
+		spheremesh->mInstanceMatrices[1] = transform1;
+        spheremesh->mInstanceMatrices[2] = transform2;
+        spheremesh->updateMatrices();
+        m_scene->addChild(spheremesh);
     }
 
 

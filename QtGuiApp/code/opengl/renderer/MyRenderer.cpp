@@ -6,6 +6,8 @@
 #include "../Material/MyscreenMaterial.h"
 #include "../Material/MycubeMaterial.h"
 #include "../Material/MyphongEnvMaterial.h"
+#include "../Material/MyphongInstanceMaterial.h"
+#include "../Mesh/MyinstancedMesh.h"
 namespace MyOpenGL {
 	MyRenderer::MyRenderer()
 	{
@@ -18,6 +20,7 @@ namespace MyOpenGL {
 		mScreenShader = new MyOpenGL::MyShader("../assets/shaders/screen.vert", "../assets/shaders/screen.frag");
 		mCubeShader = new MyOpenGL::MyShader("../assets/shaders/cube.vert", "../assets/shaders/cube.frag");
 		mPhongEnvShader = new MyOpenGL::MyShader("../assets/shaders/phongEnv.vert", "../assets/shaders/PhongEnv.frag");
+		mPhongInstancedShader = new MyOpenGL::MyShader("../assets/shaders/phongInstance.vert", "../assets/shaders/phongInstance.frag");
 
 	}
 
@@ -100,7 +103,7 @@ namespace MyOpenGL {
 		MySpotLight* spotLight, MyAmbientLight* ambLight)
 	{
 		//1 判断是Mesh还是Object，如果是Mesh就需要渲染
-		if (object->getType() == MyOpenGL::ObjectType::Mesh) {
+		if (object->getType() == MyOpenGL::ObjectType::Mesh|| object->getType()== MyOpenGL::ObjectType::InstancedMesh) {
 			auto mesh = (MyOpenGL::MyMesh*)object;
 			if (mesh->getShow() == false)
 				return;
@@ -354,6 +357,75 @@ namespace MyOpenGL {
 				shader->setFloat("opacity", material->mOpacity);
 			}
 											break;
+			case MaterialType::PhongInstanceMaterial: {
+				MyPhongInstanceMaterial* phongMat = static_cast<MyPhongInstanceMaterial*>(material);
+				MyInstancedMesh* im = static_cast<MyInstancedMesh*>(mesh);
+				//diffuse贴图
+				//将纹理采样器与纹理单元挂钩
+				shader->setInt("sampler", 0);
+				//将纹理与纹理单元进行挂钩
+				phongMat->mDiffuse->bind();
+
+			
+				//mvp矩阵的更新
+				shader->setMatrix4x4("modelMatrix", mesh->getModelMatrix());
+				shader->setMatrix4x4("viewMatrix", camera->getViewMatrix());
+				shader->setMatrix4x4("projectionMatrix", camera->getProjectionMatrix());
+
+				auto normalMatrix = glm::mat3(glm::transpose(glm::inverse(mesh->getModelMatrix())));
+				shader->setMatrix3x3("normalMatrix", normalMatrix);
+
+
+
+				// 光源参数的uniform更新 
+				//SpotLight
+				if (spotLight)
+				{
+					shader->setVector3("SpotLight.position", spotLight->getPosition());
+					shader->setVector3("SpotLight.color", spotLight->mColor);
+					shader->setVector3("SpotLight.targetDirection", spotLight->mTargetDirection);
+					shader->setFloat("SpotLight.specularIntensity", spotLight->mSpecularIntensity);
+					shader->setFloat("SpotLight.innerLine", glm::cos(glm::radians(spotLight->mInnerAngle)));
+					shader->setFloat("SpotLight.outerLine", glm::cos(glm::radians(spotLight->mOuterAngle)));
+				}
+
+				//directionalLight
+				shader->setVector3("directionalLight.color", dirLight->mColor);
+				shader->setVector3("directionalLight.direction", dirLight->mDirection);
+				shader->setFloat("directionalLight.specularIntensity", dirLight->mSpecularIntensity);
+				shader->setFloat("directionalLight.intensity", dirLight->mIntensity);
+
+				//pointLight
+				for (int i = 0; i < pointLights.size(); i++) {
+					auto pointLight = pointLights[i];
+
+					// 动态构建索引名称
+					std::string baseName = "PointLight[";
+					baseName.append(std::to_string(i));
+					baseName.append("]");
+					shader->setVector3(baseName + ".color", pointLight->mColor);
+					shader->setVector3(baseName + ".position", pointLight->getPosition());
+					shader->setFloat(baseName + ".specularIntensity", pointLight->mSpecularIntensity);
+					shader->setFloat(baseName + ".k2", pointLight->mK2);  // 二次项衰减系数
+					shader->setFloat(baseName + ".k1", pointLight->mK1);  // 线性衰减系数
+					shader->setFloat(baseName + ".kc", pointLight->mKc);  // 常数项衰减系数
+
+				}
+
+
+				shader->setVector3("ambientColor", ambLight->mColor);
+				shader->setFloat("shiness", phongMat->mShiness);
+
+				//相机信息更新
+				shader->setVector3("cameraPosition", camera->mPosition);
+
+				//透明度
+				shader->setFloat("opacity", material->mOpacity);
+
+				//**********传输uniform类型的矩阵变换数组************
+			    //shader->setMatrix4x4Array("matrices", im->mInstanceMatrices, im->mInstanceCount);
+			}
+											break;
 			default:
 				break;
 			}
@@ -362,7 +434,16 @@ namespace MyOpenGL {
 			glBindVertexArray(geometry->getVao());
 
 			// 4. 执行绘制命令
-			glDrawElements(GL_TRIANGLES, geometry->getIndicesCount(), GL_UNSIGNED_INT, (void*)(sizeof(int) * 0));
+			if(object->getType() == MyOpenGL::ObjectType::InstancedMesh)
+			{
+				//如果是实例化的mesh,则需要传入实例化的数量
+				auto im = static_cast<MyInstancedMesh*>(object);
+				glDrawElementsInstanced(GL_TRIANGLES, geometry->getIndicesCount(), GL_UNSIGNED_INT, (void*)(sizeof(int) * 0), im->mInstanceCount);
+			}
+			else {
+				glDrawElements(GL_TRIANGLES, geometry->getIndicesCount(), GL_UNSIGNED_INT, (void*)(sizeof(int) * 0));
+
+			}
 		}
 
 		//2 遍历Object的子节点，对每个子节点都需要调用rendererObject
@@ -376,7 +457,7 @@ namespace MyOpenGL {
 
 	void MyRenderer::projectObject(MyObject* obj)
 	{
-		if (obj->getType() == MyOpenGL::ObjectType::Mesh)
+		if (obj->getType() == MyOpenGL::ObjectType::Mesh|| obj->getType() == MyOpenGL::ObjectType::InstancedMesh)
 		{
 			MyMesh* mesh = static_cast<MyMesh*>(obj);
 
@@ -424,15 +505,15 @@ namespace MyOpenGL {
 		case MaterialType::ScreenMaterial:
 			result = mScreenShader;
 			break;
-			case MaterialType::CubeMaterial:
-				result = mCubeShader;
-				break;
+		case MaterialType::CubeMaterial:
+			result = mCubeShader;
+			break;
 		case MaterialType::PhongEnvMaterial:
 			result = mPhongEnvShader;
 			break;
-			//case MaterialType::PhongInstanceMaterial:
-			//	result = mPhongInstancedShader;
-			//	break;
+		case MaterialType::PhongInstanceMaterial:
+			result = mPhongInstancedShader;
+			break;
 			//case MaterialType::GrassInstanceMaterial:
 			//	result = mGrassInstanceShader;
 			//	break;

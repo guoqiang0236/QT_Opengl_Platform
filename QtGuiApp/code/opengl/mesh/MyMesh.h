@@ -1,8 +1,8 @@
 #pragma once
 
-#include "MyObject.h"
-#include "MyGeometry.h"
-#include "material/MyMaterial.h"
+#include "../MyObject.h"
+#include "../MyGeometry.h"
+#include "../material/MyMaterial.h"
 namespace MyOpenGL {
     class MyMesh : public MyObject {
     public:

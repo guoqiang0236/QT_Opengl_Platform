@@ -1,0 +1,48 @@
+#include "MyinstancedMesh.h"
+namespace MyOpenGL {
+	MyInstancedMesh::MyInstancedMesh(
+		MyGeometry* geometry,
+		MyMaterial* material,
+		unsigned int instanceCount) :
+		MyMesh(geometry, material) {  //调用父类的有参构造函数
+
+		initializeOpenGLFunctions();
+
+		m_Type = ObjectType::InstancedMesh;
+		mInstanceCount = instanceCount;
+		mInstanceMatrices = new glm::mat4[instanceCount];//这个时候这是个空数组，先占位，后面会单独灌数据
+		
+		//vbo
+		glGenBuffers(1, &mMatrixVbo); //生成一个缓冲区对象
+		glBindBuffer(GL_ARRAY_BUFFER, mMatrixVbo);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * mInstanceCount, mInstanceMatrices, GL_DYNAMIC_DRAW);
+
+		//vao
+		glBindVertexArray(mGeometry->getVao());
+		glBindBuffer(GL_ARRAY_BUFFER, mMatrixVbo);
+		for (int i = 0; i < 4; i++)
+		{
+			glEnableVertexAttribArray(3 + i);
+			glVertexAttribPointer(3 + i, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(float) * i * 4));
+			glVertexAttribDivisor(3 + i, 1);//逐实例更新
+		}
+		glBindVertexArray(0);
+
+	}
+
+
+	MyInstancedMesh::~MyInstancedMesh() {
+		if (mInstanceMatrices != nullptr)
+		{
+			delete[] mInstanceMatrices;
+		}
+	}
+	void MyInstancedMesh::updateMatrices()
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, mMatrixVbo);
+		//如果使用glBufferData进行数据更新，会导致重新分配显存空间
+		//glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * mInstanceCount, mInstanceMatrices, GL_DYNAMIC_DRAW);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::mat4) * mInstanceCount, mInstanceMatrices);//这个才是专门用来更新VBO数据的函数
+		glBindBuffer(GL_ARRAY_BUFFER, 0); //解绑缓冲区
+	}
+}

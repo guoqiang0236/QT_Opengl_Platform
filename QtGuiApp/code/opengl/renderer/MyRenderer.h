@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../pch.h"
-#include "../MyMesh.h"
+#include "../mesh/MyMesh.h"
 #include "../../camera/MyCamera.h"
 #include "../Light/MyDirectionalLight.h"
 #include "../Light/MyPointLight.h"
@@ -55,6 +55,7 @@ namespace MyOpenGL {
 		MyOpenGL::MyShader* mScreenShader{ nullptr };
 		MyOpenGL::MyShader* mCubeShader{ nullptr };
 		MyOpenGL::MyShader* mPhongEnvShader{ nullptr };
+		MyOpenGL::MyShader* mPhongInstancedShader{ nullptr };
 
 		//不透明物体与透明物体的队列
 		//注意!! 每一帧绘制前需要清空两个队列

@@ -7,7 +7,6 @@ in vec3 worldPosition;
 
 uniform sampler2D sampler;	//diffuse贴图采样器
 uniform sampler2D specularMaskSampler;//specularMask贴图采样器
-uniform samplerCube envSampler;
 
 uniform vec3 ambientColor;
 
@@ -128,12 +127,6 @@ vec3 calculatePointLight(PointLight light, vec3 normal ,vec3 viewDir){
 	return (diffuseColor + specularColor)*attenuation;
 }
 
-vec3 calculateEnv(vec3 normal, vec3 viewDir){
-	vec3 reflectDir = normalize(reflect(viewDir, normal));
-	vec3 color = texture(envSampler, reflectDir).rgb;
-	return color;
-}
-
 void main()
 {
 	vec3 result = vec3(0.0,0.0,0.0);
@@ -148,10 +141,10 @@ void main()
 	vec3 objectColor  = texture(sampler, uv).xyz;
 	float alpha =  texture(sampler, uv).a;
 
-	vec3 ambientColor = objectColor * calculateEnv(normalN, viewDir);
+	vec3 ambientColor = objectColor * ambientColor;
 
 	vec3 finalColor = result + ambientColor;
 	
-    //FragColor =vec4(calculateEnv(normalN, viewDir),alpha * opacity);
+
 	FragColor = vec4(finalColor,alpha * opacity);
 }
