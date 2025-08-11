@@ -315,26 +315,26 @@ namespace MyOpenGL {
 				//SpotLight
 				if (spotLight)
 				{
-					shader->setVector3("MySpotLight.position", spotLight->getPosition());
-					shader->setVector3("MySpotLight.color", spotLight->mColor);
-					shader->setVector3("MySpotLight.targetDirection", spotLight->mTargetDirection);
-					shader->setFloat("MySpotLight.specularIntensity", spotLight->mSpecularIntensity);
-					shader->setFloat("MySpotLight.innerLine", glm::cos(glm::radians(spotLight->mInnerAngle)));
-					shader->setFloat("MySpotLight.outerLine", glm::cos(glm::radians(spotLight->mOuterAngle)));
+					shader->setVector3("SpotLight.position", spotLight->getPosition());
+					shader->setVector3("SpotLight.color", spotLight->mColor);
+					shader->setVector3("SpotLight.targetDirection", spotLight->mTargetDirection);
+					shader->setFloat("SpotLight.specularIntensity", spotLight->mSpecularIntensity);
+					shader->setFloat("SpotLight.innerLine", glm::cos(glm::radians(spotLight->mInnerAngle)));
+					shader->setFloat("SpotLight.outerLine", glm::cos(glm::radians(spotLight->mOuterAngle)));
 				}
 
 				//directionalLight
-				shader->setVector3("MydirectionalLight.color", dirLight->mColor);
-				shader->setVector3("MydirectionalLight.direction", dirLight->mDirection);
-				shader->setFloat("MydirectionalLight.specularIntensity", dirLight->mSpecularIntensity);
-				shader->setFloat("MydirectionalLight.intensity", dirLight->mIntensity);
+				shader->setVector3("directionalLight.color", dirLight->mColor);
+				shader->setVector3("directionalLight.direction", dirLight->mDirection);
+				shader->setFloat("directionalLight.specularIntensity", dirLight->mSpecularIntensity);
+				shader->setFloat("directionalLight.intensity", dirLight->mIntensity);
 
 				//pointLight
 				for (int i = 0; i < pointLights.size(); i++) {
 					auto pointLight = pointLights[i];
 
 					// 动态构建索引名称
-					std::string baseName = "MyPointLight[";
+					std::string baseName = "PointLight[";
 					baseName.append(std::to_string(i));
 					baseName.append("]");
 					shader->setVector3(baseName + ".color", pointLight->mColor);

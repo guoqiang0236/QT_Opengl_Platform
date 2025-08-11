@@ -629,6 +629,7 @@ namespace MyOpenGL {
         spheremesh->mInstanceMatrices[0] = transform0;
 		spheremesh->mInstanceMatrices[1] = transform1;
         spheremesh->mInstanceMatrices[2] = transform2;
+    
         spheremesh->updateMatrices();
         m_scene->addChild(spheremesh);
     }
