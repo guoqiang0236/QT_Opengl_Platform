@@ -9,12 +9,14 @@ namespace MyOpenGL {
 		MyInstancedMesh(MyGeometry* geometry, MyMaterial* material, unsigned int instanceCount);
 		~MyInstancedMesh();
 
-
-		void updateMatrices();
+		
+		
 
 		unsigned int mInstanceCount{ 0 };
-		glm::mat4*  mInstanceMatrices{nullptr};
+		std::vector<glm::mat4> mInstanceMatrices{};
 		unsigned int mMatrixVbo{ 0 };
+		void updateMatrices();
+		void sortMatrices(glm::mat4 viewMatrix);
 	};
 
 }

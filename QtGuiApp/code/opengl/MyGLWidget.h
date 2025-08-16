@@ -9,6 +9,8 @@
 #include "mesh/MyinstancedMesh.h"
 #include "MyScene.h"
 #include "MyAssimpLoader.h"
+#include "MyAssimpInstanceLoader.h"
+#include "material/MygrassInstanceMaterial.h"
 
 #include "renderer/MyRenderer.h"
 #include "framebuffer/framebuffer.h"
@@ -54,6 +56,13 @@ private:
     void prepareScreen();
 	void prepareMengGuRen();
     void prepareJizuobiao();
+	void prepareAssimpInstance();
+
+    void setInstanceMaterial(MyObject* obj, MyMaterial* material);
+
+    void setInstanceMatrix(MyObject* obj, int index, glm::mat4 matrix);
+
+    void updateInstanceMatrix(MyObject* obj);
     
 
     //图形变换
@@ -151,6 +160,8 @@ private:
     bool bhaslogo = false;
     bool bhasrenderer = false;
     QColor m_bgColor = Qt::black;
+
+	MyGrassInstanceMaterial* grassMaterial = nullptr; // 草地材质
 };
 
 }

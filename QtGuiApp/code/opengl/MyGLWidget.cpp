@@ -336,7 +336,9 @@ namespace MyOpenGL {
         
         //DoublepassTest();
         //prepareMengGuRen();
-        prepareJizuobiao();
+        //prepareJizuobiao();
+
+		prepareAssimpInstance();
 
         //平行光
 		m_dirLight = new::MyOpenGL::MyDirectionalLight();
@@ -634,7 +636,82 @@ namespace MyOpenGL {
         m_scene->addChild(spheremesh);
     }
 
+    void MyGLWidget::prepareAssimpInstance()
+    {
+        auto boxgeo = MyGeometry::createBox(1.0f);
+        auto boxmat = new MyCubeMaterial();
+        boxmat->mDiffuse = new MyTexture("../assets/textures/bk.jpg", 0);
+        auto boxmesh = new MyMesh(boxgeo, boxmat);
+        m_scene->addChild(boxmesh);
 
+       
+        int rNum = 20;
+        int cNum = 20;
+
+		auto grassModel = MyAssimpInstanceLoader::load("../assets/fbx/grassNew.obj", rNum*cNum);
+		
+        glm::mat4 translate;
+
+        for (int r = 0; r < rNum; r++) {
+            for (int c = 0; c < cNum; c++) {
+                translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.2 * r, 0.0f, 0.2 * c));
+                setInstanceMatrix(grassModel, r * cNum + c, translate);
+            }
+        }
+		updateInstanceMatrix(grassModel);
+
+
+		grassMaterial = new MyGrassInstanceMaterial();
+        grassMaterial->mDiffuse= new MyTexture("../assets/textures/GRASS.PNG", 0);
+		grassMaterial->mOpacityMask = new MyTexture("../assets/textures/grassMask.png", 1);
+        grassMaterial->mBlend = true;
+        grassMaterial->mDepthWrite = false;
+
+        setInstanceMaterial(grassModel, grassMaterial);
+
+		m_scene->addChild(grassModel);
+
+       
+    }
+
+    void MyGLWidget::setInstanceMaterial(MyObject* obj, MyMaterial* material) {
+        if (obj->getType() == ObjectType::InstancedMesh)
+        {
+            MyInstancedMesh* im = (MyInstancedMesh*)obj;
+            im->mMaterial = material;
+        }
+        auto children = obj->getChildren();
+        for (int i = 0; i < children.size(); i++)
+        {
+            setInstanceMaterial(children[i], material);
+        }
+    }
+
+    void MyGLWidget::setInstanceMatrix(MyObject* obj, int index, glm::mat4 matrix) {
+        if (obj->getType() == ObjectType::InstancedMesh)
+        {
+            MyInstancedMesh* im = (MyInstancedMesh*)obj;
+            im->mInstanceMatrices[index] = matrix;
+        }
+        auto children = obj->getChildren();
+        for (int i = 0; i < children.size(); i++)
+        {
+            setInstanceMatrix(children[i], index, matrix);
+        }
+    }
+
+    void MyGLWidget::updateInstanceMatrix(MyObject* obj) {
+        if (obj->getType() == ObjectType::InstancedMesh)
+        {
+            MyInstancedMesh* im = (MyInstancedMesh*)obj;
+			im->updateMatrices();
+        }
+        auto children = obj->getChildren();
+        for (int i = 0; i < children.size(); i++)
+        {
+			updateInstanceMatrix(children[i]);
+        }
+    }
 
     void MyGLWidget::doTranslationTransform()
     {

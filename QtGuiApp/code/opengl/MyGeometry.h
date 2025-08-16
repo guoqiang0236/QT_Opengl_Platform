@@ -13,6 +13,14 @@ namespace MyOpenGL {
             const std::vector<float>& uvs,
             const std::vector<unsigned int>& indices,
             QObject* parent = nullptr);
+        MyGeometry(
+            const std::vector<float>& positions,
+            const std::vector<float>& normals,
+            const std::vector<float>& colors,
+            const std::vector<float>& uvs,
+            const std::vector<unsigned int>& indices,
+            QObject* parent = nullptr);
+
         ~MyGeometry();
 
         static MyGeometry* createBox(float size);
@@ -29,7 +37,7 @@ namespace MyOpenGL {
         GLuint mUvVbo{ 0 };
         GLuint mNormalVbo{ 0 };
         GLuint mEbo{ 0 };
-
+        GLuint mColorVbo{ 0 };
         uint32_t mIndicesCount{ 0 };
     };
 }

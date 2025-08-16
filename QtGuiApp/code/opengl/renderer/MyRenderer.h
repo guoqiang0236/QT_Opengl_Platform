@@ -56,6 +56,7 @@ namespace MyOpenGL {
 		MyOpenGL::MyShader* mCubeShader{ nullptr };
 		MyOpenGL::MyShader* mPhongEnvShader{ nullptr };
 		MyOpenGL::MyShader* mPhongInstancedShader{ nullptr };
+		MyOpenGL::MyShader* mGrassInstanceShader{ nullptr };
 
 		//不透明物体与透明物体的队列
 		//注意!! 每一帧绘制前需要清空两个队列
