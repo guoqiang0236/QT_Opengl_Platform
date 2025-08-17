@@ -132,14 +132,33 @@ void MainWindow::InitSlots()
 	connect(m_ui->uvScale, &QSlider::valueChanged, m_glwidget, &MyOpenGL::MyGLWidget::silderuvScale);
     connect(m_ui->pushButton_background, &QPushButton::clicked, this, &MainWindow::SelectColor);
     connect(m_glwidget, &MyOpenGL::MyGLWidget::prepareok, this, &MainWindow::InitRendererPannel);
-    connect(m_ui->lineEdit_brightness, &QLineEdit::editingFinished, this, &MainWindow::onLineEditBrightnessEdited);
+    connect(m_ui->lineEdit_brightness, &QLineEdit::editingFinished, this, &MainWindow::onLineEdited);
+    connect(m_ui->lineEdit_windscale, &QLineEdit::editingFinished, this, &MainWindow::onLineEdited);
+    connect(m_ui->lineEdit_PhaseScale, &QLineEdit::editingFinished, this, &MainWindow::onLineEdited);
 }
 
-void MainWindow::onLineEditBrightnessEdited() {
+void MainWindow::onLineEdited() {
+    QObject* obj = sender();
     bool ok = false;
     float value = m_ui->lineEdit_brightness->text().toFloat(&ok);
-    if (ok) {
-        m_glwidget->onBrightnessEdited(value);
+
+    if (obj == m_ui->lineEdit_brightness) {
+        value = m_ui->lineEdit_brightness->text().toFloat(&ok);
+        if (ok) {
+            m_glwidget->onBrightnessEdited(value);
+        }
+    }
+    else if (obj == m_ui->lineEdit_windscale) {
+        value = m_ui->lineEdit_windscale->text().toFloat(&ok);
+        if (ok) {
+            m_glwidget->onWindScaleEdited(value);
+        }
+    }
+    else if (obj == m_ui->lineEdit_PhaseScale) {
+        value = m_ui->lineEdit_PhaseScale->text().toFloat(&ok);
+        if (ok) {
+            m_glwidget->onPhaseScaleEdited(value); 
+        }
     }
 }
 
@@ -173,6 +192,9 @@ void MainWindow::UpdateGUI()
         validator->setDecimals(6); // 最多允许6位小数，可根据需要调整
         m_ui->lineEdit_brightness->setValidator(validator);
     }
+
+    //windscale
+	m_ui->lineEdit_windscale->setText("0.1");
 }
 
 void MainWindow::UpdateSize()

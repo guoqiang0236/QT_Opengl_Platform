@@ -4,6 +4,7 @@ out vec4 FragColor;
 in vec2 uv;
 in vec3 normal;
 in vec3 worldPosition;
+in vec2 worldXZ;
 
 uniform sampler2D sampler;	//diffuse贴图采样器
 uniform sampler2D opacityMask;//透明蒙版
@@ -131,7 +132,7 @@ vec3 calculatePointLight(vec3 objectColor,PointLight light, vec3 normal ,vec3 vi
 
 void main()
 {
-    vec2 worldXZ = worldPosition.xz;
+    vec2 worldXZ = worldXZ;//将世界坐标的位置作为采样uv
 	vec2 worldUV = worldXZ/uvScale;
     vec3 objectColor  = texture(sampler, worldUV).xyz * brightness;
 	vec3 result = vec3(0.0,0.0,0.0);

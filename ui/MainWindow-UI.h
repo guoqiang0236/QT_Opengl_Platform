@@ -45,22 +45,28 @@ public:
     QPushButton *pushButton_drawtriangle;
     QWidget *tab_4;
     QGridLayout *gridLayout_3;
-    QGridLayout *gridLayout_uvScale;
-    QSlider *uvScale;
-    QLabel *label;
-    QGridLayout *gridLayout_object;
-    ImageSwitch *widget_object;
-    QLabel *label_object;
-    QGridLayout *gridLayout_logo;
-    QLabel *label_logo;
-    ImageSwitch *widget_logo;
     QVBoxLayout *verticalLayout_2;
     QLabel *label_background;
     QPushButton *pushButton_background;
-    QSpacerItem *verticalSpacer;
+    QGridLayout *gridLayout_logo;
+    QLabel *label_logo;
+    ImageSwitch *widget_logo;
     QGridLayout *gridLayout_brightness;
-    QLabel *label_2;
     QLineEdit *lineEdit_brightness;
+    QLabel *label_2;
+    QGridLayout *gridLayout_object;
+    ImageSwitch *widget_object;
+    QLabel *label_object;
+    QGridLayout *gridLayout_uvScale;
+    QSlider *uvScale;
+    QLabel *label;
+    QGridLayout *gridLayout_PhaseScale;
+    QLineEdit *lineEdit_PhaseScale;
+    QLabel *label_PhaseScale;
+    QGridLayout *gridLayout_windscale;
+    QLineEdit *lineEdit_windscale;
+    QLabel *label_6;
+    QSpacerItem *verticalSpacer;
     QWidget *tab;
     QComboBox *comboBox;
     QLabel *label_5;
@@ -148,45 +154,23 @@ public:
         tab_4->setObjectName("tab_4");
         gridLayout_3 = new QGridLayout(tab_4);
         gridLayout_3->setObjectName("gridLayout_3");
-        gridLayout_uvScale = new QGridLayout();
-        gridLayout_uvScale->setObjectName("gridLayout_uvScale");
-        uvScale = new QSlider(tab_4);
-        uvScale->setObjectName("uvScale");
-        uvScale->setMinimumSize(QSize(0, 20));
-        uvScale->setMaximum(100);
-        uvScale->setOrientation(Qt::Orientation::Horizontal);
+        verticalLayout_2 = new QVBoxLayout();
+        verticalLayout_2->setObjectName("verticalLayout_2");
+        label_background = new QLabel(tab_4);
+        label_background->setObjectName("label_background");
+        label_background->setMinimumSize(QSize(100, 50));
+        label_background->setMaximumSize(QSize(200, 50));
 
-        gridLayout_uvScale->addWidget(uvScale, 1, 1, 1, 1);
+        verticalLayout_2->addWidget(label_background);
 
-        label = new QLabel(tab_4);
-        label->setObjectName("label");
-        label->setMaximumSize(QSize(16777215, 20));
+        pushButton_background = new QPushButton(tab_4);
+        pushButton_background->setObjectName("pushButton_background");
+        pushButton_background->setMaximumSize(QSize(16777215, 50));
 
-        gridLayout_uvScale->addWidget(label, 0, 1, 1, 1);
-
-
-        gridLayout_3->addLayout(gridLayout_uvScale, 2, 0, 1, 1);
-
-        gridLayout_object = new QGridLayout();
-        gridLayout_object->setSpacing(0);
-        gridLayout_object->setObjectName("gridLayout_object");
-        gridLayout_object->setContentsMargins(-1, 10, -1, 10);
-        widget_object = new ImageSwitch(tab_4);
-        widget_object->setObjectName("widget_object");
-        widget_object->setMinimumSize(QSize(100, 25));
-        widget_object->setMaximumSize(QSize(100, 25));
-
-        gridLayout_object->addWidget(widget_object, 0, 1, 1, 1);
-
-        label_object = new QLabel(tab_4);
-        label_object->setObjectName("label_object");
-        label_object->setMinimumSize(QSize(50, 25));
-        label_object->setMaximumSize(QSize(200, 25));
-
-        gridLayout_object->addWidget(label_object, 0, 0, 1, 1);
+        verticalLayout_2->addWidget(pushButton_background);
 
 
-        gridLayout_3->addLayout(gridLayout_object, 0, 0, 1, 1);
+        gridLayout_3->addLayout(verticalLayout_2, 6, 0, 1, 1);
 
         gridLayout_logo = new QGridLayout();
         gridLayout_logo->setSpacing(0);
@@ -209,37 +193,8 @@ public:
 
         gridLayout_3->addLayout(gridLayout_logo, 1, 0, 1, 1);
 
-        verticalLayout_2 = new QVBoxLayout();
-        verticalLayout_2->setObjectName("verticalLayout_2");
-        label_background = new QLabel(tab_4);
-        label_background->setObjectName("label_background");
-        label_background->setMinimumSize(QSize(100, 50));
-        label_background->setMaximumSize(QSize(200, 50));
-
-        verticalLayout_2->addWidget(label_background);
-
-        pushButton_background = new QPushButton(tab_4);
-        pushButton_background->setObjectName("pushButton_background");
-        pushButton_background->setMaximumSize(QSize(16777215, 50));
-
-        verticalLayout_2->addWidget(pushButton_background);
-
-        verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Expanding);
-
-        verticalLayout_2->addItem(verticalSpacer);
-
-
-        gridLayout_3->addLayout(verticalLayout_2, 4, 0, 1, 1);
-
         gridLayout_brightness = new QGridLayout();
         gridLayout_brightness->setObjectName("gridLayout_brightness");
-        label_2 = new QLabel(tab_4);
-        label_2->setObjectName("label_2");
-        label_2->setMinimumSize(QSize(0, 20));
-        label_2->setMaximumSize(QSize(16777215, 20));
-
-        gridLayout_brightness->addWidget(label_2, 0, 0, 1, 1);
-
         lineEdit_brightness = new QLineEdit(tab_4);
         lineEdit_brightness->setObjectName("lineEdit_brightness");
         lineEdit_brightness->setMinimumSize(QSize(0, 30));
@@ -247,8 +202,97 @@ public:
 
         gridLayout_brightness->addWidget(lineEdit_brightness, 1, 0, 1, 1);
 
+        label_2 = new QLabel(tab_4);
+        label_2->setObjectName("label_2");
+        label_2->setMinimumSize(QSize(0, 20));
+        label_2->setMaximumSize(QSize(16777215, 20));
+
+        gridLayout_brightness->addWidget(label_2, 0, 0, 1, 1);
+
 
         gridLayout_3->addLayout(gridLayout_brightness, 3, 0, 1, 1);
+
+        gridLayout_object = new QGridLayout();
+        gridLayout_object->setSpacing(0);
+        gridLayout_object->setObjectName("gridLayout_object");
+        gridLayout_object->setContentsMargins(-1, 10, -1, 10);
+        widget_object = new ImageSwitch(tab_4);
+        widget_object->setObjectName("widget_object");
+        widget_object->setMinimumSize(QSize(100, 25));
+        widget_object->setMaximumSize(QSize(100, 25));
+
+        gridLayout_object->addWidget(widget_object, 0, 1, 1, 1);
+
+        label_object = new QLabel(tab_4);
+        label_object->setObjectName("label_object");
+        label_object->setMinimumSize(QSize(50, 25));
+        label_object->setMaximumSize(QSize(200, 25));
+
+        gridLayout_object->addWidget(label_object, 0, 0, 1, 1);
+
+
+        gridLayout_3->addLayout(gridLayout_object, 0, 0, 1, 1);
+
+        gridLayout_uvScale = new QGridLayout();
+        gridLayout_uvScale->setObjectName("gridLayout_uvScale");
+        uvScale = new QSlider(tab_4);
+        uvScale->setObjectName("uvScale");
+        uvScale->setMinimumSize(QSize(0, 20));
+        uvScale->setMaximum(100);
+        uvScale->setOrientation(Qt::Orientation::Horizontal);
+
+        gridLayout_uvScale->addWidget(uvScale, 1, 1, 1, 1);
+
+        label = new QLabel(tab_4);
+        label->setObjectName("label");
+        label->setMaximumSize(QSize(16777215, 20));
+
+        gridLayout_uvScale->addWidget(label, 0, 1, 1, 1);
+
+
+        gridLayout_3->addLayout(gridLayout_uvScale, 2, 0, 1, 1);
+
+        gridLayout_PhaseScale = new QGridLayout();
+        gridLayout_PhaseScale->setObjectName("gridLayout_PhaseScale");
+        lineEdit_PhaseScale = new QLineEdit(tab_4);
+        lineEdit_PhaseScale->setObjectName("lineEdit_PhaseScale");
+        lineEdit_PhaseScale->setMinimumSize(QSize(0, 30));
+        lineEdit_PhaseScale->setMaximumSize(QSize(16777215, 30));
+
+        gridLayout_PhaseScale->addWidget(lineEdit_PhaseScale, 1, 0, 1, 1);
+
+        label_PhaseScale = new QLabel(tab_4);
+        label_PhaseScale->setObjectName("label_PhaseScale");
+        label_PhaseScale->setMinimumSize(QSize(0, 20));
+        label_PhaseScale->setMaximumSize(QSize(16777215, 20));
+
+        gridLayout_PhaseScale->addWidget(label_PhaseScale, 0, 0, 1, 1);
+
+
+        gridLayout_3->addLayout(gridLayout_PhaseScale, 5, 0, 1, 1);
+
+        gridLayout_windscale = new QGridLayout();
+        gridLayout_windscale->setObjectName("gridLayout_windscale");
+        lineEdit_windscale = new QLineEdit(tab_4);
+        lineEdit_windscale->setObjectName("lineEdit_windscale");
+        lineEdit_windscale->setMinimumSize(QSize(0, 30));
+        lineEdit_windscale->setMaximumSize(QSize(16777215, 30));
+
+        gridLayout_windscale->addWidget(lineEdit_windscale, 1, 0, 1, 1);
+
+        label_6 = new QLabel(tab_4);
+        label_6->setObjectName("label_6");
+        label_6->setMinimumSize(QSize(0, 20));
+        label_6->setMaximumSize(QSize(16777215, 20));
+
+        gridLayout_windscale->addWidget(label_6, 0, 0, 1, 1);
+
+
+        gridLayout_3->addLayout(gridLayout_windscale, 4, 0, 1, 1);
+
+        verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Expanding);
+
+        gridLayout_3->addItem(verticalSpacer, 7, 0, 1, 1);
 
         tabWidget->addTab(tab_4, QString());
         tab = new QWidget();
@@ -374,13 +418,17 @@ public:
         label_showthreadnum->setText(QCoreApplication::translate("MainWindow_UI", "0", nullptr));
         pushButton_drawtriangle->setText(QCoreApplication::translate("MainWindow_UI", "drawtriangle", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab_3), QCoreApplication::translate("MainWindow_UI", "\346\202\243\350\200\205\344\277\241\346\201\257", nullptr));
-        label->setText(QCoreApplication::translate("MainWindow_UI", "uvScale", nullptr));
-        label_object->setText(QCoreApplication::translate("MainWindow_UI", "\346\234\254\344\275\223\346\230\276\347\244\272", nullptr));
-        label_logo->setText(QCoreApplication::translate("MainWindow_UI", "LOGO\346\230\276\347\244\272", nullptr));
         label_background->setText(QString());
-        pushButton_background->setText(QCoreApplication::translate("MainWindow_UI", "\346\233\264\346\215\242\350\203\214\346\231\257\350\211\262", nullptr));
-        label_2->setText(QCoreApplication::translate("MainWindow_UI", "brightness", nullptr));
+        pushButton_background->setText(QCoreApplication::translate("MainWindow_UI", "\351\243\216\347\232\204\346\226\271\345\220\221", nullptr));
+        label_logo->setText(QCoreApplication::translate("MainWindow_UI", "LOGO\346\230\276\347\244\272", nullptr));
         lineEdit_brightness->setText(QCoreApplication::translate("MainWindow_UI", "1.0", nullptr));
+        label_2->setText(QCoreApplication::translate("MainWindow_UI", "brightness", nullptr));
+        label_object->setText(QCoreApplication::translate("MainWindow_UI", "\346\234\254\344\275\223\346\230\276\347\244\272", nullptr));
+        label->setText(QCoreApplication::translate("MainWindow_UI", "uvScale", nullptr));
+        lineEdit_PhaseScale->setText(QCoreApplication::translate("MainWindow_UI", "1.0", nullptr));
+        label_PhaseScale->setText(QCoreApplication::translate("MainWindow_UI", "PhaseScale", nullptr));
+        lineEdit_windscale->setText(QCoreApplication::translate("MainWindow_UI", "1.0", nullptr));
+        label_6->setText(QCoreApplication::translate("MainWindow_UI", "windscale", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab_4), QCoreApplication::translate("MainWindow_UI", "\346\270\262\346\237\223\344\272\244\344\272\222", nullptr));
         comboBox->setItemText(0, QCoreApplication::translate("MainWindow_UI", "ElegantDark", nullptr));
         comboBox->setItemText(1, QCoreApplication::translate("MainWindow_UI", "AMOLED", nullptr));

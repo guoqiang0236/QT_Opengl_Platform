@@ -89,6 +89,8 @@ public slots:
     void bShowMoxing(bool bshow);
 	void silderuvScale(float scale);
     void onBrightnessEdited(float brintness);
+    void onWindScaleEdited(float Scale);
+    void onPhaseScaleEdited(float Scale);
 protected:
     void initializeGL() override;
     void paintGL() override;

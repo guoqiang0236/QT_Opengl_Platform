@@ -23,6 +23,7 @@ namespace MyOpenGL {
 		mPhongEnvShader = new MyOpenGL::MyShader("../assets/shaders/phongEnv.vert", "../assets/shaders/PhongEnv.frag");
 		mPhongInstancedShader = new MyOpenGL::MyShader("../assets/shaders/phongInstance.vert", "../assets/shaders/phongInstance.frag");
 		mGrassInstanceShader = new MyOpenGL::MyShader("../assets/shaders/grassInstance.vert", "../assets/shaders/grassInstance.frag");
+		m_timer.start();
 	}
 
 	MyRenderer::~MyRenderer()
@@ -498,7 +499,15 @@ namespace MyOpenGL {
 				//贴图特性
 				shader->setFloat("uvScale", grassMat->mUVScale);
 				shader->setFloat("brightness", grassMat->mBrightness);
+			
+			
 
+				//风力
+				float time = m_timer.elapsed() / 1000.0f; // 单位：秒
+				shader->setFloat("time", time);
+				shader->setFloat("windScale", grassMat->mWindScale);
+				shader->setVector3("windDirection", grassMat->mWindDirection);
+				shader->setFloat("phaseScale", grassMat->mPhaseScale);
 				//**********传输uniform类型的矩阵变换数组************
 				//shader->setMatrix4x4Array("matrices", im->mInstanceMatrices, im->mInstanceCount);
 			}

@@ -65,5 +65,7 @@ namespace MyOpenGL {
 
 		int m_width{ 0 };
 		int m_height{ 0 };
+
+		QElapsedTimer m_timer;
 	};
 }

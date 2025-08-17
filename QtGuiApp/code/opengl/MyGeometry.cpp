@@ -112,6 +112,11 @@ namespace MyOpenGL {
         glEnableVertexAttribArray(2);
         glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
 
+		//°ó¶¨ÑÕÉ«
+		glBindBuffer(GL_ARRAY_BUFFER, mColorVbo);
+		glEnableVertexAttribArray(3);
+		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
+
         // °ó¶¨EBO
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEbo);
 

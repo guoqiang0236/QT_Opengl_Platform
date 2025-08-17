@@ -41,8 +41,11 @@ namespace MyOpenGL {
 
     void MyGLWidget::setBackgroundColor(const QColor& color)
     {
-        m_bgColor = color;
-        update(); // 触发重绘
+        //m_bgColor = color;
+        //update(); // 触发重绘
+        if (!grassMaterial)
+            return;
+		grassMaterial->mWindDirection = glm::vec3(color.redF(), color.greenF(), color.blueF());
     }
 
     void MyGLWidget::prapareBackground(QColor color)
@@ -216,7 +219,19 @@ namespace MyOpenGL {
         grassMaterial->mBrightness = brintness;
     }
 
-  
+    void MyGLWidget::onWindScaleEdited(float Scale)
+    {
+        if (!grassMaterial)
+            return;
+        grassMaterial->mWindScale = Scale;
+    }
+
+    void MyGLWidget::onPhaseScaleEdited(float Scale)
+    {
+        if (!grassMaterial)
+            return;
+        grassMaterial->mPhaseScale = Scale;
+    }
 
     void MyGLWidget::doRotationTransform()
     {	//构建一个旋转矩阵，绕着z轴旋转45度角

@@ -123,7 +123,7 @@ MyOpenGL::MyInstancedMesh* MyAssimpInstanceLoader::processMesh(aiMesh* aimesh, c
 		}
 	}
 
-	auto geometry = new MyOpenGL::MyGeometry(positions, normals, uvs, indices);
+	auto geometry = new MyOpenGL::MyGeometry(positions, normals,colors, uvs, indices);
 	auto material = new MyOpenGL::MyPhongInstanceMaterial();
 	material->mDepthWrite = false;
 	//进行纹理读取

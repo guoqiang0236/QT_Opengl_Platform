@@ -7,6 +7,7 @@ out vec2 uv;
 out vec3 normal;
 out vec3 worldPosition;
 
+
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
