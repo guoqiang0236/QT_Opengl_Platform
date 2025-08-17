@@ -15,6 +15,9 @@ uniform vec3 cameraPosition;
 
 
 uniform float shiness;
+//草地贴图特性
+uniform float uvScale;
+uniform float brightness;
 
 //透明度
 uniform float opacity;
@@ -95,9 +98,8 @@ vec3 calculateSpotLight(SpotLight light, vec3 normal, vec3 viewDir){
 	return (diffuseColor + specularColor)*intensity;
 }
 
-vec3 calculateDirectionalLight(DirectionalLight light, vec3 normal ,vec3 viewDir){
+vec3 calculateDirectionalLight(vec3 objectColor,DirectionalLight light, vec3 normal ,vec3 viewDir){
 	//计算光照的通用数据
-	vec3 objectColor  = texture(sampler, uv).xyz;
 	vec3 lightDir = normalize(light.direction);
 
 	//1 计算diffuse
@@ -109,9 +111,9 @@ vec3 calculateDirectionalLight(DirectionalLight light, vec3 normal ,vec3 viewDir
 	return diffuseColor + specularColor;
 }
 
-vec3 calculatePointLight(PointLight light, vec3 normal ,vec3 viewDir){
+vec3 calculatePointLight(vec3 objectColor,PointLight light, vec3 normal ,vec3 viewDir){
 	//计算光照的通用数据
-	vec3 objectColor  = texture(sampler, uv).xyz;
+
 	vec3 lightDir = normalize(worldPosition - light.position);
 
 	//计算衰减
@@ -129,16 +131,19 @@ vec3 calculatePointLight(PointLight light, vec3 normal ,vec3 viewDir){
 
 void main()
 {
+    vec2 worldXZ = worldPosition.xz;
+	vec2 worldUV = worldXZ/uvScale;
+    vec3 objectColor  = texture(sampler, worldUV).xyz * brightness;
 	vec3 result = vec3(0.0,0.0,0.0);
 
 	//计算光照的通用数据
 	vec3 normalN = normalize(normal);
 	vec3 viewDir = normalize(worldPosition - cameraPosition);
 
-	result += calculateDirectionalLight(directionalLight,normalN, viewDir);
+	result += calculateDirectionalLight(objectColor,directionalLight,normalN, viewDir);
 
 	//环境光计算
-	vec3 objectColor  = texture(sampler, uv).xyz;
+	
 	float alpha =  texture(opacityMask, uv).r;
 
 	vec3 ambientColor = objectColor * ambientColor;

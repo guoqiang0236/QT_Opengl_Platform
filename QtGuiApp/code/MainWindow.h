@@ -29,6 +29,7 @@ signals:
 
 private:
     void InitSlots();
+    void onLineEditBrightnessEdited();
     void UpdateGUI();
     void UpdateSize();
     void loadStyleSheet(const QString& path); // 动态加载 QSS

@@ -32,6 +32,6 @@ void main()
 	gl_Position = projectionMatrix * viewMatrix * transformPosition;
 	
 	uv = aUV;
-//	normal =  transpose(inverse(mat3(modelMatrix))) * aNormal;
-	normal =  normalMatrix * aNormal;
+	normal =  transpose(inverse(mat3(modelMatrix * aInstanceMatrix))) * aNormal;
+	//normal =  normalMatrix * aNormal;
 }

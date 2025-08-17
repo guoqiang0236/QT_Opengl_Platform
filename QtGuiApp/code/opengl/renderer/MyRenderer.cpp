@@ -445,8 +445,8 @@ namespace MyOpenGL {
 				shader->setMatrix4x4("viewMatrix", camera->getViewMatrix());
 				shader->setMatrix4x4("projectionMatrix", camera->getProjectionMatrix());
 
-				auto normalMatrix = glm::mat3(glm::transpose(glm::inverse(mesh->getModelMatrix())));
-				shader->setMatrix3x3("normalMatrix", normalMatrix);
+				/*auto normalMatrix = glm::mat3(glm::transpose(glm::inverse(mesh->getModelMatrix())));
+				shader->setMatrix3x3("normalMatrix", normalMatrix);*/
 
 
 
@@ -494,6 +494,10 @@ namespace MyOpenGL {
 
 				//透明度
 				shader->setFloat("opacity", material->mOpacity);
+
+				//贴图特性
+				shader->setFloat("uvScale", grassMat->mUVScale);
+				shader->setFloat("brightness", grassMat->mBrightness);
 
 				//**********传输uniform类型的矩阵变换数组************
 				//shader->setMatrix4x4Array("matrices", im->mInstanceMatrices, im->mInstanceCount);

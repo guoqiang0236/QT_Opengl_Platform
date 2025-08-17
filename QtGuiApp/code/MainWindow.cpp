@@ -129,8 +129,18 @@ void MainWindow::InitSlots()
     connect(m_ui->pushButton_drawtriangle, &QPushButton::clicked, m_glwidget, &MyOpenGL::MyGLWidget::triggerDraw);
     connect(m_ui->widget_logo, &ImageSwitch::checkedChanged, m_glwidget, &MyOpenGL::MyGLWidget::bShowLogo);
     connect(m_ui->widget_object, &ImageSwitch::checkedChanged, m_glwidget, &MyOpenGL::MyGLWidget::bShowMoxing);
+	connect(m_ui->uvScale, &QSlider::valueChanged, m_glwidget, &MyOpenGL::MyGLWidget::silderuvScale);
     connect(m_ui->pushButton_background, &QPushButton::clicked, this, &MainWindow::SelectColor);
     connect(m_glwidget, &MyOpenGL::MyGLWidget::prepareok, this, &MainWindow::InitRendererPannel);
+    connect(m_ui->lineEdit_brightness, &QLineEdit::editingFinished, this, &MainWindow::onLineEditBrightnessEdited);
+}
+
+void MainWindow::onLineEditBrightnessEdited() {
+    bool ok = false;
+    float value = m_ui->lineEdit_brightness->text().toFloat(&ok);
+    if (ok) {
+        m_glwidget->onBrightnessEdited(value);
+    }
 }
 
 void MainWindow::UpdateGUI()
@@ -156,6 +166,13 @@ void MainWindow::UpdateGUI()
     m_ui->gridLayout_8->addWidget(m_glwidget, 1, 0, 1, 1);
 	
     m_ui->label_background->setStyleSheet("background-color: rgb(0, 0, 0);"); 
+    //lineEdit_brightness*
+    if (m_ui->lineEdit_brightness) {
+        QDoubleValidator* validator = new QDoubleValidator(m_ui->lineEdit_brightness);
+        validator->setNotation(QDoubleValidator::StandardNotation); // 标准浮点格式
+        validator->setDecimals(6); // 最多允许6位小数，可根据需要调整
+        m_ui->lineEdit_brightness->setValidator(validator);
+    }
 }
 
 void MainWindow::UpdateSize()

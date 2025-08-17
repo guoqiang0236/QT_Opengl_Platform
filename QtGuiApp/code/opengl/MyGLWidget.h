@@ -87,7 +87,8 @@ public slots:
     void triggerDraw();
 	void bShowLogo(bool bshow);
     void bShowMoxing(bool bshow);
-
+	void silderuvScale(float scale);
+    void onBrightnessEdited(float brintness);
 protected:
     void initializeGL() override;
     void paintGL() override;

@@ -202,6 +202,20 @@ namespace MyOpenGL {
         update();
     }
 
+    void MyGLWidget::silderuvScale(float scale)
+    {
+        if (!grassMaterial)
+            return;
+        grassMaterial->mUVScale = scale;
+    }
+
+    void MyGLWidget::onBrightnessEdited(float brintness)
+    {
+        if (!grassMaterial)
+            return;
+        grassMaterial->mBrightness = brintness;
+    }
+
   
 
     void MyGLWidget::doRotationTransform()
@@ -645,17 +659,21 @@ namespace MyOpenGL {
         m_scene->addChild(boxmesh);
 
        
-        int rNum = 20;
-        int cNum = 20;
+        int rNum = 50;
+        int cNum = 50;
 
 		auto grassModel = MyAssimpInstanceLoader::load("../assets/fbx/grassNew.obj", rNum*cNum);
 		
         glm::mat4 translate;
+        glm::mat4 rotate;
+        glm::mat4 transform;
 
         for (int r = 0; r < rNum; r++) {
             for (int c = 0; c < cNum; c++) {
                 translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.2 * r, 0.0f, 0.2 * c));
-                setInstanceMatrix(grassModel, r * cNum + c, translate);
+                rotate = glm::rotate(glm::radians((float)(rand() % 90)),glm::vec3(0.0,1.0,0.0));
+				transform = translate * rotate;
+                setInstanceMatrix(grassModel, r * cNum + c, transform);
             }
         }
 		updateInstanceMatrix(grassModel);
